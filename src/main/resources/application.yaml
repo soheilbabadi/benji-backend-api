@@ -1,3 +1,78 @@
 spring:
   application:
     name: benji-backend-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/benji_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Changed to validate since we use Liquibase
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  liquibase:
+    database-change-log-table: Z_LIQ_CHANGELOG
+    database-change-log-lock-table: Z_LIQ_CHANGELOG_LOCK
+    change-log: classpath:config/liquibase/master.xml
+    enabled: true
+    contexts: ${spring.profiles.active:dev}
+    clear-checksums: true
+    drop-first: false
+    parameters:
+      releaseLocksOnExit: true
+      shouldSnapshotRecycleBinObjects: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:admin}
+      timeout: 6000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://admin:admin@localhost:27017/benji_db?authSource=admin}
+      auto-index-creation: true
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+    connection-timeout: 5s
+    socket-timeout: 30s
+
+server:
+  port: 8080
+
+logging:
+  level:
+    social.benji: DEBUG
+    org.springframework.security: DEBUG
+
