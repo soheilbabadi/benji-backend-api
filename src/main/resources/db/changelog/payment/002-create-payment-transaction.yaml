@@ -1,0 +1,221 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-payment-transaction-table
+      author: benji-team
+      comment: Creates the payment transaction table for tracking all payment operations
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableNameExists:
+              tableName: payment_transaction
+      changes:
+        # Create enum for payment status
+        - sql:
+            sql: |
+              CREATE TYPE payment_status AS ENUM (
+                'PENDING',
+                'SUCCESS',
+                'FAILED',
+                'CANCELLED',
+                'REFUNDED'
+              );
+            rollback: DROP TYPE IF EXISTS payment_status;
+        
+        # Create enum for payment gateway
+        - sql:
+            sql: |
+              CREATE TYPE payment_gateway AS ENUM (
+                'ZARINPAL'
+              );
+            rollback: DROP TYPE IF EXISTS payment_gateway;
+        
+        # Create payment_transaction table
+        - createTable:
+            tableName: payment_transaction
+            remarks: Stores payment transaction records with snapshot of tariff amount
+            columns:
+              # Core identification
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              
+              # Ownership and service reference
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                  remarks: ID of the user making the payment
+              - column:
+                  name: service_type
+                  type: paid_service_type
+                  constraints:
+                    nullable: false
+                  remarks: Type of paid service being purchased
+              - column:
+                  name: service_reference_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                  remarks: ID of the business object (e.g., consultation_id, lost_pet_ad_id)
+              
+              # Tariff snapshot (critical: immutable after creation)
+              - column:
+                  name: tariff_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_payment_transaction_tariff
+                    references: tariff(id)
+                  remarks: Reference to tariff used (for audit trail)
+              - column:
+                  name: amount
+                  type: bigint
+                  constraints:
+                    nullable: false
+                  remarks: Snapshot of amount in minor unit at time of creation
+              - column:
+                  name: currency
+                  type: varchar(3)
+                  defaultValue: IRR
+                  constraints:
+                    nullable: false
+                  remarks: Currency code (snapshot)
+              
+              # Gateway information
+              - column:
+                  name: gateway
+                  type: payment_gateway
+                  defaultValue: ZARINPAL
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gateway_authority
+                  type: varchar(100)
+                  constraints:
+                    unique: true
+                  remarks: Authority code from ZarinPal (unique constraint for idempotency)
+              - column:
+                  name: gateway_reference_id
+                  type: varchar(100)
+                  remarks: Reference/Tracking ID from ZarinPal after successful payment
+              - column:
+                  name: gateway_request_id
+                  type: varchar(100)
+                  remarks: Request ID for tracking API calls
+              
+              # Status and timestamps
+              - column:
+                  name: status
+                  type: payment_status
+                  defaultValue: PENDING
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: paid_at
+                  type: timestamp with time zone
+                  remarks: When payment was successfully verified
+              - column:
+                  name: refunded_at
+                  type: timestamp with time zone
+                  remarks: When refund was processed
+              
+              # Error handling
+              - column:
+                  name: failure_reason
+                  type: text
+                  remarks: Description of why payment failed or was cancelled
+              
+              # Optimistic locking
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+        
+        # Add check constraint for positive amounts
+        - addCheckConstraint:
+            tableName: payment_transaction
+            constraintName: chk_payment_amount_positive
+            condition: amount > 0
+        
+        # Add check constraint for valid status transitions (enforced in application layer primarily)
+        # This is a basic check to ensure status is not null
+        - addCheckConstraint:
+            tableName: payment_transaction
+            constraintName: chk_payment_status_not_null
+            condition: status IS NOT NULL
+        
+        # Indexes for efficient querying
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_user_id
+            columns:
+              - column:
+                  name: user_id
+        
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_service_reference
+            columns:
+              - column:
+                  name: service_type
+              - column:
+                  name: service_reference_id
+        
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status
+            columns:
+              - column:
+                  name: status
+        
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_created_at
+            columns:
+              - column:
+                  name: created_at
+        
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_gateway_authority
+            unique: true
+            columns:
+              - column:
+                  name: gateway_authority
+        
+        # Composite index for user transaction history
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_user_created
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: created_at
+      
+      rollback:
+        - dropTable:
+            tableName: payment_transaction
+        - sql:
+            sql: |
+              DROP TYPE IF EXISTS payment_status;
+              DROP TYPE IF EXISTS payment_gateway;
