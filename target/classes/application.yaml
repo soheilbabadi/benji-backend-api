@@ -76,9 +76,3 @@ logging:
     social.benji: DEBUG
     org.springframework.security: DEBUG
 
-app:
-  minio:
-    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
-    access-key: ${MINIO_ACCESS_KEY:minioadmin}
-    secret-key: ${MINIO_SECRET_KEY:minioadmin}
-    bucket-name: ${MINIO_BUCKET_NAME:benji-bucket}
