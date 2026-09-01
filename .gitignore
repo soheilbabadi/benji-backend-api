@@ -1,19 +1,22 @@
 ```
-# Build artifacts
-target/
+# Compiled and build artifacts
+*.class
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
 
 # Dependencies
-node_modules/
-venv/
-.venv/
-__pycache__/
-*.egg-info/
-dist/
-build/
+target/
+.gradle/
 
 # Logs and temp files
 *.log
 *.tmp
+*.swp
 
 # Environment
 .env
@@ -24,12 +27,14 @@ build/
 .vscode/
 .idea/
 
-# Compiled files
-*.class
-*.pyc
-*.o
-*.obj
-*.so
-*.dll
-*.exe
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Package manager
+node_modules/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
 ```

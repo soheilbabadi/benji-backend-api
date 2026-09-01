@@ -42,7 +42,8 @@ public class AuthService {
             throw new RuntimeException("Email already registered");
         }
 
-        if (userRepository.existsByMobileNumber(request.getMobileNumber())) {
+        Optional<User> existingUserByMobile = userRepository.findByMobileNumber(request.getMobileNumber());
+        if (existingUserByMobile.isPresent()) {
             throw new RuntimeException("Mobile number already registered");
         }
 
