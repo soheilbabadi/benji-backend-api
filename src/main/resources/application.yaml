@@ -60,13 +60,17 @@ spring:
           max-wait: -1ms
 
     mongodb:
-      uri: ${MONGODB_URI:mongodb://admin:admin@localhost:27017/benji_db?authSource=admin}
       auto-index-creation: true
 
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
     connection-timeout: 5s
     socket-timeout: 30s
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://admin:admin@localhost:27017/benji_db?authSource=admin}
+    authentication-database: admin
+    username: ${MONGODB_USERNAME:admin}
+    password: ${MONGODB_PASSWORD:admin}
 
 server:
   port: 8080
