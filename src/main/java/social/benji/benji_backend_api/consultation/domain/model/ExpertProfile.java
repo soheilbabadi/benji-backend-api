@@ -2,6 +2,7 @@ package social.benji.benji_backend_api.consultation.domain.model;
 
 import lombok.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.ExpertVerificationStatus;
+import social.benji.benji_backend_api.lookup.LookupModel;
 
 import jakarta.persistence.*;
 import java.time.Instant;
@@ -13,7 +14,7 @@ import java.util.UUID;
  * Represents a verified expert who can answer consultations.
  */
 @Entity
-@Table(name = "expert_profiles")
+@Table(name = "tbl_expert_profiles")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,8 +30,13 @@ public class ExpertProfile {
     private boolean isActive;
     private String bio;
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> specialties;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "tbl_expert_profile_specialties",
+        joinColumns = @JoinColumn(name = "expert_profile_id"),
+        inverseJoinColumns = @JoinColumn(name = "lookup_id")
+    )
+    private Set<LookupModel> specialties;
     private Instant createdAt;
     private Instant updatedAt;
 }

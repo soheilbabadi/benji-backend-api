@@ -1,40 +1,75 @@
 ```
-# Compiled and build artifacts
+# Java/Maven build artifacts
+target/
 *.class
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
+*.jar
+*.war
+*.ear
 
 # Dependencies
-target/
-.gradle/
+lib/
 
-# Logs and temp files
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
-*.tmp
-*.swp
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
+# Temporary files
+*.tmp
+*.temp
+*~
 
 # Coverage reports
 coverage/
 htmlcov/
-.coverage
+*.coverage
 
-# Package manager
-node_modules/
+# Package manager caches
+.gradle/
+.m2/
+.npm/
+.yarn/
+
+# Python artifacts (if mixed project)
 __pycache__/
-.mypy_cache/
-.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Node artifacts (if mixed project)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+out/
+
+# Testing
+*.test.js
+*.spec.js
+*.test.ts
+*.spec.ts
+
+# OS generated files
+ehthumbs.db
+Icon?
 ```
