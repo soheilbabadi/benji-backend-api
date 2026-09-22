@@ -4,6 +4,7 @@ import lombok.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.*;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
@@ -14,7 +15,7 @@ import java.util.*;
  * Enforces business rules for state transitions and data integrity.
  */
 @Entity
-@Table(name = "consultations")
+@Table(name = "tbl_consultations")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,8 +33,7 @@ public class Consultation {
     private String question;
     @Enumerated(EnumType.STRING)
     private ConsultationStatus status;
-    @Embedded
-    private Money price;
+    private BigDecimal price;
     private boolean emergencyDisclaimerAccepted;
     private UUID assignedExpertId;
     private Instant createdAt;

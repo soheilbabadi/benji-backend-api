@@ -2,9 +2,9 @@ package social.benji.benji_backend_api.consultation.domain.model;
 
 import lombok.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.PaymentStatus;
-import social.benji.benji_backend_api.consultation.domain.valueobject.Money;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ import java.util.UUID;
  * Payment status transitions are controlled and validated.
  */
 @Entity
-@Table(name = "consultation_payments")
+@Table(name = "tbl_consultation_payments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,8 +27,7 @@ public class ConsultationPayment {
     private String providerPaymentId; // ID from Stripe/PayPal/etc.
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
-    @Embedded
-    private Money amount;
+    private BigDecimal amount;
     private String idempotencyKey; // For idempotent callback processing
     private Instant createdAt;
     private Instant updatedAt;

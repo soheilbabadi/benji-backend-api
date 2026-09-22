@@ -11,7 +11,7 @@ import java.util.UUID;
  * Files are stored externally; this entity holds metadata only.
  */
 @Entity
-@Table(name = "consultation_attachments")
+@Table(name = "tbl_consultation_attachments")
 @Getter
 @Setter
 @NoArgsConstructor

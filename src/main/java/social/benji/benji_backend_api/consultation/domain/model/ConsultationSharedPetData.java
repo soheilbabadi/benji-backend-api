@@ -12,7 +12,7 @@ import java.util.UUID;
  * This is a separate aggregate to maintain explicit consent boundaries.
  */
 @Entity
-@Table(name = "consultation_shared_pet_data")
+@Table(name = "tbl_consultation_shared_pet_data")
 @Getter
 @Setter
 @NoArgsConstructor

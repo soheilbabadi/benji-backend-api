@@ -11,7 +11,7 @@ import java.util.UUID;
  * Messages are immutable after creation.
  */
 @Entity
-@Table(name = "consultation_messages")
+@Table(name = "tbl_consultation_messages")
 @Getter
 @Setter
 @NoArgsConstructor
