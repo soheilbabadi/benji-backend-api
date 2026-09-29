@@ -1,17 +1,16 @@
 package social.benji.benji_backend_api.consultation.domain.model;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.UUID;
 
 /**
  * Represents an attachment (file) uploaded to a consultation.
  * Files are stored externally; this entity holds metadata only.
  */
-@Entity
-@Table(name = "consultation_attachments")
+@Document(collection = "consultation_attachments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,12 +19,12 @@ import java.util.UUID;
 public class ConsultationAttachment {
 
     @Id
-    private UUID id;
-    private UUID consultationId;
+    private String id;
+    private String consultationId;
     private String originalFilename;
     private String contentType;
     private long fileSize;
     private String storageKey; // Path/key in external storage
-    private UUID uploadedBy;
+    private String uploadedBy;
     private Instant createdAt;
 }
