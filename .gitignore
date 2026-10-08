@@ -1,1 +1,13 @@
-(empty)
+# Maven/Java build artifacts
+target/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

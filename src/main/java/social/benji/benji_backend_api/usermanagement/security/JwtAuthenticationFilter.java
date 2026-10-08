@@ -58,10 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UUID userId = UUID.fromString(subject);
             return userRepository.findById(userId)
                     .filter(User::isActive)
-                    .map(u -> new UserPrincipal(
-                            u.getId(),
-                            u.getMobileNumber(),
-                            List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole().name()))));
+                    .map(UserPrincipal::of);
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
@@ -80,8 +77,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public record UserPrincipal(UUID id, String maskedMobile,
                                 List<SimpleGrantedAuthority> authorities) {
 
-        public UserPrincipal(UUID id, String mobile, List<SimpleGrantedAuthority> authorities) {
-            this(id, MobileNumberNormalizer.mask(mobile), authorities);
+        public static UserPrincipal of(User user) {
+            return new UserPrincipal(
+                    user.getId(),
+                    MobileNumberNormalizer.mask(user.getMobileNumber()),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
         }
     }
 }

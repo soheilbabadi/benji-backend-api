@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-002-create-otp-challenges
+      author: benji
+      changes:
+        - createTable:
+            tableName: otp_challenges
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: mobile_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: code
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(30)
+                  defaultValue: CREATED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: attempts
+                  type: integer
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: max_attempts
+                  type: integer
+                  defaultValueNumeric: 5
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verified_at
+                  type: timestamptz
+        - createIndex:
+            indexName: idx_otp_challenges_mobile_status_created
+            tableName: otp_challenges
+            columns:
+              - column:
+                  name: mobile_number
+              - column:
+                  name: status
+              - column:
+                  name: created_at
+      rollback:
+        - dropTable:
+            tableName: otp_challenges
