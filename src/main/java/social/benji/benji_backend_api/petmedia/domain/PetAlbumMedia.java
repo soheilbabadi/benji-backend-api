@@ -21,7 +21,7 @@ import lombok.Setter;
  * PostgreSQL — only the object key and descriptive fields live here.
  */
 @Entity
-@Table(name = "pet_album_media")
+@Table(name = "tbl_pet_album_media")
 @Getter
 @Setter
 @NoArgsConstructor

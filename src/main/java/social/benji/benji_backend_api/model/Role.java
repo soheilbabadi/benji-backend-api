@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "tbl_roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

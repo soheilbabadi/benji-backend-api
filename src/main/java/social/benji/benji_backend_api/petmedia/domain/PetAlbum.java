@@ -23,7 +23,7 @@ import lombok.Setter;
  * a single source of truth for who owns what.
  */
 @Entity
-@Table(name = "pet_albums")
+@Table(name = "tbl_pet_albums")
 @Getter
 @Setter
 @NoArgsConstructor

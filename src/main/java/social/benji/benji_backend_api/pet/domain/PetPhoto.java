@@ -19,7 +19,7 @@ import lombok.Setter;
  * attributes live here; binary content never touches PostgreSQL.
  */
 @Entity
-@Table(name = "pet_photos")
+@Table(name = "tbl_pet_photos")
 @Getter
 @Setter
 @NoArgsConstructor

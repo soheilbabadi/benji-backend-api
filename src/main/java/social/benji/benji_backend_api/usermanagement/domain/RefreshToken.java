@@ -22,7 +22,7 @@ import lombok.Setter;
  * only its SHA-256 hash, so a database leak cannot be replayed.
  */
 @Entity
-@Table(name = "refresh_tokens")
+@Table(name = "tbl_refresh_tokens")
 @Getter
 @Setter
 @NoArgsConstructor

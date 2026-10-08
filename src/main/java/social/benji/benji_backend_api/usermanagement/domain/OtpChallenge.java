@@ -22,7 +22,7 @@ import lombok.Setter;
  * authentication protocol state never pollutes identity data.
  */
 @Entity
-@Table(name = "otp_challenges")
+@Table(name = "tbl_otp_challenges")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -26,7 +26,7 @@ import lombok.Setter;
  * association, to keep the module boundary intact.
  */
 @Entity
-@Table(name = "pets")
+@Table(name = "tbl_pets")
 @Getter
 @Setter
 @NoArgsConstructor

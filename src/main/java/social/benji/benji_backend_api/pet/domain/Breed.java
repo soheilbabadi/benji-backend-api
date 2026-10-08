@@ -21,7 +21,7 @@ import lombok.Setter;
  * the pet form always has an honest option without nullable-column semantics.
  */
 @Entity
-@Table(name = "breeds")
+@Table(name = "tbl_breeds")
 @Getter
 @Setter
 @NoArgsConstructor

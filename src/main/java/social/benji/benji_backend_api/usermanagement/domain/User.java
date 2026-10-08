@@ -22,7 +22,7 @@ import lombok.Setter;
  * {@code user_id} and never duplicate profile data.
  */
 @Entity
-@Table(name = "users")
+@Table(name = "tbl_users")
 @Getter
 @Setter
 @NoArgsConstructor
