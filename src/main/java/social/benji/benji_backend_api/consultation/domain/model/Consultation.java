@@ -4,7 +4,6 @@ import lombok.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.*;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
@@ -33,7 +32,10 @@ public class Consultation {
     private String question;
     @Enumerated(EnumType.STRING)
     private ConsultationStatus status;
-    private BigDecimal price;
+    @Column(name = "price_amount")
+    private Long priceAmount;
+    @Column(name = "currency", length = 3)
+    private String currency;
     private boolean emergencyDisclaimerAccepted;
     private UUID assignedExpertId;
     private Instant createdAt;
