@@ -54,17 +54,9 @@ public class BlogPostModel {
     @Indexed
     private Boolean featured = false;
 
+    @org.springframework.data.annotation.CreatedDate
     private Instant createdAt;
 
-    private Instant updatedAt;
-
-    @org.springframework.data.annotation.CreatedDate
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
     @org.springframework.data.annotation.LastModifiedDate
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    private Instant updatedAt;
 }
