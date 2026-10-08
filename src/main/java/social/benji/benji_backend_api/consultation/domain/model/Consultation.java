@@ -1,20 +1,22 @@
 package social.benji.benji_backend_api.consultation.domain.model;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.Document;
 import social.benji.benji_backend_api.consultation.domain.valueobject.*;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
 /**
  * Consultation aggregate root.
  * Represents a consultation request from a pet owner to an expert.
- * 
+ *
  * Enforces business rules for state transitions and data integrity.
  */
-@Entity
-@Table(name = "tbl_consultations")
+@Document(collection = "consultations")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,21 +25,16 @@ import java.util.*;
 public class Consultation {
 
     @Id
-    private UUID id;
-    private UUID ownerId;
-    private UUID petId;
-    @Enumerated(EnumType.STRING)
+    private String id;
+    private String ownerId;
+    private String petId;
     private ConsultationCategory category;
     private String subject;
     private String question;
-    @Enumerated(EnumType.STRING)
     private ConsultationStatus status;
-    @Column(name = "price_amount")
-    private Long priceAmount;
-    @Column(name = "currency", length = 3)
-    private String currency;
+    private BigDecimal price;
     private boolean emergencyDisclaimerAccepted;
-    private UUID assignedExpertId;
+    private String assignedExpertId;
     private Instant createdAt;
     private Instant updatedAt;
     private Instant closedAt;
@@ -45,15 +42,8 @@ public class Consultation {
     @Version
     private long version;
 
-    // Child collections
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
     private Set<PetDataType> sharedPetDataTypes;
-    
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<UUID> attachmentIds;
-    
-    @Embedded
+    private List<String> attachmentIds;
     private ConsultationAnswer answer;
 
     // Valid state transitions map

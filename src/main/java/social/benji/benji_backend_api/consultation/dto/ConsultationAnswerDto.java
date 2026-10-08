@@ -1,25 +1,17 @@
-package social.benji.benji_backend_api.consultation.domain.model;
+package social.benji.benji_backend_api.consultation.dto;
 
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import social.benji.benji_backend_api.consultation.domain.valueobject.UrgencyLevel;
 
 import java.time.Instant;
 
-/**
- * Value object representing the expert's final structured answer.
- * Immutable after submission (except through explicit correction/versioning).
- */
-@Document(collection = "consultation_answers")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConsultationAnswer {
+public class ConsultationAnswerDto {
 
-    @Id
     private String id;
     private String expertId;
     private String assessment;

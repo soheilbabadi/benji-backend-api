@@ -1,17 +1,16 @@
 package social.benji.benji_backend_api.consultation.domain.model;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.UUID;
 
 /**
  * Represents a message in a consultation conversation.
  * Messages are immutable after creation.
  */
-@Entity
-@Table(name = "tbl_consultation_messages")
+@Document(collection = "consultation_messages")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,9 +19,9 @@ import java.util.UUID;
 public class ConsultationMessage {
 
     @Id
-    private UUID id;
-    private UUID consultationId;
-    private UUID senderId;
+    private String id;
+    private String consultationId;
+    private String senderId;
     private String senderRole; // 'OWNER', 'EXPERT', 'SYSTEM'
     private String content;
     private boolean isSystemMessage;
