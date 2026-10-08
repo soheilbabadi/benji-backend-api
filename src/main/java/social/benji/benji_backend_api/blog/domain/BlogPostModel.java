@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
+import social.benji.benji_backend_api.blog.enums.BlogPostStatus;
 
 /**
  * Plain in-memory model matching the field set BlogPostMapper maps. The Mongo
@@ -19,14 +21,9 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "blog_posts")
 public class BlogPostModel {
 
-    public enum Status {
-        DRAFT,
-        PENDING_REVIEW,
-        PUBLISHED,
-        ARCHIVED
-    }
 
     private String id;
     private String title;
@@ -37,7 +34,7 @@ public class BlogPostModel {
     private List<String> tags;
     private List<String> categories;
     private List<String> attachmentIds;
-    private Status status;
+    private BlogPostStatus blogPostStatus;
     private Long views;
     private Integer commentsCount;
     private Boolean featured;

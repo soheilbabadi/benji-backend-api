@@ -36,7 +36,7 @@ public final class BlogPostMapper {
                 .tags(model.getTags() != null ? model.getTags() : Collections.emptyList())
                 .categories(model.getCategories() != null ? model.getCategories() : Collections.emptyList())
                 .attachmentIds(model.getAttachmentIds() != null ? model.getAttachmentIds() : Collections.emptyList())
-                .status(model.getStatus())
+                .blogPostStatus(model.getBlogPostStatus())
                 .views(model.getViews() != null ? model.getViews() : 0L)
                 .createdAt(model.getCreatedAt())
                 .updatedAt(model.getUpdatedAt())
@@ -60,7 +60,7 @@ public final class BlogPostMapper {
                 .tags(dto.getTags() != null ? dto.getTags() : Collections.emptyList())
                 .categories(dto.getCategories() != null ? dto.getCategories() : Collections.emptyList())
                 .attachmentIds(dto.getAttachmentIds() != null ? dto.getAttachmentIds() : Collections.emptyList())
-                .status(dto.getStatus())
+                .blogPostStatus(dto.getBlogPostStatus())
                 .views(0L)
                 .commentsCount(0)
                 .featured(false)
@@ -84,7 +84,7 @@ public final class BlogPostMapper {
         model.setTags(dto.getTags() != null ? dto.getTags() : Collections.emptyList());
         model.setCategories(dto.getCategories() != null ? dto.getCategories() : Collections.emptyList());
         model.setAttachmentIds(dto.getAttachmentIds() != null ? dto.getAttachmentIds() : Collections.emptyList());
-        model.setStatus(dto.getStatus());
+        model.setBlogPostStatus(dto.getBlogPostStatus());
 
         return model;
     }

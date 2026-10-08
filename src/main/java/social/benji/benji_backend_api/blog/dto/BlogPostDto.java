@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import social.benji.benji_backend_api.blog.domain.BlogPostModel;
+import social.benji.benji_backend_api.blog.enums.BlogPostStatus;
 
 /**
  * Read DTO for a blog post. Kept minimal: only fields BlogPostMapper actually
@@ -31,7 +31,7 @@ public class BlogPostDto {
     private List<String> tags;
     private List<String> categories;
     private List<String> attachmentIds;
-    private BlogPostModel.Status status;
+    private BlogPostStatus blogPostStatus;
     private Long views;
     private Instant createdAt;
     private Instant updatedAt;

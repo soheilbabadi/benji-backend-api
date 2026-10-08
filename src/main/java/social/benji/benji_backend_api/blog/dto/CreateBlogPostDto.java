@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import social.benji.benji_backend_api.blog.domain.BlogPostModel;
+import social.benji.benji_backend_api.blog.enums.BlogPostStatus;
 
 /**
  * Creation DTO for blog posts (counterpart of BlogPostDto). Fields mirror what
@@ -25,5 +25,5 @@ public class CreateBlogPostDto {
     private List<String> tags;
     private List<String> categories;
     private List<String> attachmentIds;
-    private BlogPostModel.Status status;
+    private BlogPostStatus blogPostStatus;
 }
