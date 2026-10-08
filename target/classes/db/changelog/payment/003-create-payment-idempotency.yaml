@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-payment-idempotency-table
+      author: benji-team
+      comment: Creates the payment idempotency key table to prevent duplicate payment creation
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableNameExists:
+              tableName: payment_idempotency_key
+      changes:
+        # Create payment_idempotency_key table
+        - createTable:
+            tableName: payment_idempotency_key
+            remarks: Stores idempotency keys to prevent duplicate payment creation under concurrent requests
+            columns:
+              - column:
+                  name: idempotency_key
+                  type: varchar(128)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  remarks: Unique key generated from request parameters
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                  remarks: User who made the request
+              - column:
+                  name: service_type
+                  type: paid_service_type
+                  constraints:
+                    nullable: false
+              - column:
+                  name: service_reference_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_transaction_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_idempotency_payment_transaction
+                    references: payment_transaction(id)
+                  remarks: Reference to the created payment transaction
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: timestamp with time zone
+                  remarks: When this key expires (prevents indefinite locking)
+        
+        # Add index for cleanup of expired keys
+        - createIndex:
+            tableName: payment_idempotency_key
+            indexName: idx_idempotency_expires_at
+            columns:
+              - column:
+                  name: expires_at
+        
+        # Add index for user lookups
+        - createIndex:
+            tableName: payment_idempotency_key
+            indexName: idx_idempotency_user_id
+            columns:
+              - column:
+                  name: user_id
+      
+      rollback:
+        - dropTable:
+            tableName: payment_idempotency_key

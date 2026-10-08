@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-add-payment-indexes-and-constraints
+      author: benji-team
+      comment: Adds additional indexes and constraints for payment performance and data integrity
+      preConditions:
+        - onFail: MARK_RAN
+          tableExists:
+            tableName: payment_transaction
+      changes:
+        # Add composite unique constraint to prevent duplicate pending payments for same service reference
+        # This prevents multiple pending payments for the same consultation/advertisement
+        - addUniqueConstraint:
+            tableName: payment_transaction
+            constraintName: uk_payment_service_pending
+            columns: service_type, service_reference_id, status
+            deferrable: true
+            initiallyDeferred: true
+          remarks: Prevents multiple pending payments for same service (partial index simulation)
+        
+        # Note: PostgreSQL doesn't support partial unique indexes directly in Liquibase,
+        # so we enforce this logic in the application layer with proper transaction handling
+        
+        # Add index for admin filtering by status and date
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_created
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: created_at
+        
+        # Add index for refund processing
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_refunded_at
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: refunded_at
+          remarks: Efficient lookup for refund operations
+        
+        # Add foreign key index if not automatically created
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_tariff_id
+            columns:
+              - column:
+                  name: tariff_id
+          remarks: Improves join performance with tariff table
+      
+      rollback:
+        - dropIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_created
+        - dropIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_refunded_at
+        - dropIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_tariff_id
+        # Note: Cannot drop unique constraint with columns in Liquibase rollback easily
+        # Manual intervention may be required
