@@ -1,40 +1,13 @@
-```
-# Compiled and build artifacts
-*.class
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
-# Dependencies
+# Maven/Java build artifacts
 target/
-.gradle/
 
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
+# IDEs and editors
 .idea/
+.vscode/
+*.iml
+*.swp
+*.swo
 
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Package manager
-node_modules/
-__pycache__/
-.mypy_cache/
-.pytest_cache/
-```
+# OS files
+.DS_Store
+Thumbs.db

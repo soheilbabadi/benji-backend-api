@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import social.benji.benji_backend_api.consultation.domain.valueobject.ExpertVerificationStatus;
+import social.benji.benji_backend_api.lookup.LookupModel;
 
 import java.time.Instant;
 import java.util.*;
