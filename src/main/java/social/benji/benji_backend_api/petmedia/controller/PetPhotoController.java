@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.petmedia.web;
+package social.benji.benji_backend_api.petmedia.controller;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,9 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import social.benji.benji_backend_api.petmedia.application.PhotoService;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbumMedia;
-import social.benji.benji_backend_api.petmedia.web.dto.AccessUrlResponse;
-import social.benji.benji_backend_api.petmedia.web.dto.MovePhotoRequest;
-import social.benji.benji_backend_api.petmedia.web.dto.PhotoResponse;
+import social.benji.benji_backend_api.petmedia.dto.AccessUrlResponse;
+import social.benji.benji_backend_api.petmedia.dto.MovePhotoRequest;
+import social.benji.benji_backend_api.petmedia.dto.PhotoResponse;
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 /**

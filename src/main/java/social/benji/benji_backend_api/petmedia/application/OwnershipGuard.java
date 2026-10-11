@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import social.benji.benji_backend_api.pet.domain.Pet;
 import social.benji.benji_backend_api.pet.service.PetService;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbum;
-import social.benji.benji_backend_api.petmedia.domain.exception.MediaErrors;
+import social.benji.benji_backend_api.petmedia.application.exception.MediaErrors;
 import social.benji.benji_backend_api.petmedia.repository.PetAlbumRepository;
 
 /**

@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
-import social.benji.benji_backend_api.petmedia.domain.MediaType;
+import social.benji.benji_backend_api.petmedia.valueobject.MediaType;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbum;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbumMedia;
-import social.benji.benji_backend_api.petmedia.domain.exception.MediaErrors;
+import social.benji.benji_backend_api.petmedia.application.exception.MediaErrors;
 import social.benji.benji_backend_api.petmedia.repository.PetAlbumMediaRepository;
 import social.benji.benji_backend_api.petmedia.repository.PetAlbumRepository;
 import social.benji.benji_backend_api.storage.MinioProperties;

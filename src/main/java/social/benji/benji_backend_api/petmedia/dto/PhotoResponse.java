@@ -1,9 +1,9 @@
-package social.benji.benji_backend_api.petmedia.web.dto;
+package social.benji.benji_backend_api.petmedia.dto;
 
 import java.time.Instant;
 import java.util.UUID;
 
-import social.benji.benji_backend_api.petmedia.domain.MediaType;
+import social.benji.benji_backend_api.petmedia.valueobject.MediaType;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbumMedia;
 
 /** Media descriptor for the UI; access bytes come via the separate url endpoint. */

@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import social.benji.benji_backend_api.petmedia.domain.exception.MediaErrors;
+import social.benji.benji_backend_api.petmedia.application.exception.MediaErrors;
 
 /**
  * Validates uploaded images server-side: size ceiling, declared content type,

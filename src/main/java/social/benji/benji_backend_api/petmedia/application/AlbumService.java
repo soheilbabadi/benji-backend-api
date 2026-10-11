@@ -1,19 +1,18 @@
 package social.benji.benji_backend_api.petmedia.application;
 
-import java.util.List;
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.extern.slf4j.Slf4j;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbum;
 import social.benji.benji_backend_api.petmedia.domain.PetAlbumMedia;
-import social.benji.benji_backend_api.petmedia.domain.exception.MediaErrors;
+import social.benji.benji_backend_api.petmedia.application.exception.MediaErrors;
 import social.benji.benji_backend_api.petmedia.repository.PetAlbumMediaRepository;
 import social.benji.benji_backend_api.petmedia.repository.PetAlbumRepository;
 import social.benji.benji_backend_api.storage.MinioProperties;
 import social.benji.benji_backend_api.storage.ObjectStorage;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Album lifecycle: create, list, update, hard delete. Deletion removes every
@@ -47,7 +46,7 @@ public class AlbumService {
         return albums.save(PetAlbum.builder()
                 .id(UUID.randomUUID())
                 .petId(petId)
-                .name(name.trim())
+                .petName(name.trim())
                 .description(blankToNull(description))
                 .build());
     }
@@ -67,7 +66,7 @@ public class AlbumService {
     public PetAlbum updateAlbum(UUID petId, UUID albumId, UUID ownerId, String name, String description) {
         PetAlbum album = guard.requireOwnedAlbum(petId, albumId, ownerId);
         if (name != null && !name.isBlank()) {
-            album.setName(name.trim());
+            album.setPetName(name.trim());
         }
         if (description != null) {
             album.setDescription(blankToNull(description));

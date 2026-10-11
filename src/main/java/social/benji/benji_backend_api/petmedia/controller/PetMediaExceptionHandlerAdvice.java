@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.petmedia.web;
+package social.benji.benji_backend_api.petmedia.controller;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import social.benji.benji_backend_api.petmedia.domain.exception.MediaException;
+import social.benji.benji_backend_api.petmedia.application.exception.MediaException;
 
 /**
  * Maps pet-media domain errors (MediaException) to their declared HTTP status

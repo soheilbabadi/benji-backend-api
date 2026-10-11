@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.petmedia.web.dto;
+package social.benji.benji_backend_api.petmedia.dto;
 
 import jakarta.validation.constraints.Size;
 

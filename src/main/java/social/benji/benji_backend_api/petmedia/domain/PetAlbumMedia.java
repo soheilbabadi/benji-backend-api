@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import social.benji.benji_backend_api.petmedia.valueobject.MediaType;
 
 /**
  * Metadata for one object stored in MinIO. Binary content never touches

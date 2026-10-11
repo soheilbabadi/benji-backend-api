@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.petmedia.domain.exception;
+package social.benji.benji_backend_api.petmedia.application.exception;
 
 import org.springframework.http.HttpStatus;
 
