@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.PetDataType;
 import social.benji.benji_backend_api.consultation.dto.ConsultationSharedPetDataDto;
@@ -30,6 +31,7 @@ public class ConsultationSharedPetDataController {
             @ApiResponse(responseCode = "201", description = "داده با موفقیت ثبت شد"),
             @ApiResponse(responseCode = "400", description = "اطلاعات ورودی نامعتبر است")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationSharedPetDataDto> create(@Valid @RequestBody ConsultationSharedPetDataDto sharedPetDataDto) {
         log.info("Creating shared pet data for consultationId: {}", sharedPetDataDto.getConsultationId());
@@ -78,6 +80,7 @@ public class ConsultationSharedPetDataController {
             @ApiResponse(responseCode = "200", description = "داده با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "داده یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationSharedPetDataDto> update(
             @PathVariable String id,
@@ -92,8 +95,9 @@ public class ConsultationSharedPetDataController {
             @ApiResponse(responseCode = "204", description = "داده با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "داده یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting shared pet data with id: {}", id);
         consultationSharedPetDataService.deleteById(id);
         return ResponseEntity.noContent().build();

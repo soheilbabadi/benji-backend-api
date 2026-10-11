@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.PaymentStatus;
 import social.benji.benji_backend_api.consultation.dto.ConsultationPaymentDto;
@@ -30,6 +31,7 @@ public class ConsultationPaymentController {
             @ApiResponse(responseCode = "201", description = "پرداخت با موفقیت ثبت شد"),
             @ApiResponse(responseCode = "400", description = "اطلاعات ورودی نامعتبر است")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationPaymentDto> create(@Valid @RequestBody ConsultationPaymentDto paymentDto) {
         log.info("Creating payment for consultationId: {}", paymentDto.getConsultationId());
@@ -96,6 +98,7 @@ public class ConsultationPaymentController {
             @ApiResponse(responseCode = "200", description = "پرداخت با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پرداخت یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationPaymentDto> update(
             @PathVariable String id,
@@ -110,8 +113,9 @@ public class ConsultationPaymentController {
             @ApiResponse(responseCode = "204", description = "پرداخت با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پرداخت یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting payment with id: {}", id);
         consultationPaymentService.deleteById(id);
         return ResponseEntity.noContent().build();

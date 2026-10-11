@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import social.benji.benji_backend_api.consultation.dto.ConsultationMessageDto;
 import social.benji.benji_backend_api.consultation.service.ConsultationMessageService;
@@ -29,6 +30,7 @@ public class ConsultationMessageController {
             @ApiResponse(responseCode = "201", description = "پیام با موفقیت ارسال شد"),
             @ApiResponse(responseCode = "400", description = "اطلاعات ورودی نامعتبر است")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationMessageDto> create(@Valid @RequestBody ConsultationMessageDto messageDto) {
         log.info("Creating message for consultationId: {}", messageDto.getConsultationId());
@@ -74,6 +76,7 @@ public class ConsultationMessageController {
             @ApiResponse(responseCode = "200", description = "پیام با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پیام یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationMessageDto> update(
             @PathVariable String id,
@@ -88,8 +91,9 @@ public class ConsultationMessageController {
             @ApiResponse(responseCode = "204", description = "پیام با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پیام یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting message with id: {}", id);
         consultationMessageService.deleteById(id);
         return ResponseEntity.noContent().build();

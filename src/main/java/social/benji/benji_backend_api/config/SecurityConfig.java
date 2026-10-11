@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import social.benji.benji_backend_api.repository.UserRepository;
+import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,9 +39,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(UserRepository userRepository) {
+    public SecurityConfig(UserRepository userRepository,
+                          JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userRepository = userRepository;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     /**
@@ -137,6 +141,15 @@ public class SecurityConfig {
                 // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
+                // Lookup reads are public reference data; writes stay authenticated
+                // (further restricted to ADMIN via @PreAuthorize on LookupController)
+                .requestMatchers(HttpMethod.GET, "/api/lookups/**").permitAll()
+                // Lookup writes (POST/PUT/PATCH/DELETE) are ADMIN-only; this mirrors the
+                // @PreAuthorize on LookupController so 403 is decided at the request layer too.
+                .requestMatchers(HttpMethod.POST, "/api/lookups/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/lookups/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/lookups/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/lookups/**").hasRole("ADMIN")
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/actuator/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -156,7 +169,10 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
-            .httpBasic(withDefaults());
+            .httpBasic(withDefaults())
+            // Validate the Bearer access token (HS256 signature + expiry) and
+            // populate the SecurityContext before authorization checks run.
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -79,12 +79,24 @@ public final class BlogPostMapper {
             return model;
         }
 
-        model.setTitle(dto.getTitle());
-        model.setContent(dto.getContent());
-        model.setTags(dto.getTags() != null ? dto.getTags() : Collections.emptyList());
-        model.setCategories(dto.getCategories() != null ? dto.getCategories() : Collections.emptyList());
-        model.setAttachmentIds(dto.getAttachmentIds() != null ? dto.getAttachmentIds() : Collections.emptyList());
-        model.setBlogPostStatus(dto.getBlogPostStatus());
+        if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
+            model.setTitle(dto.getTitle());
+        }
+        if (dto.getContent() != null) {
+            model.setContent(dto.getContent());
+        }
+        if (dto.getTags() != null) {
+            model.setTags(dto.getTags());
+        }
+        if (dto.getCategories() != null) {
+            model.setCategories(dto.getCategories());
+        }
+        if (dto.getAttachmentIds() != null) {
+            model.setAttachmentIds(dto.getAttachmentIds());
+        }
+        if (dto.getBlogPostStatus() != null) {
+            model.setBlogPostStatus(dto.getBlogPostStatus());
+        }
 
         return model;
     }

@@ -72,6 +72,21 @@ spring:
     username: ${MONGODB_USERNAME:admin}
     password: ${MONGODB_PASSWORD:admin}
 
+benji:
+  security:
+    jwt:
+      # HS256 requires >= 32 bytes of key material; override via env in every real environment.
+      secret: ${JWT_SECRET:}
+      algorithm: ${JWT_ALGORITHM:HS256}
+      access-token-ttl: ${JWT_ACCESS_TTL:15m}
+  sms:
+    kavenegar:
+      base-url: ${KAVENEGAR_BASE_URL:https://api.kavenegar.com/v1}
+      api-token: ${KAVENEGAR_API_TOKEN:}
+      sender: ${KAVENEGAR_SENDER:}
+      connect-timeout: 5s
+      read-timeout: 10s
+
 server:
   port: 8080
 

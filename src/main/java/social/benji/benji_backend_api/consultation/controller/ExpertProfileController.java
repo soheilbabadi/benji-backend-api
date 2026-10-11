@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import social.benji.benji_backend_api.consultation.domain.valueobject.ExpertVerificationStatus;
 import social.benji.benji_backend_api.consultation.dto.ExpertProfileDto;
@@ -30,6 +31,7 @@ public class ExpertProfileController {
             @ApiResponse(responseCode = "201", description = "پروفایل با موفقیت ایجاد شد"),
             @ApiResponse(responseCode = "400", description = "اطلاعات ورودی نامعتبر است")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ExpertProfileDto> create(@Valid @RequestBody ExpertProfileDto expertProfileDto) {
         log.info("Creating expert profile for userId: {}", expertProfileDto.getUserId());
@@ -90,6 +92,7 @@ public class ExpertProfileController {
             @ApiResponse(responseCode = "200", description = "پروفایل با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پروفایل یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ExpertProfileDto> update(
             @PathVariable String id,
@@ -104,8 +107,9 @@ public class ExpertProfileController {
             @ApiResponse(responseCode = "204", description = "پروفایل با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پروفایل یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting expert profile with id: {}", id);
         expertProfileService.deleteById(id);
         return ResponseEntity.noContent().build();

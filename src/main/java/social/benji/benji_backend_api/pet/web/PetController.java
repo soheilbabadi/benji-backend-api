@@ -98,7 +98,7 @@ public class PetController {
 
     /** Maps DELETE to archive: physical deletion would destroy the life record. */
     @DeleteMapping("/{petId}")
-    public ResponseEntity<Void> archive(@PathVariable UUID petId,
+    public ResponseEntity<HttpStatus> archive(@PathVariable UUID petId,
                                         @AuthenticationPrincipal UserPrincipal principal) {
         petService.archive(petId, principal.id());
         return ResponseEntity.noContent().build();
@@ -120,7 +120,7 @@ public class PetController {
 
     /** Replacing the profile photo fully removes the previous one (MinIO + DB). */
     @PutMapping(value = "/{petId}/photo", consumes = "multipart/form-data")
-    public ResponseEntity<Void> uploadPhoto(@PathVariable UUID petId,
+    public ResponseEntity<HttpStatus> uploadPhoto(@PathVariable UUID petId,
                                             @RequestPart("file") MultipartFile file,
                                             @AuthenticationPrincipal UserPrincipal principal) {
         petPhotoService.replacePhoto(petId, principal.id(), file);
@@ -134,7 +134,7 @@ public class PetController {
     }
 
     @DeleteMapping("/{petId}/photo")
-    public ResponseEntity<Void> deletePhoto(@PathVariable UUID petId,
+    public ResponseEntity<HttpStatus> deletePhoto(@PathVariable UUID petId,
                                             @AuthenticationPrincipal UserPrincipal principal) {
         petPhotoService.deletePhoto(petId, principal.id());
         return ResponseEntity.noContent().build();

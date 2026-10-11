@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import social.benji.benji_backend_api.consultation.dto.ConsultationAttachmentDto;
 import social.benji.benji_backend_api.consultation.service.ConsultationAttachmentService;
@@ -29,6 +30,7 @@ public class ConsultationAttachmentController {
             @ApiResponse(responseCode = "201", description = "پیوست با موفقیت ایجاد شد"),
             @ApiResponse(responseCode = "400", description = "اطلاعات ورودی نامعتبر است")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationAttachmentDto> create(@Valid @RequestBody ConsultationAttachmentDto attachmentDto) {
         log.info("Creating attachment for consultationId: {}", attachmentDto.getConsultationId());
@@ -72,6 +74,7 @@ public class ConsultationAttachmentController {
             @ApiResponse(responseCode = "200", description = "پیوست با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پیوست یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationAttachmentDto> update(
             @PathVariable String id,
@@ -86,8 +89,9 @@ public class ConsultationAttachmentController {
             @ApiResponse(responseCode = "204", description = "پیوست با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پیوست یافت نشد")
     })
+    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting attachment with id: {}", id);
         consultationAttachmentService.deleteById(id);
         return ResponseEntity.noContent().build();
