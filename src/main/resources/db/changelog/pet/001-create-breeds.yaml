@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: pet-001-create-breeds
+      author: benji
+      changes:
+        - createTable:
+            tableName: breeds
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: species
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_mixed
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_unknown
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            constraintName: uq_breeds_species_name
+            tableName: breeds
+            columnNames: species, name
+        - createIndex:
+            indexName: idx_breeds_species
+            tableName: breeds
+            columns:
+              - column:
+                  name: species
+      rollback:
+        - dropTable:
+            tableName: breeds

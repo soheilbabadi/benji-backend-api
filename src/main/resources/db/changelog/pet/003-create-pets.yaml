@@ -1,0 +1,107 @@
+databaseChangeLog:
+  - changeSet:
+      id: pet-003-create-pets
+      author: benji
+      changes:
+        - createTable:
+            tableName: pets
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: owner_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_pets_owner
+                    references: users(id)
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: species
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: breed_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_pets_breed
+                    references: breeds(id)
+              - column:
+                  name: sex
+                  type: varchar(20)
+                  defaultValue: UNKNOWN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_of_birth
+                  type: date
+              - column:
+                  name: color
+                  type: varchar(50)
+              - column:
+                  name: current_weight_kg
+                  type: numeric(6,2)
+              - column:
+                  name: microchip_number
+                  type: varchar(50)
+              - column:
+                  name: status
+                  type: varchar(20)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: archived_at
+                  type: timestamptz
+              - column:
+                  name: deceased_at
+                  type: timestamptz
+        - addCheckConstraint:
+            constraintName: ck_pets_species
+            tableName: pets
+            checkClause: species IN ('DOG', 'CAT')
+        - addCheckConstraint:
+            constraintName: ck_pets_sex
+            tableName: pets
+            checkClause: sex IN ('MALE', 'FEMALE', 'UNKNOWN')
+        - addCheckConstraint:
+            constraintName: ck_pets_status
+            tableName: pets
+            checkClause: status IN ('ACTIVE', 'ARCHIVED', 'DECEASED')
+        - addCheckConstraint:
+            constraintName: ck_pets_weight_positive
+            tableName: pets
+            checkClause: current_weight_kg IS NULL OR (current_weight_kg > 0 AND current_weight_kg < 200)
+        - createIndex:
+            indexName: idx_pets_owner_status
+            tableName: pets
+            columns:
+              - column:
+                  name: owner_id
+              - column:
+                  name: status
+      rollback:
+        - dropTable:
+            tableName: pets

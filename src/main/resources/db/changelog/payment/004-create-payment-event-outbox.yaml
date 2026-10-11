@@ -1,0 +1,126 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-payment-event-outbox-table
+      author: benji-team
+      comment: Creates the payment event outbox table for reliable event delivery (transactional outbox pattern)
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableNameExists:
+              tableName: payment_event_outbox
+      changes:
+        # Create enum for event types
+        - sql:
+            sql: |
+              CREATE TYPE payment_event_type AS ENUM (
+                'PAYMENT_SUCCEEDED',
+                'PAYMENT_FAILED',
+                'PAYMENT_REFUNDED'
+              );
+            rollback: DROP TYPE IF EXISTS payment_event_type;
+        
+        # Create payment_event_outbox table
+        - createTable:
+            tableName: payment_event_outbox
+            remarks: Stores domain events for reliable delivery using transactional outbox pattern
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: event_type
+                  type: payment_event_type
+                  constraints:
+                    nullable: false
+              - column:
+                  name: aggregate_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                  remarks: ID of the aggregate that produced the event (payment_transaction.id)
+              - column:
+                  name: aggregate_type
+                  type: varchar(100)
+                  defaultValue: PaymentTransaction
+                  constraints:
+                    nullable: false
+                  remarks: Type of aggregate
+              - column:
+                  name: payload
+                  type: jsonb
+                  constraints:
+                    nullable: false
+                  remarks: JSON payload containing event data
+              - column:
+                  name: occurred_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+                  remarks: When the event occurred
+              - column:
+                  name: processed
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+                  remarks: Whether the event has been processed/published
+              - column:
+                  name: processed_at
+                  type: timestamp with time zone
+                  remarks: When the event was processed
+              - column:
+                  name: retry_count
+                  type: integer
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  remarks: Number of retry attempts
+              - column:
+                  name: last_error
+                  type: text
+                  remarks: Last error message if processing failed
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+        
+        # Add index for finding unprocessed events efficiently
+        - createIndex:
+            tableName: payment_event_outbox
+            indexName: idx_outbox_processed_occurred
+            columns:
+              - column:
+                  name: processed
+              - column:
+                  name: occurred_at
+        
+        # Add index for aggregate lookups
+        - createIndex:
+            tableName: payment_event_outbox
+            indexName: idx_outbox_aggregate
+            columns:
+              - column:
+                  name: aggregate_id
+              - column:
+                  name: aggregate_type
+        
+        # Add unique constraint to prevent duplicate events for same aggregate and type
+        - addUniqueConstraint:
+            tableName: payment_event_outbox
+            constraintName: uk_outbox_aggregate_event_type
+            columns: aggregate_id, event_type, occurred_at
+            deferrable: true
+            initiallyDeferred: true
+      
+      rollback:
+        - dropTable:
+            tableName: payment_event_outbox
+        - sql:
+            sql: DROP TYPE IF EXISTS payment_event_type;
