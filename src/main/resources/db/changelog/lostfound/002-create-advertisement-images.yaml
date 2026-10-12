@@ -1,0 +1,77 @@
+databaseChangeLog:
+  # Advertisement image metadata. Binaries live ONLY in MinIO (private bucket);
+  # this table stores backend-generated object keys and safe metadata.
+  - changeSet:
+      id: lostfound-002-create-advertisement-images
+      author: benji
+      changes:
+        - createTable:
+            tableName: lost_found_advertisement_image
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints: { primaryKey: true, nullable: false }
+              - column:
+                  name: advertisement_id
+                  type: uuid
+                  constraints: { nullable: false }
+              - column:
+                  name: object_key
+                  type: varchar(512)
+                  remarks: "Backend-generated: lostfound/{advertisementId}/{imageId}.ext — never a client filename."
+                  constraints: { nullable: false, unique: true }
+              - column:
+                  name: content_type
+                  type: varchar(50)
+                  constraints: { nullable: false }
+              - column:
+                  name: size_bytes
+                  type: bigint
+                  constraints: { nullable: false }
+              - column:
+                  name: sort_order
+                  type: integer
+                  defaultValueNumeric: 0
+                  constraints: { nullable: false }
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints: { nullable: false }
+        - addForeignKeyConstraint:
+            baseTableName: lost_found_advertisement_image
+            baseColumnNames: advertisement_id
+            constraintName: fk_lf_image_advertisement
+            referencedTableName: lost_found_advertisement
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: lost_found_advertisement_image
+            indexName: idx_lf_image_ad_sort
+            columns:
+              - column: { name: advertisement_id }
+              - column: { name: sort_order }
+        - sql:
+            sql: |
+              -- Confirmed limit: max 5 images per advertisement (DB backstop for the service check).
+              CREATE OR REPLACE FUNCTION lf_enforce_max_images() RETURNS trigger AS $$
+              BEGIN
+                IF (SELECT count(*) FROM lost_found_advertisement_image
+                    WHERE advertisement_id = NEW.advertisement_id) >= 5 THEN
+                  RAISE EXCEPTION 'lost_found_max_images_exceeded';
+                END IF;
+                RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+              CREATE CONSTRAINT TRIGGER trg_lf_max_images
+                AFTER INSERT ON lost_found_advertisement_image
+                DEFERRABLE INITIALLY DEFERRED
+                FOR EACH ROW EXECUTE FUNCTION lf_enforce_max_images();
+      rollback:
+        - sql:
+            sql: |
+              DROP TRIGGER trg_lf_max_images ON lost_found_advertisement_image;
+              DROP FUNCTION lf_enforce_max_images();
+        - dropTable: { tableName: lost_found_advertisement_image }
