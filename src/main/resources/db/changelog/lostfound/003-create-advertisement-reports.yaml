@@ -1,0 +1,79 @@
+databaseChangeLog:
+  # Minimal MVP moderation: authenticated visitors report ads; admins resolve reports
+  # by hiding/restoring/closing the advertisement. Reports are never deleted (audit trail).
+  - changeSet:
+      id: lostfound-003-create-advertisement-reports
+      author: benji
+      changes:
+        - sql:
+            sql: |
+              CREATE TYPE lost_found_report_reason AS ENUM
+                ('SPAM', 'FRAUD', 'INAPPROPRIATE_CONTENT', 'WRONG_INFORMATION',
+                 'PRIVATE_INFO_EXPOSED', 'DUPLICATE', 'OTHER');
+              CREATE TYPE lost_found_report_status AS ENUM ('OPEN', 'DISMISSED', 'ACTIONED');
+        - createTable:
+            tableName: lost_found_advertisement_report
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints: { primaryKey: true, nullable: false }
+              - column:
+                  name: advertisement_id
+                  type: uuid
+                  constraints: { nullable: false }
+              - column:
+                  name: reporter_user_id
+                  type: uuid
+                  constraints: { nullable: false }
+              - column:
+                  name: reason
+                  type: lost_found_report_reason
+                  constraints: { nullable: false }
+              - column:
+                  name: details
+                  type: varchar(1000)
+              - column:
+                  name: status
+                  type: lost_found_report_status
+                  constraints: { nullable: false }
+              - column:
+                  name: reviewed_by_user_id
+                  type: uuid
+              - column:
+                  name: review_note
+                  type: varchar(500)
+              - column:
+                  name: reviewed_at
+                  type: timestamptz
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints: { nullable: false }
+        - addForeignKeyConstraint:
+            baseTableName: lost_found_advertisement_report
+            baseColumnNames: advertisement_id
+            constraintName: fk_lf_report_advertisement
+            referencedTableName: lost_found_advertisement
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: lost_found_advertisement_report
+            indexName: idx_lf_report_open
+            columns:
+              - column: { name: status }
+              - column: { name: created_at }
+        - sql:
+            sql: |
+              -- One open report per (ad, reporter): duplicate submissions update nothing (idempotent-ish).
+              CREATE UNIQUE INDEX uq_lf_report_one_open_per_user
+                ON lost_found_advertisement_report (advertisement_id, reporter_user_id)
+               WHERE status = 'OPEN';
+      rollback:
+        - dropTable: { tableName: lost_found_advertisement_report }
+        - sql:
+            sql: |
+              DROP TYPE lost_found_report_reason;
+              DROP TYPE lost_found_report_status;
