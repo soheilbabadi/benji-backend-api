@@ -121,6 +121,16 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
+    public BlogCommentDto like(String id) {
+        return updateLikes(id, 1);
+    }
+
+    @Override
+    public BlogCommentDto unlike(String id) {
+        return updateLikes(id, -1);
+    }
+
+    @Override
     public void moderate(String id, CommentStatus status, String moderatorId, String note) {
         BlogCommentModel comment = getExisting(id);
         comment.setStatus(status);
@@ -135,9 +145,6 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     @Override
     public void deleteById(String id) {
         BlogCommentModel comment = getExisting(id);
-        comment.setDeleted(true);
-        comment.setStatus(CommentStatus.DELETED);
-        blogCommentRepository.save(comment);
 
         if (comment.getParentId() != null) {
             blogCommentRepository.findById(comment.getParentId()).ifPresent(parent -> {
@@ -146,7 +153,17 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                 blogCommentRepository.save(parent);
             });
         }
+
+        blogCommentRepository.deleteById(id);
         refreshPostCommentCount(comment.getBlogPostId());
+    }
+
+    private BlogCommentDto updateLikes(String id, int delta) {
+        BlogCommentModel comment = getExisting(id);
+        int currentLikes = comment.getLikesCount() == null ? 0 : comment.getLikesCount();
+        comment.setLikesCount(Math.max(0, currentLikes + delta));
+        comment.setUpdatedAt(Instant.now());
+        return BlogCommentMapper.toDto(blogCommentRepository.save(comment));
     }
 
     private void refreshPostCommentCount(String blogPostId) {

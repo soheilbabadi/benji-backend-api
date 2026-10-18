@@ -51,8 +51,9 @@ public class BlogCommentModel {
     /** Depth of nesting, useful for rendering/thread caps. */
     private Integer depth;
     /** Number of direct replies, cached to avoid counting on read. */
-    private Integer repliesCount;
-    private Integer likesCount;
+    private Integer repliesCount = 0;
+    /** Number of likes for the comment, updated on each like/unlike action. */
+    private Integer likesCount = 0;
     /** Moderation state; only APPROVED comments show publicly. */
     @Indexed
     private CommentStatus status;

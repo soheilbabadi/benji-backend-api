@@ -22,6 +22,10 @@ public interface BlogCommentService {
 
     BlogCommentDto create(CreateBlogCommentDto dto);
 
+    BlogCommentDto like(String id);
+
+    BlogCommentDto unlike(String id);
+
     void moderate(String id, CommentStatus status, String moderatorId, String note);
 
     void deleteById(String id);

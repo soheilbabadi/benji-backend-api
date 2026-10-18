@@ -105,6 +105,16 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.CREATED).body(blogCommentService.create(dto));
     }
 
+    @PostMapping("/comments/{id}/like")
+    public ResponseEntity<BlogCommentDto> likeComment(@PathVariable String id) {
+        return ResponseEntity.ok(blogCommentService.like(id));
+    }
+
+    @DeleteMapping("/comments/{id}/like")
+    public ResponseEntity<BlogCommentDto> unlikeComment(@PathVariable String id) {
+        return ResponseEntity.ok(blogCommentService.unlike(id));
+    }
+
     @PatchMapping("/comments/{id}/moderate")
     public ResponseEntity<Void> moderateComment(
             @PathVariable String id,
