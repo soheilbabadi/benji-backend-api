@@ -1,23 +1,22 @@
 package social.benji.benji_backend_api.usermanagement.security;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import social.benji.benji_backend_api.usermanagement.domain.User;
 import social.benji.benji_backend_api.usermanagement.repository.UserRepository;
 import social.benji.benji_backend_api.usermanagement.service.MobileNumberNormalizer;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Validates the bearer access token and rebuilds a fresh principal from the
@@ -39,8 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, java.io.IOException {
         extractToken(request).ifPresent(token -> {
             String subject = tokenProvider.verify(token);

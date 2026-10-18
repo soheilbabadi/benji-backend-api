@@ -24,7 +24,6 @@ import java.util.List;
 public class BlogPostServiceImpl implements BlogPostService {
 
     private static final int WORDS_PER_MINUTE = 200;
-
     private final BlogPostRepository blogPostRepository;
 
     @Override
@@ -32,6 +31,12 @@ public class BlogPostServiceImpl implements BlogPostService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return blogPostRepository.findByBlogPostStatusAndDeletedFalse(status, pageable)
                 .map(BlogPostMapper::toDto);
+    }
+
+    @Override
+    public Page<BlogPostDto> list(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return list(BlogPostStatus.PUBLISHED ,page,size);
     }
 
     @Override
@@ -97,10 +102,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 
     @Override
     public void deleteById(String id) {
-        BlogPostModel model = blogPostRepository.findById(id)
-                .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Blog post not found with id: " + id));
-        model.setDeleted(true);
-        blogPostRepository.save(model);
+        blogPostRepository.deleteById(id);
     }
 
     private String buildUniqueSlug(String title) {

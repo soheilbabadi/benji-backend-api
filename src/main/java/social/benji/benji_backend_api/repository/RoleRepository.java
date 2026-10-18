@@ -2,7 +2,7 @@ package social.benji.benji_backend_api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import social.benji.benji_backend_api.model.Role;
+import social.benji.benji_backend_api.auth.model.Role;
 
 import java.util.Optional;
 

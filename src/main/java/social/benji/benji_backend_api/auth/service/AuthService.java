@@ -1,14 +1,17 @@
-package social.benji.benji_backend_api.service;
+package social.benji.benji_backend_api.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import social.benji.benji_backend_api.auth.dto.AuthResponse;
+import social.benji.benji_backend_api.auth.dto.LoginRequest;
+import social.benji.benji_backend_api.auth.dto.OtpVerificationRequest;
+import social.benji.benji_backend_api.auth.dto.RegisterRequest;
 import social.benji.benji_backend_api.dto.*;
-import social.benji.benji_backend_api.model.Role;
-import social.benji.benji_backend_api.model.User;
+import social.benji.benji_backend_api.auth.model.Role;
+import social.benji.benji_backend_api.auth.model.User;
 import social.benji.benji_backend_api.repository.RoleRepository;
 import social.benji.benji_backend_api.repository.UserRepository;
 

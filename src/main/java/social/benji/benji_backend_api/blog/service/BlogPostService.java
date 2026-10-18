@@ -12,6 +12,7 @@ public interface BlogPostService {
 
     /** Paginated list of posts with the given status, newest first (excludes soft-deleted). */
     Page<BlogPostDto> list(BlogPostStatus status, int page, int size);
+    Page<BlogPostDto> list(int page, int size);
 
     BlogPostDto findById(String id);
 

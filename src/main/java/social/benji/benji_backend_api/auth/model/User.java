@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.model;
+package social.benji.benji_backend_api.auth.model;
 
 import jakarta.persistence.*;
 import lombok.*;

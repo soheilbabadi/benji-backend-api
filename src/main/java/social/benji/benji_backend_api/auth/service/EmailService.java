@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.service;
+package social.benji.benji_backend_api.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

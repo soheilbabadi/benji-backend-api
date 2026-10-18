@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.controller;
+package social.benji.benji_backend_api.auth.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -6,8 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import social.benji.benji_backend_api.auth.dto.AuthResponse;
+import social.benji.benji_backend_api.auth.dto.LoginRequest;
+import social.benji.benji_backend_api.auth.dto.OtpVerificationRequest;
+import social.benji.benji_backend_api.auth.dto.RegisterRequest;
 import social.benji.benji_backend_api.dto.*;
-import social.benji.benji_backend_api.service.AuthService;
+import social.benji.benji_backend_api.auth.service.AuthService;
 
 @RestController
 @RequestMapping("/api/auth")
