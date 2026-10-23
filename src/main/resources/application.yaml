@@ -79,6 +79,13 @@ benji:
       secret: ${JWT_SECRET:}
       algorithm: ${JWT_ALGORITHM:HS256}
       access-token-ttl: ${JWT_ACCESS_TTL:15m}
+    otp:
+      length: 6
+      ttl-seconds: 180
+      # Minimum interval between two OTP sends for the same mobile number (3 minutes).
+      resend-cooldown-seconds: ${OTP_RESEND_COOLDOWN_SECONDS:180}
+      max-requests-per-hour: 5
+      max-attempts: 5
   sms:
     kavenegar:
       base-url: ${KAVENEGAR_BASE_URL:https://api.kavenegar.com/v1}
@@ -96,6 +103,15 @@ logging:
     org.springframework.security: DEBUG
 
 app:
+  # Default administrator seeded at startup (idempotent; set enabled=false to skip).
+  # Sign-in happens through the normal OTP flow on this mobile number.
+  admin-bootstrap:
+    enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
+    mobile-number: ${ADMIN_MOBILE_NUMBER:+989120000000}
+    username: ${ADMIN_USERNAME:admin}
+    first-name: ${ADMIN_FIRST_NAME:Benji}
+    last-name: ${ADMIN_LAST_NAME:Admin}
+    email: ${ADMIN_EMAIL:admin@benji.social}
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
     access-key: ${MINIO_ACCESS_KEY:minioadmin}

@@ -91,12 +91,31 @@ public class AuthenticationService {
                 jwtTokenProvider.accessTokenTtl().toSeconds(), user.getId());
     }
 
+    /**
+     * Single-session logout: revokes the presented refresh token so it can no
+     * longer mint access tokens. Idempotent — an unknown/already-revoked token
+     * is a silent no-op (revocation state is not leaked to the caller). The
+     * short-lived access token remains valid until natural expiry; clients
+     * should discard it immediately.
+     */
+    @Transactional
     public void logout(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw UserManagementErrors.invalidRefreshToken();
+        }
         tokenService.revoke(refreshToken);
+        log.info("Logout: refresh token revoked");
     }
 
+    /**
+     * Global logout ("sign out everywhere"): revokes every live refresh session
+     * of the authenticated user. Requires a valid access token, so the caller
+     * identity comes from the SecurityContext, never from the request body.
+     */
+    @Transactional
     public void logoutAll(UUID userId) {
         tokenService.revokeAllForUser(userId);
+        log.info("Logout-all: all refresh sessions revoked for userId={}", userId);
     }
 
     public record AuthTokens(String accessToken, String refreshToken, long expiresInSeconds, UUID userId) {

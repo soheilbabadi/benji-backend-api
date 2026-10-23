@@ -22,6 +22,19 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     boolean existsByEmailAndDeletedAtIsNull(String email);
 
+    Optional<User> findByUsernameIgnoreCaseAndDeletedAtIsNull(String username);
+
+    /**
+     * A taken username may only be reused by its current owner; deleted rows
+     * release their handle.
+     */
+    @Query("""
+            select count(u) > 0 from User u
+            where lower(u.username) = lower(:username)
+              and u.deletedAt is null and u.id <> :userId
+            """)
+    boolean usernameTakenByAnother(@Param("username") String username, @Param("userId") UUID userId);
+
     /**
      * Soft delete that also releases the mobile number for future re-registration:
      * the live unique identity moves to a tombstone value derived from the row id.

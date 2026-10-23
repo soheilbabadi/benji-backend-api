@@ -55,6 +55,45 @@ public class User {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
+    /** Unique handle for public profile URLs; lowercase letters, digits, dot and underscore. */
+    @Column(name = "username", length = 30, unique = true)
+    private String username;
+
+    @Column(name = "city", length = 100)
+    private String city;
+
+    @Column(name = "country", length = 100)
+    private String country;
+
+    @Column(name = "bio", length = 500)
+    private String bio;
+
+    /** Optional secondary contact number shown on the profile (not an identity). */
+    @Column(name = "phone", length = 20)
+    private String phone;
+
+    @Column(name = "website", length = 200)
+    private String website;
+
+    /** Free-form ISO date (yyyy-MM-dd) to keep the schema tolerant of partial dates. */
+    @Column(name = "birth_date", length = 10)
+    private String birthDate;
+
+    @Column(name = "gender", length = 20)
+    private String gender;
+
+    /**
+     * Object-storage key of the avatar inside the shared MinIO bucket, e.g.
+     * {@code profile-pictures/<userId>/av_<uuid>.jpg}. Never a client filename
+     * and never a full URL; delivery happens through short-lived presigned GETs.
+     */
+    @Column(name = "avatar_object_key", length = 200)
+    private String avatarObjectKey;
+
+    /** MIME type detected from magic bytes at upload time (jpeg/png/webp). */
+    @Column(name = "avatar_content_type", length = 50)
+    private String avatarContentType;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
