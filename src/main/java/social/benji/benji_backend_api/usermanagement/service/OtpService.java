@@ -52,10 +52,14 @@ public class OtpService {
 
         // Cooldown is measured from the most recent request of any state, so an
         // expired/blocked challenge cannot be used to bypass the resend throttle.
+        // Default is 180s (3 minutes) between OTP sends for the same number.
         Instant lastRequestAt = challengeRepository.findLatestCreatedAt(normalizedMobile).orElse(null);
-        if (lastRequestAt != null
-                && now.isBefore(lastRequestAt.plus(Duration.ofSeconds(properties.resendCooldownSeconds())))) {
-            throw UserManagementErrors.otpRateLimited();
+        if (lastRequestAt != null) {
+            Instant nextAllowedAt = lastRequestAt.plus(Duration.ofSeconds(properties.resendCooldownSeconds()));
+            if (now.isBefore(nextAllowedAt)) {
+                long retryAfter = Math.max(1, Duration.between(now, nextAllowedAt).toSeconds());
+                throw UserManagementErrors.otpRateLimited(retryAfter);
+            }
         }
 
         if (challengeRepository.countRequestsSince(normalizedMobile, now.minus(Duration.ofHours(1)))

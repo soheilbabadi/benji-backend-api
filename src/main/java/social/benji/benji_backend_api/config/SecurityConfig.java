@@ -138,7 +138,9 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
+                // Public endpoints (OTP request/verify/refresh/logout). The global
+                // logout endpoint sits under /api/auth/** but is additionally
+                // protected by the @AuthenticationPrincipal null-check in the controller.
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 // Lookup reads are public reference data; writes stay authenticated

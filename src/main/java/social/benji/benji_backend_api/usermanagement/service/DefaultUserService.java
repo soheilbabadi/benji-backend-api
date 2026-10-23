@@ -12,9 +12,11 @@ import social.benji.benji_backend_api.usermanagement.repository.UserRepository;
 public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
+    private final UserAvatarService userAvatarService;
 
-    public DefaultUserService(UserRepository userRepository) {
+    public DefaultUserService(UserRepository userRepository, UserAvatarService userAvatarService) {
         this.userRepository = userRepository;
+        this.userAvatarService = userAvatarService;
     }
 
     @Override
@@ -36,12 +38,27 @@ public class DefaultUserService implements UserService {
     public User registerWithVerifiedMobile(String normalizedMobile) {
         // Concurrent registrations for the same number are settled by the DB unique
         // constraint; the loser simply adopts the winner's row.
+        boolean createdHere = false;
+        User user;
         try {
-            return userRepository.saveAndFlush(User.newActive(normalizedMobile));
+            user = userRepository.saveAndFlush(User.newActive(normalizedMobile));
+            createdHere = true;
         } catch (DataIntegrityViolationException e) {
-            return userRepository.findLiveByMobile(normalizedMobile)
+            user = userRepository.findLiveByMobile(normalizedMobile)
                     .orElseThrow(UserManagementErrors::authenticationFailed);
         }
+        if (createdHere) {
+            // Brand-new account: seed the default picsum avatar so a fresh user
+            // always has a picture; they can replace it later via the avatar API.
+            // REQUIRES_NEW inside the service isolates the external fetch from
+            // this transaction; any failure is logged and swallowed there.
+            try {
+                userAvatarService.assignDefaultAvatar(user.getId());
+            } catch (RuntimeException ignored) {
+                // seeding must never break registration
+            }
+        }
+        return user;
     }
 
     @Override

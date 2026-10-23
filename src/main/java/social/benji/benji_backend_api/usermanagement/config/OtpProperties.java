@@ -22,7 +22,8 @@ public record OtpProperties(
             ttlSeconds = 120;
         }
         if (resendCooldownSeconds <= 0) {
-            resendCooldownSeconds = 60;
+            // Minimum 3 minutes between OTP sends for the same mobile number.
+            resendCooldownSeconds = 180;
         }
         if (maxRequestsPerHour <= 0) {
             maxRequestsPerHour = 5;
