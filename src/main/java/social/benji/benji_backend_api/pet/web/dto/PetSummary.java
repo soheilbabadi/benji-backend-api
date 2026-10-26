@@ -13,6 +13,7 @@ public record PetSummary(
         PetSpecies species,
         String breedName,
         String status,
+        String city,
         boolean hasPhoto) {
 
     public static PetSummary from(Pet pet, String breedName) {
@@ -22,6 +23,7 @@ public record PetSummary(
                 pet.getSpecies(),
                 breedName,
                 pet.getStatus().name(),
+                pet.getCity(),
                 false);
     }
 
@@ -32,6 +34,7 @@ public record PetSummary(
                 pet.getSpecies(),
                 breedName,
                 pet.getStatus().name(),
+                pet.getCity(),
                 hasPhoto);
     }
 }

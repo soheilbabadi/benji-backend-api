@@ -108,7 +108,8 @@ class MinioObjectStorage implements ObjectStorage {
         }
     }
 
-    InputStream download(String bucket, String objectKey) {
+    @Override
+    public InputStream download(String bucket, String objectKey) {
         try {
             return client.getObject(GetObjectArgs.builder().bucket(bucket).object(objectKey).build());
         } catch (Exception e) {

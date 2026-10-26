@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.auth.dto;
+package social.benji.benji_backend_api.usermanagement.dto;
 
 import lombok.*;
 import jakarta.validation.constraints.Email;

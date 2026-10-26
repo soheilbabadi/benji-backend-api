@@ -18,6 +18,9 @@ public interface ObjectStorage {
     /** Generates a short-lived GET URL so clients fetch bytes directly from storage. */
     String presignedGetUrl(String bucket, String objectKey, Duration expiry);
 
+    /** Opens the object for server-side streaming; caller must close the stream. */
+    InputStream download(String bucket, String objectKey);
+
     void delete(String bucket, String objectKey);
 
     boolean exists(String bucket, String objectKey);

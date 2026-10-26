@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.auth.model;
+package social.benji.benji_backend_api.usermanagement.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,13 +8,20 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Legacy email/OTP identity model (Spring Security {@link UserDetails}).
+ * The canonical Benji identity root is
+ * {@code social.benji.benji_backend_api.usermanagement.domain.User}; this
+ * entity shares the same physical table ({@code tbl_users}) and lives in the
+ * user-management feature package alongside it.
+ */
 @Entity
 @Table(name = "tbl_users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails {
+public class LegacyUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

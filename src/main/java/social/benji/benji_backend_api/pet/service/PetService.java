@@ -33,7 +33,9 @@ public class PetService {
     @Transactional
     public Pet create(UUID ownerId, String name, PetSpecies species, UUID breedId, PetSex sex,
                       java.time.LocalDate dateOfBirth, String color,
-                      java.math.BigDecimal weightKg, String microchipNumber) {
+                      java.math.BigDecimal weightKg, String microchipNumber,
+                      Boolean neutered, String coatColor,
+                      String city, String bio) {
         validateFieldRules(name, dateOfBirth, weightKg, microchipNumber);
         validateBreedMatchesSpecies(breedId, species);
 
@@ -46,6 +48,10 @@ public class PetService {
         pet.setColor(blankToNull(color));
         pet.setCurrentWeightKg(weightKg);
         pet.setMicrochipNumber(normalizeMicrochip(microchipNumber));
+        pet.setNeutered(neutered);
+        pet.setCoatColor(blankToNull(coatColor));
+        pet.setCity(blankToNull(city));
+        pet.setBio(blankToNull(bio));
         return petRepository.save(pet);
     }
 
@@ -67,7 +73,9 @@ public class PetService {
     @Transactional
     public Pet update(UUID petId, UUID ownerId, String name, UUID breedId, PetSex sex,
                       java.time.LocalDate dateOfBirth, String color,
-                      java.math.BigDecimal weightKg, String microchipNumber) {
+                      java.math.BigDecimal weightKg, String microchipNumber,
+                      Boolean neutered, String coatColor,
+                      String city, String bio) {
         Pet pet = getOwnedPet(petId, ownerId);
         try {
             pet.ensureEditable();
@@ -99,6 +107,18 @@ public class PetService {
         if (microchipNumber != null) {
             validateFieldRules(null, null, null, microchipNumber);
             pet.setMicrochipNumber(normalizeMicrochip(microchipNumber));
+        }
+        if (neutered != null) {
+            pet.setNeutered(neutered);
+        }
+        if (coatColor != null) {
+            pet.setCoatColor(blankToNull(coatColor));
+        }
+        if (city != null) {
+            pet.setCity(blankToNull(city));
+        }
+        if (bio != null) {
+            pet.setBio(blankToNull(bio));
         }
         return pet;
     }

@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.auth.service;
+package social.benji.benji_backend_api.usermanagement.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ObjectStorageService {
+public class LegacyObjectStorageService {
 
     /**
      * Uploads a file to object storage (e.g., AWS S3, MinIO, Google Cloud Storage)

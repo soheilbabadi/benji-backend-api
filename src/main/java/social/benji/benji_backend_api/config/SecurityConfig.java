@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import social.benji.benji_backend_api.repository.UserRepository;
+import social.benji.benji_backend_api.usermanagement.repository.LegacyUserRepository;
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter;
 
 import java.util.Arrays;
@@ -38,12 +38,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
+    private final LegacyUserRepository legacyUserRepository;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(UserRepository userRepository,
+    public SecurityConfig(LegacyUserRepository legacyUserRepository,
                           JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.userRepository = userRepository;
+        this.legacyUserRepository = legacyUserRepository;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -52,7 +52,7 @@ public class SecurityConfig {
      */
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        return username -> legacyUserRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 

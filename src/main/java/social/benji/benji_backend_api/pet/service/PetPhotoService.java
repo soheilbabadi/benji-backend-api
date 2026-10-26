@@ -103,10 +103,29 @@ public class PetPhotoService {
     @Transactional
     public void deletePhoto(UUID petId, UUID ownerId) {
         pets.requireOwnedPet(petId, ownerId);
+        // Idempotent: a pet without a photo is not an error; nothing to remove.
         for (PetPhoto photo : photoRepository.findByPetId(petId)) {
             storage.delete(minioProperties.bucketName(), photo.getObjectKey());
             photoRepository.delete(photo);
         }
+    }
+
+    /**
+     * Streams the primary profile photo bytes for an authorized owner. The
+     * client never learns the bucket or object key.
+     */
+    @Transactional(readOnly = true)
+    public PhotoContent getPhotoContent(UUID petId, UUID ownerId) {
+        pets.requireOwnedPet(petId, ownerId);
+        PetPhoto photo = photoRepository.findFirstByPetIdAndPrimaryIsTrue(petId)
+                .orElseThrow(PetErrors::photoNotFound);
+        java.io.InputStream in = storage.download(
+                minioProperties.bucketName(), photo.getObjectKey());
+        return new PhotoContent(in, photo.getContentType(), photo.getFileSizeBytes());
+    }
+
+    /** Photo bytes plus metadata for HTTP streaming. */
+    public record PhotoContent(java.io.InputStream content, String contentType, long sizeBytes) {
     }
 
     private void removePreviousPhotos(UUID petId, UUID keepId) {

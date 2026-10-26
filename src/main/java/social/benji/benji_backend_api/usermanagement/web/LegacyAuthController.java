@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.auth.controller;
+package social.benji.benji_backend_api.usermanagement.web;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -6,20 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import social.benji.benji_backend_api.auth.dto.AuthResponse;
-import social.benji.benji_backend_api.auth.dto.LoginRequest;
-import social.benji.benji_backend_api.auth.dto.OtpVerificationRequest;
-import social.benji.benji_backend_api.auth.dto.RegisterRequest;
-import social.benji.benji_backend_api.dto.*;
-import social.benji.benji_backend_api.auth.service.AuthService;
+import social.benji.benji_backend_api.usermanagement.dto.AuthResponse;
+import social.benji.benji_backend_api.usermanagement.dto.LoginRequest;
+import social.benji.benji_backend_api.usermanagement.dto.OtpVerificationRequest;
+import social.benji.benji_backend_api.usermanagement.dto.RegisterRequest;
+import social.benji.benji_backend_api.usermanagement.service.LegacyAuthService;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
-public class AuthController {
+public class LegacyAuthController {
 
-    private final AuthService authService;
+    private final LegacyAuthService authService;
 
     /**
      * Register a new user
