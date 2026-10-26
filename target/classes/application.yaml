@@ -1,0 +1,119 @@
+spring:
+  application:
+    name: benji-backend-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/benji_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Changed to validate since we use Liquibase
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  liquibase:
+    database-change-log-table: Z_LIQ_CHANGELOG
+    database-change-log-lock-table: Z_LIQ_CHANGELOG_LOCK
+    change-log: classpath:config/liquibase/master.xml
+    enabled: true
+    contexts: ${spring.profiles.active:dev}
+    clear-checksums: true
+    drop-first: false
+    parameters:
+      releaseLocksOnExit: true
+      shouldSnapshotRecycleBinObjects: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:admin}
+      timeout: 6000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+    mongodb:
+      auto-index-creation: true
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+    connection-timeout: 5s
+    socket-timeout: 30s
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://admin:admin@localhost:27017/benji_db?authSource=admin}
+    authentication-database: admin
+    username: ${MONGODB_USERNAME:admin}
+    password: ${MONGODB_PASSWORD:admin}
+
+benji:
+  security:
+    jwt:
+      # HS256 requires >= 32 bytes of key material; override via env in every real environment.
+      secret: ${JWT_SECRET:}
+      algorithm: ${JWT_ALGORITHM:HS256}
+      access-token-ttl: ${JWT_ACCESS_TTL:15m}
+    otp:
+      length: 6
+      ttl-seconds: 180
+      # Minimum interval between two OTP sends for the same mobile number (3 minutes).
+      resend-cooldown-seconds: ${OTP_RESEND_COOLDOWN_SECONDS:180}
+      max-requests-per-hour: 5
+      max-attempts: 5
+  sms:
+    kavenegar:
+      base-url: ${KAVENEGAR_BASE_URL:https://api.kavenegar.com/v1}
+      api-token: ${KAVENEGAR_API_TOKEN:}
+      sender: ${KAVENEGAR_SENDER:}
+      connect-timeout: 5s
+      read-timeout: 10s
+
+server:
+  port: 8080
+
+logging:
+  level:
+    social.benji: DEBUG
+    org.springframework.security: DEBUG
+
+app:
+  # Default administrator seeded at startup (idempotent; set enabled=false to skip).
+  # Sign-in happens through the normal OTP flow on this mobile number.
+  admin-bootstrap:
+    enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
+    mobile-number: ${ADMIN_MOBILE_NUMBER:+989120000000}
+    username: ${ADMIN_USERNAME:admin}
+    first-name: ${ADMIN_FIRST_NAME:Benji}
+    last-name: ${ADMIN_LAST_NAME:Admin}
+    email: ${ADMIN_EMAIL:admin@benji.social}
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket-name: ${MINIO_BUCKET_NAME:benji-bucket}

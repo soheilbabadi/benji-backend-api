@@ -9,8 +9,8 @@ import social.benji.benji_backend_api.usermanagement.dto.AuthResponse;
 import social.benji.benji_backend_api.usermanagement.dto.LoginRequest;
 import social.benji.benji_backend_api.usermanagement.dto.OtpVerificationRequest;
 import social.benji.benji_backend_api.usermanagement.dto.RegisterRequest;
-import social.benji.benji_backend_api.usermanagement.model.Role;
-import social.benji.benji_backend_api.usermanagement.model.LegacyUser;
+import social.benji.benji_backend_api.usermanagement.domain.Role;
+import social.benji.benji_backend_api.usermanagement.domain.LegacyUser;
 import social.benji.benji_backend_api.usermanagement.repository.RoleRepository;
 import social.benji.benji_backend_api.usermanagement.repository.LegacyUserRepository;
 
