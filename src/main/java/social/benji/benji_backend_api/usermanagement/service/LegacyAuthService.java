@@ -1,19 +1,18 @@
-package social.benji.benji_backend_api.auth.service;
+package social.benji.benji_backend_api.usermanagement.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import social.benji.benji_backend_api.auth.dto.AuthResponse;
-import social.benji.benji_backend_api.auth.dto.LoginRequest;
-import social.benji.benji_backend_api.auth.dto.OtpVerificationRequest;
-import social.benji.benji_backend_api.auth.dto.RegisterRequest;
-import social.benji.benji_backend_api.dto.*;
-import social.benji.benji_backend_api.auth.model.Role;
-import social.benji.benji_backend_api.auth.model.User;
-import social.benji.benji_backend_api.repository.RoleRepository;
-import social.benji.benji_backend_api.repository.UserRepository;
+import social.benji.benji_backend_api.usermanagement.dto.AuthResponse;
+import social.benji.benji_backend_api.usermanagement.dto.LoginRequest;
+import social.benji.benji_backend_api.usermanagement.dto.OtpVerificationRequest;
+import social.benji.benji_backend_api.usermanagement.dto.RegisterRequest;
+import social.benji.benji_backend_api.usermanagement.model.Role;
+import social.benji.benji_backend_api.usermanagement.model.LegacyUser;
+import social.benji.benji_backend_api.usermanagement.repository.RoleRepository;
+import social.benji.benji_backend_api.usermanagement.repository.LegacyUserRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -24,12 +23,12 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthService {
+public class LegacyAuthService {
 
-    private final UserRepository userRepository;
+    private final LegacyUserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EmailService emailService;
-    private final ObjectStorageService objectStorageService;
+    private final LegacyObjectStorageService objectStorageService;
 
     private static final int OTP_LENGTH = 6;
     private static final int OTP_VALIDITY_MINUTES = 10;
@@ -45,12 +44,12 @@ public class AuthService {
             throw new RuntimeException("Email already registered");
         }
 
-        Optional<User> existingUserByMobile = userRepository.findByMobileNumber(request.getMobileNumber());
+        Optional<LegacyUser> existingUserByMobile = userRepository.findByMobileNumber(request.getMobileNumber());
         if (existingUserByMobile.isPresent()) {
             throw new RuntimeException("Mobile number already registered");
         }
 
-        User user = User.builder()
+        LegacyUser user = LegacyUser.builder()
                 .email(request.getEmail())
                 .mobileNumber(request.getMobileNumber())
                 .firstName(request.getFirstName())
@@ -71,7 +70,7 @@ public class AuthService {
         user.setOtp(otp);
         user.setOtpGeneratedAt(LocalDateTime.now());
 
-        User savedUser = userRepository.save(user);
+        LegacyUser savedUser = userRepository.save(user);
 
         emailService.sendOtpEmail(savedUser.getEmail(), otp);
 
@@ -91,7 +90,7 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
 
-        User user = userRepository.findByEmail(request.getEmail())
+        LegacyUser user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + request.getEmail()));
 
         if (!user.isEnabled()) {
@@ -123,7 +122,7 @@ public class AuthService {
     public AuthResponse verifyOtp(OtpVerificationRequest request) {
         log.info("Verifying OTP for email: {}", request.getEmail());
 
-        User user = userRepository.findByEmail(request.getEmail())
+        LegacyUser user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user.getOtp() == null || !user.getOtp().equals(request.getOtp())) {
@@ -166,7 +165,7 @@ public class AuthService {
             throw new RuntimeException("File is empty");
         }
 
-        User user = userRepository.findById(userId)
+        LegacyUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Delete old profile picture if exists
