@@ -103,6 +103,9 @@ logging:
     org.springframework.security: DEBUG
 
 app:
+  cors:
+    # Comma-separated list of origins allowed to call this API (frontend).
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
   # Default administrator seeded at startup (idempotent; set enabled=false to skip).
   # Sign-in happens through the normal OTP flow on this mobile number.
   admin-bootstrap:

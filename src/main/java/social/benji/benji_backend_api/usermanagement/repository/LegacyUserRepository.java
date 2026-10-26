@@ -2,7 +2,7 @@ package social.benji.benji_backend_api.usermanagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import social.benji.benji_backend_api.usermanagement.model.LegacyUser;
+import social.benji.benji_backend_api.usermanagement.domain.LegacyUser;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.usermanagement.model;
+package social.benji.benji_backend_api.usermanagement.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

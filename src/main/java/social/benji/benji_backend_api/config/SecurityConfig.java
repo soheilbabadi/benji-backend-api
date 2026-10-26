@@ -25,7 +25,6 @@ import social.benji.benji_backend_api.usermanagement.repository.LegacyUserReposi
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -83,16 +82,20 @@ public class SecurityConfig {
     }
 
     /**
-     * Configure CORS settings.
+     * Configure CORS settings. Origins are read from the
+     * {@code app.cors.allowed-origins} property (comma-separated) so they can be
+     * overridden per environment without a code change; the defaults cover local
+     * development (Next.js frontend on :3000) and the production domain.
      */
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource(
+            @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:8080,https://benji.social}")
+            String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-            "http://localhost:3000",
-            "http://localhost:8080",
-            "https://tellinbox.com"
-        ));
+        configuration.setAllowedOriginPatterns(Arrays.stream(allowedOrigins.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .toList());
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization",
