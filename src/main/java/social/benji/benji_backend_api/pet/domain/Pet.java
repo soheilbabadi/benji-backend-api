@@ -72,6 +72,22 @@ public class Pet {
     @Column(name = "microchip_number", length = 50)
     private String microchipNumber;
 
+    /** Tri-state: null means the owner has not specified it yet. */
+    @Column(name = "neutered")
+    private Boolean neutered;
+
+    /** Free-text coat colour, kept alongside the legacy generic color field. */
+    @Column(name = "coat_color", length = 50)
+    private String coatColor;
+
+    /** Optional free-text city; may be left empty and completed later. */
+    @Column(name = "city", length = 100)
+    private String city;
+
+    /** Short "about the pet" blurb shown on the profile. */
+    @Column(name = "bio", length = 500)
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default

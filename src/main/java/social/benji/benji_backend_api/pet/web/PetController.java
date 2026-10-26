@@ -65,7 +65,9 @@ public class PetController {
                                               @AuthenticationPrincipal UserPrincipal principal) {
         Pet pet = petService.create(principal.id(), request.name(), request.species(),
                 request.breedId(), request.sex(), request.dateOfBirth(),
-                request.color(), request.weightKg(), request.microchipNumber());
+                request.color(), request.weightKg(), request.microchipNumber(),
+                request.neutered(), request.coatColor(),
+                request.city(), request.bio());
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(pet));
     }
 
@@ -92,7 +94,9 @@ public class PetController {
                               @AuthenticationPrincipal UserPrincipal principal) {
         Pet pet = petService.update(petId, principal.id(), request.name(), request.breedId(),
                 request.sex(), request.dateOfBirth(), request.color(),
-                request.weightKg(), request.microchipNumber());
+                request.weightKg(), request.microchipNumber(),
+                request.neutered(), request.coatColor(),
+                request.city(), request.bio());
         return toResponse(pet);
     }
 
@@ -131,6 +135,23 @@ public class PetController {
     public Map<String, String> photoUrl(@PathVariable UUID petId,
                                         @AuthenticationPrincipal UserPrincipal principal) {
         return Map.of("url", petPhotoService.getPhotoAccessUrl(petId, principal.id()));
+    }
+
+    /** Streams the profile photo bytes; ownership enforced, storage details hidden. */
+    @GetMapping("/{petId}/photo")
+    ResponseEntity<org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody> getPhoto(
+            @PathVariable UUID petId,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        PetPhotoService.PhotoContent photo = petPhotoService.getPhotoContent(petId, principal.id());
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.parseMediaType(photo.contentType()));
+        headers.setContentLength(photo.sizeBytes());
+        headers.setCacheControl("private, max-age=300");
+        return new ResponseEntity<>(out -> {
+            try (java.io.InputStream in = photo.content()) {
+                in.transferTo(out);
+            }
+        }, headers, org.springframework.http.HttpStatus.OK);
     }
 
     @DeleteMapping("/{petId}/photo")

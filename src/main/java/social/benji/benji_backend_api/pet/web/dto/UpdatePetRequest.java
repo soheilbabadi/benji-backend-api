@@ -17,5 +17,9 @@ public record UpdatePetRequest(
         LocalDate dateOfBirth,
         @Size(max = 50) String color,
         @DecimalMin("0.0") @DecimalMax("200.0") BigDecimal weightKg,
-        @Size(max = 50) String microchipNumber) {
+        @Size(max = 50) String microchipNumber,
+        Boolean neutered,
+        @Size(max = 50) String coatColor,
+        @Size(max = 100) String city,
+        @Size(max = 500) String bio) {
 }
