@@ -8,18 +8,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.transaction.TransactionException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import social.benji.benji_backend_api.usermanagement.domain.exception.UserManagementException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
 public class BenjiExceptionHandler {
@@ -141,6 +145,24 @@ public class BenjiExceptionHandler {
             BenjiCustomException.PricingCalculationException ex, HttpServletRequest request) {
         String localizedMessage = getMessage("exception.pricing_calculation_error", ex.getMessage());
         return build(HttpStatus.PRECONDITION_FAILED, localizedMessage, request);
+    }
+
+    /**
+     * Maps the user-management module's domain errors onto RFC 7807 problem
+     * responses, exposing the stable machine-readable code as a property.
+     */
+    @ExceptionHandler(UserManagementException.class)
+    public ResponseEntity<ProblemDetail> handleUserManagementException(UserManagementException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(ex.getStatus(), ex.getMessage());
+        problem.setTitle(HttpStatus.valueOf(ex.getStatus().value()).getReasonPhrase());
+        problem.setProperty("code", ex.getCode());
+        ResponseEntity.BodyBuilder builder = ResponseEntity.status(ex.getStatus());
+        if (ex.getRetryAfterSeconds() > 0) {
+            // Standard rate-limit affordance so clients can back off precisely.
+            builder.header(HttpHeaders.RETRY_AFTER, String.valueOf(ex.getRetryAfterSeconds()));
+            problem.setProperty("retryAfterSeconds", ex.getRetryAfterSeconds());
+        }
+        return builder.body(problem);
     }
 
     @ExceptionHandler(Exception.class)
