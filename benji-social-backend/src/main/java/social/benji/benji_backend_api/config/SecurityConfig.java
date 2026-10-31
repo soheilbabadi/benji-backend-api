@@ -155,7 +155,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/actuator/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                
+
+                // Blog: reading posts/comments is public; every write requires a
+                // logged-in user (ownership is enforced inside the blog services).
+                .requestMatchers(HttpMethod.GET, "/api/blog/**").permitAll()
+                .requestMatchers("/api/blog/**").authenticated()
+
                 // Admin only endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 

@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Creation DTO for blog post comments.
+ * Creation DTO for blog post comments. Author identity fields are intentionally
+ * absent: the author is taken from the authenticated principal in the controller.
  */
 @Getter
 @Setter
@@ -17,9 +18,6 @@ import lombok.Setter;
 public class CreateBlogCommentDto {
 
     private String blogPostId;
-    private String authorId;
-    private String authorName;
-    private String authorEmail;
     private String content;
     /** Immediate parent comment id; null for top-level comments. */
     private String parentId;

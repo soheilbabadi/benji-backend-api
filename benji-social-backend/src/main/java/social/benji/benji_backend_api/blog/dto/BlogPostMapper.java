@@ -1,10 +1,11 @@
 package social.benji.benji_backend_api.blog.dto;
 
-import social.benji.benji_backend_api.blog.domain.BlogPostModel;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import social.benji.benji_backend_api.blog.domain.BlogPostModel;
+import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 /**
  * Utility class for mapping between BlogPostModel and DTOs.
@@ -44,15 +45,21 @@ public final class BlogPostMapper {
     }
 
     /**
-     * Maps a CreateBlogPostDto to a BlogPostModel.
+     * Maps a CreateBlogPostDto to a BlogPostModel, stamping the author from the
+     * authenticated principal rather than trusting any client-supplied identity.
      *
-     * @param dto the creation DTO
+     * @param dto     the creation DTO
+     * @param creator the authenticated user creating the post
      * @return the new blog post entity
      */
-    public static BlogPostModel toEntity(CreateBlogPostDto dto) {
+    public static BlogPostModel toEntity(CreateBlogPostDto dto, UserPrincipal creator) {
         if (dto == null) {
             return null;
         }
+
+        String displayName = (dto.getAuthorName() != null && !dto.getAuthorName().isBlank())
+                ? dto.getAuthorName().trim()
+                : creator.maskedMobile();
 
         return BlogPostModel.builder()
                 .title(dto.getTitle())
@@ -61,6 +68,8 @@ public final class BlogPostMapper {
                 .categories(dto.getCategories() != null ? dto.getCategories() : Collections.emptyList())
                 .attachmentIds(dto.getAttachmentIds() != null ? dto.getAttachmentIds() : Collections.emptyList())
                 .blogPostStatus(dto.getBlogPostStatus())
+                .authorId(creator.id() != null ? creator.id().toString() : null)
+                .authorName(displayName)
                 .views(0L)
                 .commentsCount(0)
                 .featured(false)

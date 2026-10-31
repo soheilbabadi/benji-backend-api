@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,9 +25,16 @@ import social.benji.benji_backend_api.blog.enums.BlogPostStatus;
 import social.benji.benji_backend_api.blog.enums.CommentStatus;
 import social.benji.benji_backend_api.blog.service.BlogCommentService;
 import social.benji.benji_backend_api.blog.service.BlogPostService;
+import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 import java.util.List;
 
+/**
+ * Blog REST API. GET endpoints are public (see SecurityConfig); every write
+ * endpoint requires a valid Bearer token and enforces author ownership (or
+ * ROLE_ADMIN) inside the service layer. The caller identity always comes from
+ * the verified JWT principal, never from the request body.
+ */
 @RestController
 @RequestMapping("/api/blog")
 @RequiredArgsConstructor

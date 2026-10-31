@@ -15,11 +15,11 @@ public interface BlogPostRepository extends MongoRepository<BlogPostModel, Strin
 
     boolean existsBySlug(String slug);
 
-    Page<BlogPostModel> findByBlogPostStatusAndDeletedFalse(BlogPostStatus status, Pageable pageable);
+    Page<BlogPostModel> findByBlogPostStatus(BlogPostStatus status, Pageable pageable);
 
-    List<BlogPostModel> findByAuthorIdAndDeletedFalse(String authorId);
+    List<BlogPostModel> findByAuthorId(String authorId);
 
-    Page<BlogPostModel> findByTagsContainingAndDeletedFalse(String tag, Pageable pageable);
+    Page<BlogPostModel> findByTagsContaining(String tag, Pageable pageable);
 
-    Page<BlogPostModel> findByCategoriesContainingAndDeletedFalse(String category, Pageable pageable);
+    Page<BlogPostModel> findByCategoriesContaining(String category, Pageable pageable);
 }
