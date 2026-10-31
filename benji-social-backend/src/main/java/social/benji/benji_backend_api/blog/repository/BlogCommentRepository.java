@@ -15,6 +15,8 @@ public interface BlogCommentRepository extends MongoRepository<BlogCommentModel,
 
     List<BlogCommentModel> findByBlogPostIdAndDeletedFalse(String blogPostId);
 
+    List<BlogCommentModel> findByBlogPostId(String blogPostId);
+
     List<BlogCommentModel> findByRootCommentIdAndDeletedFalse(String rootCommentId);
 
     Optional<BlogCommentModel> findByClientRequestId(String clientRequestId);

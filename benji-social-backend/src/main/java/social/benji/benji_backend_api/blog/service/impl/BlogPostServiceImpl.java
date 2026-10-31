@@ -6,12 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import social.benji.benji_backend_api.blog.domain.BlogCommentModel;
 import social.benji.benji_backend_api.blog.domain.BlogPostModel;
 import social.benji.benji_backend_api.blog.dto.BlogPostDto;
 import social.benji.benji_backend_api.blog.dto.BlogPostMapper;
 import social.benji.benji_backend_api.blog.dto.CreateBlogPostDto;
 import social.benji.benji_backend_api.blog.dto.UpdateBlogPostDto;
 import social.benji.benji_backend_api.blog.enums.BlogPostStatus;
+import social.benji.benji_backend_api.blog.repository.BlogCommentRepository;
 import social.benji.benji_backend_api.blog.repository.BlogPostRepository;
 import social.benji.benji_backend_api.blog.service.BlogPostService;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
@@ -25,6 +28,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 
     private static final int WORDS_PER_MINUTE = 200;
     private final BlogPostRepository blogPostRepository;
+    private final BlogCommentRepository blogCommentRepository;
 
     @Override
     public Page<BlogPostDto> list(BlogPostStatus status, int page, int size) {
@@ -101,8 +105,17 @@ public class BlogPostServiceImpl implements BlogPostService {
     }
 
     @Override
+    @Transactional
     public void deleteById(String id) {
-        blogPostRepository.deleteById(id);
+        BlogPostModel post = blogPostRepository.findById(id)
+                .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Blog post not found with id: " + id));
+
+        // Remove all comments associated with the post from the database, then the post itself.
+        List<BlogCommentModel> comments = blogCommentRepository.findByBlogPostId(post.getId());
+        if (!comments.isEmpty()) {
+            blogCommentRepository.deleteAll(comments);
+        }
+        blogPostRepository.deleteById(post.getId());
     }
 
     private String buildUniqueSlug(String title) {
