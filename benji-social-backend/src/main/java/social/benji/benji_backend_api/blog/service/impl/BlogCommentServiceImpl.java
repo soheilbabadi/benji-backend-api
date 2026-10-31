@@ -32,18 +32,18 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     @Override
     public Page<BlogCommentDto> listByPost(String blogPostId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return blogCommentRepository.findByBlogPostIdAndStatusAndDeletedFalse(blogPostId, CommentStatus.APPROVED, pageable)
+        return blogCommentRepository.findByBlogPostIdAndStatus(blogPostId, CommentStatus.APPROVED, pageable)
                 .map(BlogCommentMapper::toDto);
     }
 
     @Override
     public List<BlogCommentDto> findAllByPost(String blogPostId) {
-        return BlogCommentMapper.toDtoList(blogCommentRepository.findByBlogPostIdAndDeletedFalse(blogPostId));
+        return BlogCommentMapper.toDtoList(blogCommentRepository.findByBlogPostId(blogPostId));
     }
 
     @Override
     public List<BlogCommentDto> findThread(String rootCommentId) {
-        return BlogCommentMapper.toDtoList(blogCommentRepository.findByRootCommentIdAndDeletedFalse(rootCommentId));
+        return BlogCommentMapper.toDtoList(blogCommentRepository.findByRootCommentId(rootCommentId));
     }
 
     @Override
@@ -69,7 +69,6 @@ public class BlogCommentServiceImpl implements BlogCommentService {
         }
 
         BlogPostModel post = blogPostRepository.findById(dto.getBlogPostId())
-                .filter(p -> !Boolean.TRUE.equals(p.getDeleted()))
                 .orElseThrow(() -> new BenjiCustomException.ParentNotFoundException("Blog post not found with id: " + dto.getBlogPostId()));
 
         BlogCommentModel parent = null;
@@ -96,7 +95,6 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                 .repliesCount(0)
                 .likesCount(0)
                 .status(CommentStatus.PENDING)
-                .deleted(false)
                 .edited(false)
                 .clientRequestId(dto.getClientRequestId())
                 .createdAt(Instant.now())
@@ -114,7 +112,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
             blogCommentRepository.save(parent);
         }
 
-        post.setCommentsCount((int) blogCommentRepository.countByBlogPostIdAndStatusAndDeletedFalse(post.getId(), CommentStatus.APPROVED));
+        post.setCommentsCount((int) blogCommentRepository.countByBlogPostIdAndStatus(post.getId(), CommentStatus.APPROVED));
         blogPostRepository.save(post);
 
         return BlogCommentMapper.toDto(saved);
@@ -168,14 +166,13 @@ public class BlogCommentServiceImpl implements BlogCommentService {
 
     private void refreshPostCommentCount(String blogPostId) {
         blogPostRepository.findById(blogPostId).ifPresent(post -> {
-            post.setCommentsCount((int) blogCommentRepository.countByBlogPostIdAndStatusAndDeletedFalse(blogPostId, CommentStatus.APPROVED));
+            post.setCommentsCount((int) blogCommentRepository.countByBlogPostIdAndStatus(blogPostId, CommentStatus.APPROVED));
             blogPostRepository.save(post);
         });
     }
 
     private BlogCommentModel getExisting(String id) {
         return blogCommentRepository.findById(id)
-                .filter(c -> !Boolean.TRUE.equals(c.getDeleted()))
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Comment not found with id: " + id));
     }
 }

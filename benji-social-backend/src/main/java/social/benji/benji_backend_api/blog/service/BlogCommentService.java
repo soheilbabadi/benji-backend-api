@@ -12,7 +12,7 @@ public interface BlogCommentService {
     /** Paginated approved comments for a post, newest first. */
     Page<BlogCommentDto> listByPost(String blogPostId, int page, int size);
 
-    /** All non-deleted comments of a post in creation order (moderation view). */
+    /** All comments of a post in creation order (moderation view). */
     List<BlogCommentDto> findAllByPost(String blogPostId);
 
     /** Whole thread (root + replies) for a top-level comment. */

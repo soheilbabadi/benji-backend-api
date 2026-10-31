@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface BlogPostService {
 
-    /** Paginated list of posts with the given status, newest first (excludes soft-deleted). */
+    /** Paginated list of posts with the given status, newest first. */
     Page<BlogPostDto> list(BlogPostStatus status, int page, int size);
     Page<BlogPostDto> list(int page, int size);
 

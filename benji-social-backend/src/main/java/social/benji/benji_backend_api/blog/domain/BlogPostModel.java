@@ -61,8 +61,6 @@ public class BlogPostModel {
     private Instant scheduledFor;
     /** Estimated read time in minutes, precomputed at save to avoid runtime cost. */
     private Integer readingTimeMinutes;
-    /** Soft-delete flag instead of removing documents (keeps slugs/comments recoverable). */
-    private Boolean deleted;
     private Instant createdAt;
     @LastModifiedDate
     private Instant updatedAt;

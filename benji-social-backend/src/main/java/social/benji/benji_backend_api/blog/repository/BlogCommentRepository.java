@@ -11,15 +11,13 @@ import java.util.Optional;
 
 public interface BlogCommentRepository extends MongoRepository<BlogCommentModel, String> {
 
-    Page<BlogCommentModel> findByBlogPostIdAndStatusAndDeletedFalse(String blogPostId, CommentStatus status, Pageable pageable);
-
-    List<BlogCommentModel> findByBlogPostIdAndDeletedFalse(String blogPostId);
+    Page<BlogCommentModel> findByBlogPostIdAndStatus(String blogPostId, CommentStatus status, Pageable pageable);
 
     List<BlogCommentModel> findByBlogPostId(String blogPostId);
 
-    List<BlogCommentModel> findByRootCommentIdAndDeletedFalse(String rootCommentId);
+    List<BlogCommentModel> findByRootCommentId(String rootCommentId);
 
     Optional<BlogCommentModel> findByClientRequestId(String clientRequestId);
 
-    long countByBlogPostIdAndStatusAndDeletedFalse(String blogPostId, CommentStatus status);
+    long countByBlogPostIdAndStatus(String blogPostId, CommentStatus status);
 }

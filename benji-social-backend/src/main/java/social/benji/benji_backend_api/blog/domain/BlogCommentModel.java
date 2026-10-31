@@ -62,8 +62,6 @@ public class BlogCommentModel {
     /** Id of the moderator who changed status, if any. */
     private String moderatedBy;
     private Instant moderatedAt;
-    /** Soft delete keeps the thread structure intact for children. */
-    private Boolean deleted;
     /** Content edited after posting. */
     private Boolean edited;
     /** Client-generated id for idempotent comment submission. */

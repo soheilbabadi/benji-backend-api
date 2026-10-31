@@ -33,7 +33,7 @@ public class BlogPostServiceImpl implements BlogPostService {
     @Override
     public Page<BlogPostDto> list(BlogPostStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return blogPostRepository.findByBlogPostStatusAndDeletedFalse(status, pageable)
+        return blogPostRepository.findByBlogPostStatus(status, pageable)
                 .map(BlogPostMapper::toDto);
     }
 
@@ -46,7 +46,6 @@ public class BlogPostServiceImpl implements BlogPostService {
     @Override
     public BlogPostDto findById(String id) {
         return blogPostRepository.findById(id)
-                .filter(post -> !Boolean.TRUE.equals(post.getDeleted()))
                 .map(BlogPostMapper::toDto)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Blog post not found with id: " + id));
     }
@@ -54,14 +53,13 @@ public class BlogPostServiceImpl implements BlogPostService {
     @Override
     public BlogPostDto findBySlug(String slug) {
         return blogPostRepository.findBySlug(slug)
-                .filter(post -> !Boolean.TRUE.equals(post.getDeleted()))
                 .map(BlogPostMapper::toDto)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Blog post not found with slug: " + slug));
     }
 
     @Override
     public List<BlogPostDto> findByAuthorId(String authorId) {
-        return BlogPostMapper.toDtoList(blogPostRepository.findByAuthorIdAndDeletedFalse(authorId));
+        return BlogPostMapper.toDtoList(blogPostRepository.findByAuthorId(authorId));
     }
 
     @Override
@@ -78,7 +76,7 @@ public class BlogPostServiceImpl implements BlogPostService {
         if (Boolean.TRUE.equals(model.getPublished())) {
             model.setPublishedAt(Instant.now());
         }
-        model.setDeleted(false);
+
         model.setCreatedAt(Instant.now());
 
         return BlogPostMapper.toDto(blogPostRepository.save(model));
@@ -87,7 +85,6 @@ public class BlogPostServiceImpl implements BlogPostService {
     @Override
     public BlogPostDto update(String id, UpdateBlogPostDto dto) {
         BlogPostModel model = blogPostRepository.findById(id)
-                .filter(post -> !Boolean.TRUE.equals(post.getDeleted()))
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Blog post not found with id: " + id));
 
         boolean wasPublished = BlogPostStatus.PUBLISHED == model.getBlogPostStatus();
