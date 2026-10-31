@@ -16,6 +16,7 @@ import social.benji.benji_backend_api.blog.repository.BlogCommentRepository;
 import social.benji.benji_backend_api.blog.repository.BlogPostRepository;
 import social.benji.benji_backend_api.blog.service.BlogCommentService;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
+import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 public class BlogCommentServiceImpl implements BlogCommentService {
 
     private static final int MAX_DEPTH = 10;
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     private final BlogCommentRepository blogCommentRepository;
     private final BlogPostRepository blogPostRepository;
@@ -52,12 +54,16 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
-    public BlogCommentDto create(CreateBlogCommentDto dto) {
+    public BlogCommentDto create(CreateBlogCommentDto dto, UserPrincipal author) {
         if (dto == null || dto.getContent() == null || dto.getContent().isBlank()) {
             throw new BenjiCustomException.ValidationException("Comment content must not be blank");
         }
         if (dto.getBlogPostId() == null || dto.getBlogPostId().isBlank()) {
             throw new BenjiCustomException.ValidationException("blogPostId is required");
+        }
+        String authorId = author != null && author.id() != null ? author.id().toString() : null;
+        if (authorId == null) {
+            throw new BenjiCustomException.ResourceUnauthorizedException("Sign in to comment on a blog post");
         }
 
         // Idempotency: return the already-created comment for a repeated client request id.
@@ -82,11 +88,15 @@ public class BlogCommentServiceImpl implements BlogCommentService {
             }
         }
 
+        // Identity always comes from the verified principal, never from the payload.
+        String displayName = (author.maskedMobile() != null && !author.maskedMobile().isBlank())
+                ? author.maskedMobile()
+                : "user-" + authorId;
+
         BlogCommentModel model = BlogCommentModel.builder()
                 .blogPostId(post.getId())
-                .authorId(dto.getAuthorId())
-                .authorName(dto.getAuthorName())
-                .authorEmail(dto.getAuthorEmail())
+                .authorId(authorId)
+                .authorName(displayName)
                 .content(dto.getContent())
                 .parentId(parent != null ? parent.getId() : null)
                 .rootCommentId(parent == null ? null : (Boolean.TRUE.equals(parent.getTopLevel()) ? parent.getId() : parent.getRootCommentId()))
@@ -129,10 +139,13 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
-    public void moderate(String id, CommentStatus status, String moderatorId, String note) {
+    public void moderate(String id, CommentStatus status, UserPrincipal moderator, String note) {
+        if (!isAdmin(moderator)) {
+            throw new BenjiCustomException.ResourceForbiddenException("Only an admin can moderate comments");
+        }
         BlogCommentModel comment = getExisting(id);
         comment.setStatus(status);
-        comment.setModeratedBy(moderatorId);
+        comment.setModeratedBy(moderator != null && moderator.id() != null ? moderator.id().toString() : null);
         comment.setModeratedAt(Instant.now());
         comment.setModerationNote(note);
         blogCommentRepository.save(comment);
@@ -141,8 +154,16 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(String id, UserPrincipal requester) {
         BlogCommentModel comment = getExisting(id);
+
+        if (!isAdmin(requester)) {
+            String callerId = requester != null && requester.id() != null ? requester.id().toString() : null;
+            if (callerId == null || !callerId.equals(comment.getAuthorId())) {
+                throw new BenjiCustomException.ResourceForbiddenException(
+                        "Only the author or an admin can delete this comment");
+            }
+        }
 
         if (comment.getParentId() != null) {
             blogCommentRepository.findById(comment.getParentId()).ifPresent(parent -> {
@@ -174,5 +195,10 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     private BlogCommentModel getExisting(String id) {
         return blogCommentRepository.findById(id)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Comment not found with id: " + id));
+    }
+
+    private boolean isAdmin(UserPrincipal principal) {
+        return principal != null && principal.authorities() != null
+                && principal.authorities().stream().anyMatch(a -> ROLE_ADMIN.equals(a.getAuthority()));
     }
 }

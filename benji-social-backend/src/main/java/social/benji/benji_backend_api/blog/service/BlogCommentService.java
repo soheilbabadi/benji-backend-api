@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import social.benji.benji_backend_api.blog.dto.BlogCommentDto;
 import social.benji.benji_backend_api.blog.dto.CreateBlogCommentDto;
 import social.benji.benji_backend_api.blog.enums.CommentStatus;
+import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 import java.util.List;
 
@@ -20,13 +21,16 @@ public interface BlogCommentService {
 
     BlogCommentDto findById(String id);
 
-    BlogCommentDto create(CreateBlogCommentDto dto);
+    /** Creates a comment authored by {@code author}; payload identity fields are ignored. */
+    BlogCommentDto create(CreateBlogCommentDto dto, UserPrincipal author);
 
     BlogCommentDto like(String id);
 
     BlogCommentDto unlike(String id);
 
-    void moderate(String id, CommentStatus status, String moderatorId, String note);
+    /** Moderation is restricted to ROLE_ADMIN. */
+    void moderate(String id, CommentStatus status, UserPrincipal moderator, String note);
 
-    void deleteById(String id);
+    /** Deletes a comment; rejected unless the caller authored it or has ROLE_ADMIN. */
+    void deleteById(String id, UserPrincipal requester);
 }
