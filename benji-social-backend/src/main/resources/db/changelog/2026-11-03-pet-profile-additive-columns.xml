@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Additive migration for the Pet Profile Management feature.
+
+        Adds every new optional column introduced on social.benji...pet.domain.Pet
+        to the EXISTING table tbl_pets. All columns are nullable so existing rows
+        and progressive profile completion keep working; nothing is dropped or
+        altered. Types mirror the JPA mapping exactly (PostgreSQL):
+          - String  -> VARCHAR(n) matching @Column(length=n)
+          - BigDecimal -> NUMERIC(6,2) matching precision/scale
+          - enums (@Enumerated(STRING)) -> VARCHAR(20)
+          - Boolean -> BOOLEAN
+          - Integer -> INTEGER
+          - LocalDate -> DATE
+          - Instant -> TIMESTAMP WITH TIME ZONE
+    -->
+
+    <changeSet id="2026-11-03-pet-profile-columns-001" author="benji-pet-profile">
+
+        <preConditions onFail="MARK_RAN" onFailMessage="Some pet profile columns already exist; skipping duplicates.">
+            <or>
+                <not><tableExists tableName="tbl_pets"/></not>
+                <and>
+                    <not><columnExists tableName="tbl_pets" columnName="birth_date_estimated"/></not>
+                    <not><columnExists tableName="tbl_pets" columnName="origin_description"/></not>
+                </and>
+            </or>
+        </preConditions>
+
+        <!-- Basic information -->
+        <addColumn tableName="tbl_pets">
+            <column name="birth_date_estimated" type="BOOLEAN">
+                <documentation>True when date_of_birth is an owner estimate rather than a known date.</documentation>
+            </column>
+        </addColumn>
+
+        <!-- Physical characteristics -->
+        <addColumn tableName="tbl_pets">
+            <column name="height_cm" type="NUMERIC(6,2)">
+                <documentation>Optional standing-height snapshot in centimetres.</documentation>
+            </column>
+            <column name="body_size" type="VARCHAR(20)">
+                <documentation>SMALL / MEDIUM / LARGE / UNKNOWN (stored as enum name).</documentation>
+            </column>
+            <column name="eye_color" type="VARCHAR(50)"/>
+            <column name="coat_length" type="VARCHAR(20)">
+                <documentation>SHORT / MEDIUM / LONG / UNKNOWN.</documentation>
+            </column>
+            <column name="physical_description" type="VARCHAR(1000)"/>
+        </addColumn>
+
+        <!-- Identification -->
+        <addColumn tableName="tbl_pets">
+            <column name="identification_tag" type="VARCHAR(100)"/>
+            <column name="registration_number" type="VARCHAR(100)"/>
+            <column name="city_license_number" type="VARCHAR(100)"/>
+        </addColumn>
+
+        <!-- Behavior &amp; lifestyle -->
+        <addColumn tableName="tbl_pets">
+            <column name="activity_level" type="VARCHAR(20)">
+                <documentation>LOW / MEDIUM / HIGH / UNKNOWN.</documentation>
+            </column>
+            <column name="temperament" type="VARCHAR(500)">
+                <documentation>Canonical comma-separated temperament tags.</documentation>
+            </column>
+            <column name="social_behavior" type="VARCHAR(500)"/>
+            <column name="good_with_children" type="BOOLEAN">
+                <documentation>Tri-state: NULL means not specified yet.</documentation>
+            </column>
+            <column name="good_with_other_pets" type="BOOLEAN">
+                <documentation>Tri-state: NULL means not specified yet.</documentation>
+            </column>
+            <column name="behavioral_notes" type="VARCHAR(1000)"/>
+        </addColumn>
+
+        <!-- Nutrition -->
+        <addColumn tableName="tbl_pets">
+            <column name="diet_type" type="VARCHAR(100)"/>
+            <column name="food_type" type="VARCHAR(20)">
+                <documentation>DRY / WET / HOMEMADE / MIXED.</documentation>
+            </column>
+            <column name="food_brand" type="VARCHAR(100)"/>
+            <column name="daily_meal_count" type="INTEGER"/>
+            <column name="daily_food_amount_grams" type="INTEGER"/>
+            <column name="dietary_restrictions" type="VARCHAR(500)"/>
+        </addColumn>
+
+        <!-- Ownership provenance -->
+        <addColumn tableName="tbl_pets">
+            <column name="acquisition_date" type="DATE"/>
+            <column name="acquisition_method" type="VARCHAR(20)">
+                <documentation>ADOPTION / PURCHASE / RESCUE / OTHER.</documentation>
+            </column>
+            <column name="origin_description" type="VARCHAR(500)"/>
+        </addColumn>
+
+        <!-- Lifecycle timestamps for the LOST / FOUND / REHOMED statuses -->
+        <addColumn tableName="tbl_pets">
+            <column name="lost_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="found_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="rehomed_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

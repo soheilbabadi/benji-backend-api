@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Master changelog referenced by application.yaml (spring.liquibase.change-log).
+
+        IMPORTANT — schema baseline is MISSING from this repository:
+        the pre-existing tables (tbl_users, tbl_pets, tbl_breeds, tbl_pet_photos,
+        lost & found, petmedia, ...) were provisioned outside of Liquibase and no
+        changeset creating them exists here. Per the task constraints we do NOT
+        fabricate a baseline and do NOT recreate existing tables. This master file
+        therefore only registers additive changesets that assume those tables
+        already exist in the target database.
+
+        If you run against a fresh, empty database, Hibernate ddl-auto=validate
+        will still fail until a real baseline changelog is added — that is a
+        pre-existing gap, unchanged by this feature.
+    -->
+
+    <include file="db/changelog/2026-11-03-pet-profile-additive-columns.xml" relativeToChangelogFile="false"/>
+
+</databaseChangeLog>
