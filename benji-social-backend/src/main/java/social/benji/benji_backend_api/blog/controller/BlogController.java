@@ -70,18 +70,25 @@ public class BlogController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<BlogPostDto> createPost(@Valid @RequestBody CreateBlogPostDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(blogPostService.create(dto));
+    public ResponseEntity<BlogPostDto> createPost(
+            @Valid @RequestBody CreateBlogPostDto dto,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(blogPostService.create(dto, principal));
     }
 
     @PutMapping("/posts/{id}")
-    public ResponseEntity<BlogPostDto> updatePost(@PathVariable String id, @Valid @RequestBody UpdateBlogPostDto dto) {
-        return ResponseEntity.ok(blogPostService.update(id, dto));
+    public ResponseEntity<BlogPostDto> updatePost(
+            @PathVariable String id,
+            @Valid @RequestBody UpdateBlogPostDto dto,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(blogPostService.update(id, dto, principal));
     }
 
     @DeleteMapping("/posts/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable String id) {
-        blogPostService.deleteById(id);
+    public ResponseEntity<Void> deletePost(
+            @PathVariable String id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        blogPostService.deleteById(id, principal);
         return ResponseEntity.noContent().build();
     }
 
@@ -109,8 +116,10 @@ public class BlogController {
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<BlogCommentDto> createComment(@Valid @RequestBody CreateBlogCommentDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(blogCommentService.create(dto));
+    public ResponseEntity<BlogCommentDto> createComment(
+            @Valid @RequestBody CreateBlogCommentDto dto,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(blogCommentService.create(dto, principal));
     }
 
     @PostMapping("/comments/{id}/like")
@@ -127,15 +136,17 @@ public class BlogController {
     public ResponseEntity<Void> moderateComment(
             @PathVariable String id,
             @RequestParam CommentStatus status,
-            @RequestParam(required = false) String moderatorId,
-            @RequestParam(required = false) String note) {
-        blogCommentService.moderate(id, status, moderatorId, note);
+            @RequestParam(required = false) String note,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        blogCommentService.moderate(id, status, principal, note);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/comments/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable String id) {
-        blogCommentService.deleteById(id);
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable String id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        blogCommentService.deleteById(id, principal);
         return ResponseEntity.noContent().build();
     }
 }
