@@ -258,23 +258,28 @@ public class Pet {
         this.lostAt = Instant.now();
     }
 
-    /** Allowed from LOST or FOUND (e.g. a shelter intake confirmed as a local pet). */
+    /** Allowed from LOST only; FOUND -> FOUND is idempotent (no timestamp churn). */
     public void markFound() {
         requireTransitionAllowed();
-        if (status != PetStatus.LOST && status != PetStatus.FOUND) {
-            throw new IllegalStateException("Only a lost or found pet can be marked found");
+        if (status == PetStatus.FOUND) {
+            return;
+        }
+        if (status != PetStatus.LOST) {
+            throw new IllegalStateException("Only a lost pet can be marked found");
         }
         this.status = PetStatus.FOUND;
         this.foundAt = Instant.now();
     }
 
-    /** Back to normal life after being reported lost/found. */
+    /** Back to normal life after being reported lost/found; clears the markers. */
     public void markRecovered() {
         requireTransitionAllowed();
         if (status != PetStatus.LOST && status != PetStatus.FOUND) {
             throw new IllegalStateException("Only a lost or found pet can return to active");
         }
         this.status = PetStatus.ACTIVE;
+        this.lostAt = null;
+        this.foundAt = null;
     }
 
     /** Terminal: the profile becomes a permanent record and freezes. */

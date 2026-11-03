@@ -8,7 +8,13 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import social.benji.benji_backend_api.pet.domain.AcquisitionMethod;
+import social.benji.benji_backend_api.pet.domain.ActivityLevel;
+import social.benji.benji_backend_api.pet.domain.BodySize;
 import social.benji.benji_backend_api.pet.domain.Breed;
+import social.benji.benji_backend_api.pet.domain.CoatLength;
+import social.benji.benji_backend_api.pet.domain.FoodType;
+import social.benji.benji_backend_api.pet.domain.PetSpecies;
 import social.benji.benji_backend_api.pet.domain.Pet;
 import social.benji.benji_backend_api.pet.domain.exception.PetErrors;
 import social.benji.benji_backend_api.pet.repository.BreedRepository;
@@ -61,6 +67,24 @@ public class PetProfileService {
 
         if (request.birthDateEstimated() != null) {
             pet.setBirthDateEstimated(request.birthDateEstimated());
+        }
+        // Core create already validated weight/microchip; validate the newer
+        // numeric and date fields that only exist on this extended payload.
+        if (request.dailyMealCount() != null && request.dailyMealCount() <= 0) {
+            throw PetErrors.invalidMealCount();
+        }
+        if (request.dailyFoodAmountGrams() != null && request.dailyFoodAmountGrams() <= 0) {
+            throw PetErrors.invalidFoodAmount();
+        }
+        if (request.acquisitionDate() != null
+                && request.acquisitionDate().isAfter(LocalDate.now())) {
+            throw PetErrors.invalidAcquisitionDate();
+        }
+        if (request.heightCm() != null) {
+            BigDecimal h = request.heightCm();
+            if (h.compareTo(MIN_HEIGHT) < 0 || h.compareTo(MAX_HEIGHT) > 0) {
+                throw PetErrors.invalidHeight();
+            }
         }
         applyPhysical(pet, request.heightCm(), request.bodySize(), request.eyeColor(),
                 request.coatLength(), request.physicalDescription());
@@ -185,25 +209,64 @@ public class PetProfileService {
         transition(petId, ownerId, Pet::markRehomed);
     }
 
-    // ----- Shared appliers (used by create and section PATCH) -------------
+    // ----- Shared appliers (used by create, section PATCH and legacy PATCH) --
 
-    private void applyPhysical(Pet pet, BigDecimal weightKg, Object bodySizeRaw, String eyeColor,
-                               Object coatLengthRaw, String physicalDescription) {
+    /** Legacy-PATCH entry point: also applies the core weight field. */
+    @Transactional
+    public void applyLegacyPhysical(Pet pet, BigDecimal weightKg, BigDecimal heightCm,
+                                    BodySize bodySize, String eyeColor, CoatLength coatLength,
+                                    String physicalDescription) {
+        if (heightCm != null && (heightCm.compareTo(MIN_HEIGHT) < 0
+                || heightCm.compareTo(MAX_HEIGHT) > 0)) {
+            throw PetErrors.invalidHeight();
+        }
+        applyPhysical(pet, weightKg, bodySize, eyeColor, coatLength, physicalDescription);
+        if (heightCm != null) {
+            pet.setHeightCm(heightCm);
+        }
+    }
+
+    public void applyLegacyIdentification(Pet pet, String identificationTag,
+                                          String registrationNumber, String cityLicenseNumber) {
+        applyIdentification(pet, identificationTag, registrationNumber, cityLicenseNumber);
+    }
+
+    public void applyLegacyBehavior(Pet pet, ActivityLevel activityLevel, List<String> temperament,
+                                    String socialBehavior, Boolean goodWithChildren,
+                                    Boolean goodWithOtherPets, String behavioralNotes) {
+        applyBehavior(pet, activityLevel, temperament, socialBehavior, goodWithChildren,
+                goodWithOtherPets, behavioralNotes);
+    }
+
+    public void applyLegacyNutrition(Pet pet, String dietType, FoodType foodType, String foodBrand,
+                                     Integer dailyMealCount, Integer dailyFoodAmountGrams,
+                                     String dietaryRestrictions) {
+        applyNutrition(pet, dietType, foodType, foodBrand, dailyMealCount,
+                dailyFoodAmountGrams, dietaryRestrictions);
+    }
+
+    public void applyLegacyOwnership(Pet pet, LocalDate acquisitionDate,
+                                     AcquisitionMethod acquisitionMethod, String originDescription) {
+        applyOwnership(pet, acquisitionDate, acquisitionMethod, originDescription);
+    }
+
+    private void applyPhysical(Pet pet, BigDecimal weightKg, BodySize bodySize, String eyeColor,
+                               CoatLength coatLength, String physicalDescription) {
         if (weightKg != null) {
-            BigDecimal w = (BigDecimal) weightKg;
+            BigDecimal w = weightKg;
             if (w.signum() <= 0 || w.compareTo(MAX_WEIGHT_KG) >= 0) {
                 throw PetErrors.invalidWeight();
             }
             pet.setCurrentWeightKg(w);
         }
-        if (bodySizeRaw != null) {
-            pet.setBodySize((social.benji.benji_backend_api.pet.domain.BodySize) bodySizeRaw);
+        if (bodySize != null) {
+            pet.setBodySize(bodySize);
         }
         if (eyeColor != null) {
             pet.setEyeColor(blankToNull(eyeColor));
         }
-        if (coatLengthRaw != null) {
-            pet.setCoatLength((social.benji.benji_backend_api.pet.domain.CoatLength) coatLengthRaw);
+        if (coatLength != null) {
+            pet.setCoatLength(coatLength);
         }
         if (physicalDescription != null) {
             pet.setPhysicalDescription(blankToNull(physicalDescription));
@@ -223,11 +286,11 @@ public class PetProfileService {
         }
     }
 
-    private void applyBehavior(Pet pet, Object activityLevelRaw, List<String> temperament,
+    private void applyBehavior(Pet pet, ActivityLevel activityLevel, List<String> temperament,
                                String socialBehavior, Boolean goodWithChildren,
                                Boolean goodWithOtherPets, String behavioralNotes) {
-        if (activityLevelRaw != null) {
-            pet.setActivityLevel((social.benji.benji_backend_api.pet.domain.ActivityLevel) activityLevelRaw);
+        if (activityLevel != null) {
+            pet.setActivityLevel(activityLevel);
         }
         if (temperament != null) {
             pet.setTemperament(canonicalizeTemperament(temperament));
@@ -246,14 +309,14 @@ public class PetProfileService {
         }
     }
 
-    private void applyNutrition(Pet pet, String dietType, Object foodTypeRaw, String foodBrand,
+    private void applyNutrition(Pet pet, String dietType, FoodType foodType, String foodBrand,
                                 Integer dailyMealCount, Integer dailyFoodAmountGrams,
                                 String dietaryRestrictions) {
         if (dietType != null) {
             pet.setDietType(blankToNull(dietType));
         }
-        if (foodTypeRaw != null) {
-            pet.setFoodType((social.benji.benji_backend_api.pet.domain.FoodType) foodTypeRaw);
+        if (foodType != null) {
+            pet.setFoodType(foodType);
         }
         if (foodBrand != null) {
             pet.setFoodBrand(blankToNull(foodBrand));
@@ -275,7 +338,7 @@ public class PetProfileService {
         }
     }
 
-    private void applyOwnership(Pet pet, LocalDate acquisitionDate, Object acquisitionMethodRaw,
+    private void applyOwnership(Pet pet, LocalDate acquisitionDate, AcquisitionMethod acquisitionMethod,
                                 String originDescription) {
         if (acquisitionDate != null) {
             if (acquisitionDate.isAfter(LocalDate.now())) {
@@ -283,9 +346,8 @@ public class PetProfileService {
             }
             pet.setAcquisitionDate(acquisitionDate);
         }
-        if (acquisitionMethodRaw != null) {
-            pet.setAcquisitionMethod(
-                    (social.benji.benji_backend_api.pet.domain.AcquisitionMethod) acquisitionMethodRaw);
+        if (acquisitionMethod != null) {
+            pet.setAcquisitionMethod(acquisitionMethod);
         }
         if (originDescription != null) {
             pet.setOriginDescription(blankToNull(originDescription));
@@ -322,16 +384,11 @@ public class PetProfileService {
         return normalized;
     }
 
-    private void validateBreedMatchesSpecies(UUID breedId, social.benji.benji_backend_api.pet.domain.PetSpecies species) {
+    private void validateBreedMatchesSpecies(UUID breedId, PetSpecies species) {
         Breed breed = breedRepository.findById(breedId).orElseThrow(PetErrors::invalidBreed);
         if (breed.getSpecies() != species) {
             throw PetErrors.invalidBreed();
         }
-    }
-
-    /** Trim, dedupe, validate charset, join canonically. Public for the legacy PATCH path. */
-    public String canonicalizeTemperamentForLegacy(List<String> tags) {
-        return canonicalizeTemperament(tags);
     }
 
     /** Trim, drop empties, dedupe, validate charset, join canonically. */

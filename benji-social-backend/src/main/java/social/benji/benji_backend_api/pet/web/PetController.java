@@ -383,89 +383,26 @@ public class PetController {
     /**
      * Legacy PATCH extras: applies the newer profile-section fields that were
      * added to UpdatePetRequest without touching the core service signature.
-     * Same PATCH semantics as the section endpoints (null = unchanged).
+     * Delegates to PetProfileService so validation and PATCH semantics are
+     * identical to the section endpoints (null = unchanged, blank clears).
      */
     private void applyLegacyExtras(Pet pet, UpdatePetRequest request) {
         if (request.birthDateEstimated() != null) {
             pet.setBirthDateEstimated(request.birthDateEstimated());
         }
-        if (request.heightCm() != null) {
-            pet.setHeightCm(request.heightCm());
-        }
-        if (request.bodySize() != null) {
-            pet.setBodySize(request.bodySize());
-        }
-        if (request.eyeColor() != null) {
-            pet.setEyeColor(blankToNull(request.eyeColor()));
-        }
-        if (request.coatLength() != null) {
-            pet.setCoatLength(request.coatLength());
-        }
-        if (request.physicalDescription() != null) {
-            pet.setPhysicalDescription(blankToNull(request.physicalDescription()));
-        }
-        if (request.identificationTag() != null) {
-            pet.setIdentificationTag(blankToNull(request.identificationTag()));
-        }
-        if (request.registrationNumber() != null) {
-            pet.setRegistrationNumber(blankToNull(request.registrationNumber()));
-        }
-        if (request.cityLicenseNumber() != null) {
-            pet.setCityLicenseNumber(blankToNull(request.cityLicenseNumber()));
-        }
-        if (request.activityLevel() != null) {
-            pet.setActivityLevel(request.activityLevel());
-        }
-        if (request.temperament() != null) {
-            pet.setTemperament(petProfileService.canonicalizeTemperamentForLegacy(request.temperament()));
-        }
-        if (request.socialBehavior() != null) {
-            pet.setSocialBehavior(blankToNull(request.socialBehavior()));
-        }
-        if (request.goodWithChildren() != null) {
-            pet.setGoodWithChildren(request.goodWithChildren());
-        }
-        if (request.goodWithOtherPets() != null) {
-            pet.setGoodWithOtherPets(request.goodWithOtherPets());
-        }
-        if (request.behavioralNotes() != null) {
-            pet.setBehavioralNotes(blankToNull(request.behavioralNotes()));
-        }
-        if (request.dietType() != null) {
-            pet.setDietType(blankToNull(request.dietType()));
-        }
-        if (request.foodType() != null) {
-            pet.setFoodType(request.foodType());
-        }
-        if (request.foodBrand() != null) {
-            pet.setFoodBrand(blankToNull(request.foodBrand()));
-        }
-        if (request.dailyMealCount() != null) {
-            pet.setDailyMealCount(request.dailyMealCount());
-        }
-        if (request.dailyFoodAmountGrams() != null) {
-            pet.setDailyFoodAmountGrams(request.dailyFoodAmountGrams());
-        }
-        if (request.dietaryRestrictions() != null) {
-            pet.setDietaryRestrictions(blankToNull(request.dietaryRestrictions()));
-        }
-        if (request.acquisitionDate() != null) {
-            pet.setAcquisitionDate(request.acquisitionDate());
-        }
-        if (request.acquisitionMethod() != null) {
-            pet.setAcquisitionMethod(request.acquisitionMethod());
-        }
-        if (request.originDescription() != null) {
-            pet.setOriginDescription(blankToNull(request.originDescription()));
-        }
-    }
-
-    private static String blankToNull(String value) {
-        if (value == null) {
-            return null;
-        }
-        String stripped = value.strip();
-        return stripped.isEmpty() ? null : stripped;
+        petProfileService.applyLegacyPhysical(pet, request.weightKg(), request.heightCm(),
+                request.bodySize(), request.eyeColor(), request.coatLength(),
+                request.physicalDescription());
+        petProfileService.applyLegacyIdentification(pet, request.identificationTag(),
+                request.registrationNumber(), request.cityLicenseNumber());
+        petProfileService.applyLegacyBehavior(pet, request.activityLevel(), request.temperament(),
+                request.socialBehavior(), request.goodWithChildren(), request.goodWithOtherPets(),
+                request.behavioralNotes());
+        petProfileService.applyLegacyNutrition(pet, request.dietType(), request.foodType(),
+                request.foodBrand(), request.dailyMealCount(), request.dailyFoodAmountGrams(),
+                request.dietaryRestrictions());
+        petProfileService.applyLegacyOwnership(pet, request.acquisitionDate(),
+                request.acquisitionMethod(), request.originDescription());
     }
 
     private PetResponse toResponse(Pet pet) {
