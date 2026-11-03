@@ -3,8 +3,14 @@ package social.benji.benji_backend_api.pet.web.dto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
+import social.benji.benji_backend_api.pet.domain.AcquisitionMethod;
+import social.benji.benji_backend_api.pet.domain.ActivityLevel;
+import social.benji.benji_backend_api.pet.domain.BodySize;
+import social.benji.benji_backend_api.pet.domain.CoatLength;
+import social.benji.benji_backend_api.pet.domain.FoodType;
 import social.benji.benji_backend_api.pet.domain.Pet;
 import social.benji.benji_backend_api.pet.domain.PetSex;
 import social.benji.benji_backend_api.pet.domain.PetSpecies;
@@ -22,6 +28,7 @@ public record PetResponse(
         String breedName,
         PetSex sex,
         LocalDate dateOfBirth,
+        Boolean birthDateEstimated,
         java.time.Period age,
         String color,
         BigDecimal currentWeightKg,
@@ -32,6 +39,34 @@ public record PetResponse(
         String bio,
         PetStatus status,
         boolean hasPhoto,
+        // Physical characteristics
+        BigDecimal heightCm,
+        BodySize bodySize,
+        String eyeColor,
+        CoatLength coatLength,
+        String physicalDescription,
+        // Identification
+        String identificationTag,
+        String registrationNumber,
+        String cityLicenseNumber,
+        // Behavior & lifestyle
+        ActivityLevel activityLevel,
+        List<String> temperament,
+        String socialBehavior,
+        Boolean goodWithChildren,
+        Boolean goodWithOtherPets,
+        String behavioralNotes,
+        // Nutrition
+        String dietType,
+        FoodType foodType,
+        String foodBrand,
+        Integer dailyMealCount,
+        Integer dailyFoodAmountGrams,
+        String dietaryRestrictions,
+        // Ownership provenance
+        LocalDate acquisitionDate,
+        AcquisitionMethod acquisitionMethod,
+        String originDescription,
         Instant createdAt,
         Instant updatedAt) {
 
@@ -44,6 +79,7 @@ public record PetResponse(
                 breedName,
                 pet.getSex(),
                 pet.getDateOfBirth(),
+                pet.getBirthDateEstimated(),
                 pet.getDateOfBirth() == null ? null : java.time.Period.between(pet.getDateOfBirth(), java.time.LocalDate.now()),
                 pet.getColor(),
                 pet.getCurrentWeightKg(),
@@ -54,7 +90,41 @@ public record PetResponse(
                 pet.getBio(),
                 pet.getStatus(),
                 hasPhoto,
+                pet.getHeightCm(),
+                pet.getBodySize(),
+                pet.getEyeColor(),
+                pet.getCoatLength(),
+                pet.getPhysicalDescription(),
+                pet.getIdentificationTag(),
+                pet.getRegistrationNumber(),
+                pet.getCityLicenseNumber(),
+                pet.getActivityLevel(),
+                decodeTemperament(pet.getTemperament()),
+                pet.getSocialBehavior(),
+                pet.getGoodWithChildren(),
+                pet.getGoodWithOtherPets(),
+                pet.getBehavioralNotes(),
+                pet.getDietType(),
+                pet.getFoodType(),
+                pet.getFoodBrand(),
+                pet.getDailyMealCount(),
+                pet.getDailyFoodAmountGrams(),
+                pet.getDietaryRestrictions(),
+                pet.getAcquisitionDate(),
+                pet.getAcquisitionMethod(),
+                pet.getOriginDescription(),
                 pet.getCreatedAt(),
                 pet.getUpdatedAt());
+    }
+
+    /** Stored as a canonical comma-separated string; exposed as a list. */
+    static List<String> decodeTemperament(String stored) {
+        if (stored == null || stored.isBlank()) {
+            return List.of();
+        }
+        return java.util.Arrays.stream(stored.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
     }
 }

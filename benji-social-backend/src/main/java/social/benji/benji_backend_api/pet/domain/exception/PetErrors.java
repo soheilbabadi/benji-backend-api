@@ -46,6 +46,41 @@ public final class PetErrors {
                 HttpStatus.BAD_REQUEST);
     }
 
+    public static PetException invalidHeight() {
+        return new PetException(
+                "INVALID_HEIGHT",
+                "The height must be between 0.1 and 300 cm.",
+                HttpStatus.BAD_REQUEST);
+    }
+
+    public static PetException invalidMealCount() {
+        return new PetException(
+                "INVALID_MEAL_COUNT",
+                "The daily meal count must be a positive number of meals.",
+                HttpStatus.BAD_REQUEST);
+    }
+
+    public static PetException invalidFoodAmount() {
+        return new PetException(
+                "INVALID_FOOD_AMOUNT",
+                "The daily food amount must be a positive number of grams.",
+                HttpStatus.BAD_REQUEST);
+    }
+
+    public static PetException invalidTemperamentTag(String tag) {
+        return new PetException(
+                "INVALID_TEMPERAMENT_TAG",
+                "The temperament tag \"" + tag + "\" is not valid (letters, digits, spaces and hyphens only).",
+                HttpStatus.BAD_REQUEST);
+    }
+
+    public static PetException invalidAcquisitionDate() {
+        return new PetException(
+                "INVALID_ACQUISITION_DATE",
+                "The acquisition date must not be in the future.",
+                HttpStatus.BAD_REQUEST);
+    }
+
     public static PetException invalidMicrochipNumber() {
         return new PetException(
                 "INVALID_MICROCHIP_NUMBER",
