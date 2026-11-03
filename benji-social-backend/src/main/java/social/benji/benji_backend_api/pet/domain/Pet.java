@@ -61,12 +61,35 @@ public class Pet {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    /** True when date_of_birth is an owner estimate rather than a known date. */
+    @Column(name = "birth_date_estimated")
+    private Boolean birthDateEstimated;
+
     @Column(name = "color", length = 50)
     private String color;
 
     /** Profile snapshot only; historical measurements belong to Weight & Growth. */
     @Column(name = "current_weight_kg", precision = 6, scale = 2)
     private BigDecimal currentWeightKg;
+
+    /** Optional standing-height snapshot in cm; history belongs to other modules. */
+    @Column(name = "height_cm", precision = 6, scale = 2)
+    private BigDecimal heightCm;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "body_size", length = 20)
+    private BodySize bodySize;
+
+    @Column(name = "eye_color", length = 50)
+    private String eyeColor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "coat_length", length = 20)
+    private CoatLength coatLength;
+
+    /** Free-text physical description (markings, distinguishing features). */
+    @Column(name = "physical_description", length = 1000)
+    private String physicalDescription;
 
     /** Optional; duplicates across users are tolerated (no unique constraint). */
     @Column(name = "microchip_number", length = 50)
@@ -88,6 +111,78 @@ public class Pet {
     @Column(name = "bio", length = 500)
     private String bio;
 
+    // ----- Identification (optional) -------------------------------------
+
+    /** Visible tag / collar id distinct from the implanted microchip. */
+    @Column(name = "identification_tag", length = 100)
+    private String identificationTag;
+
+    /** Kennel-club or registry number (pedigree registrations). */
+    @Column(name = "registration_number", length = 100)
+    private String registrationNumber;
+
+    /** Municipal pet-license number where the owner's city requires one. */
+    @Column(name = "city_license_number", length = 100)
+    private String cityLicenseNumber;
+
+    // ----- Behavior & lifestyle (optional) -------------------------------
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "activity_level", length = 20)
+    private ActivityLevel activityLevel;
+
+    /** Comma-separated temperament tags, validated/canonicalized in the service. */
+    @Column(name = "temperament", length = 500)
+    private String temperament;
+
+    @Column(name = "social_behavior", length = 500)
+    private String socialBehavior;
+
+    /** Tri-state: null means "not specified yet". */
+    @Column(name = "good_with_children")
+    private Boolean goodWithChildren;
+
+    /** Tri-state: null means "not specified yet". */
+    @Column(name = "good_with_other_pets")
+    private Boolean goodWithOtherPets;
+
+    @Column(name = "behavioral_notes", length = 1000)
+    private String behavioralNotes;
+
+    // ----- Nutrition (optional) ------------------------------------------
+
+    /** Free-text diet description, e.g. "grain-free", "vet renal diet". */
+    @Column(name = "diet_type", length = 100)
+    private String dietType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "food_type", length = 20)
+    private FoodType foodType;
+
+    @Column(name = "food_brand", length = 100)
+    private String foodBrand;
+
+    @Column(name = "daily_meal_count")
+    private Integer dailyMealCount;
+
+    @Column(name = "daily_food_amount_grams")
+    private Integer dailyFoodAmountGrams;
+
+    @Column(name = "dietary_restrictions", length = 500)
+    private String dietaryRestrictions;
+
+    // ----- Ownership provenance (optional) -------------------------------
+
+    @Column(name = "acquisition_date")
+    private LocalDate acquisitionDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "acquisition_method", length = 20)
+    private AcquisitionMethod acquisitionMethod;
+
+    @Column(name = "origin_description", length = 500)
+    private String originDescription;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
@@ -104,6 +199,15 @@ public class Pet {
 
     @Column(name = "deceased_at")
     private Instant deceasedAt;
+
+    @Column(name = "lost_at")
+    private Instant lostAt;
+
+    @Column(name = "found_at")
+    private Instant foundAt;
+
+    @Column(name = "rehomed_at")
+    private Instant rehomedAt;
 
     public static Pet create(UUID ownerId, String name, PetSpecies species) {
         return Pet.builder()
@@ -141,17 +245,65 @@ public class Pet {
     }
 
     /**
-     * Editable while active or archived (owners may complete an archived pet's
-     * profile), frozen once deceased because it becomes part of the permanent
-     * life record.
+     * Profile marker only: does not touch Lost & Found advertisements, which
+     * own a separate state machine. Allowed from ACTIVE or FOUND (a found
+     * stray that goes missing again).
+     */
+    public void markLost() {
+        requireTransitionAllowed();
+        if (status != PetStatus.ACTIVE && status != PetStatus.FOUND) {
+            throw new IllegalStateException("Only an active or found pet can be marked lost");
+        }
+        this.status = PetStatus.LOST;
+        this.lostAt = Instant.now();
+    }
+
+    /** Allowed from LOST only; FOUND -> FOUND is idempotent (no timestamp churn). */
+    public void markFound() {
+        requireTransitionAllowed();
+        if (status == PetStatus.FOUND) {
+            return;
+        }
+        if (status != PetStatus.LOST) {
+            throw new IllegalStateException("Only a lost pet can be marked found");
+        }
+        this.status = PetStatus.FOUND;
+        this.foundAt = Instant.now();
+    }
+
+    /** Back to normal life after being reported lost/found; clears the markers. */
+    public void markRecovered() {
+        requireTransitionAllowed();
+        if (status != PetStatus.LOST && status != PetStatus.FOUND) {
+            throw new IllegalStateException("Only a lost or found pet can return to active");
+        }
+        this.status = PetStatus.ACTIVE;
+        this.lostAt = null;
+        this.foundAt = null;
+    }
+
+    /** Terminal: the profile becomes a permanent record and freezes. */
+    public void markRehomed() {
+        requireTransitionAllowed();
+        this.status = PetStatus.REHOMED;
+        this.rehomedAt = Instant.now();
+    }
+
+    /**
+     * Editable while active/archived/lost/found (owners may keep completing a
+     * profile), frozen once deceased or rehomed because those become permanent
+     * records.
      */
     public void ensureEditable() {
-        requireTransitionAllowed();
+        if (status.isTerminal()) {
+            throw new IllegalStateException(
+                    "Pet is " + status.name().toLowerCase() + " and its profile can no longer change");
+        }
     }
 
     private void requireTransitionAllowed() {
         if (status.isTerminal()) {
-            throw new IllegalStateException("Pet is deceased and its state can no longer change");
+            throw new IllegalStateException("Pet is in a terminal status and its state can no longer change");
         }
     }
 
