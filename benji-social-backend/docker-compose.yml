@@ -113,6 +113,7 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=admin
       - SPRING_DATA_MONGODB_URI=mongodb://admin:admin@mongodb:27017/benji_db?authSource=admin
       - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+      - BENJI_SECURITY_JWT_SECRET=b/GS0teBc3CY5CdahwOn5PWywoW1b849hB2MeQ/PdCiO42IH15zyF/zMSrGVO7kC
     ports:
       - "8080:8080"
     depends_on:
