@@ -188,10 +188,10 @@ public class LostFoundAdvertisementEntity {
 
     public void assertTypeConsistency() {
         if (advertisementType == AdvertisementType.LOST && petId == null) {
-            throw new BenjiCustomException("LOST advertisement requires a pet reference");
+            throw new BenjiCustomException.ValidationException("LOST advertisement requires a pet reference");
         }
         if (advertisementType == AdvertisementType.FOUND && petId != null) {
-            throw new BenjiCustomException("FOUND advertisement must not reference a pet profile");
+            throw new BenjiCustomException.ValidationException("FOUND advertisement must not reference a pet profile");
         }
     }
 
@@ -200,7 +200,7 @@ public class LostFoundAdvertisementEntity {
     /** The ONLY way status changes. Rejects anything outside {@link AdvertisementStatus#canTransitionTo}. */
     public void transitionTo(AdvertisementStatus next) {
         if (!status.canTransitionTo(next)) {
-            throw new BenjiCustomException(
+            throw new BenjiCustomException.ValidationException(
                     "Illegal advertisement transition " + status + " -> " + next + " for ad " + publicId);
         }
         this.status = next;
@@ -229,10 +229,10 @@ public class LostFoundAdvertisementEntity {
     /** Called ONLY by the payment-success event handler (server-verified). Idempotent no-op otherwise. */
     public void activateOnVerifiedPayment(UUID actingUserId) {
         if (advertisementType != AdvertisementType.LOST) {
-            throw new BenjiCustomException("Only LOST advertisements require payment activation");
+            throw new BenjiCustomException.ValidationException("Only LOST advertisements require payment activation");
         }
         if (!userId.equals(actingUserId)) {
-            throw new BenjiCustomException("Payment event user does not match advertisement owner");
+            throw new BenjiCustomException.ValidationException("Payment event user does not match advertisement owner");
         }
         if (status == AdvertisementStatus.ACTIVE) {
             return; // duplicate PaymentSucceededEvent → harmless no-op (idempotency requirement)
@@ -240,7 +240,7 @@ public class LostFoundAdvertisementEntity {
         if (status != AdvertisementStatus.PAYMENT_PENDING) {
             // e.g. payment succeeded after the draft was CANCELLED: record stays in Payment module
             // for refund review; the ad is NOT resurrected.
-            throw new BenjiCustomException("Advertisement is not awaiting payment: " + status);
+            throw new BenjiCustomException.ValidationException("Advertisement is not awaiting payment: " + status);
         }
         transitionTo(AdvertisementStatus.ACTIVE);
     }

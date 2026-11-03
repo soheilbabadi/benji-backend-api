@@ -64,45 +64,40 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  elasticsearch:
-    image: elastic/elasticsearch:8.19.19
-    container_name: benji-elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - benji_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    restart: unless-stopped
+#  elasticsearch:
+#    image: elastic/elasticsearch:8.19.19
+#    container_name: benji-elasticsearch
+#    environment:
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#    ports:
+#      - "9200:9200"
+#    volumes:
+#      - elasticsearch_data:/usr/share/elasticsearch/data
+#    networks:
+#      - benji_network
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+#    restart: unless-stopped
 
   minio:
-    image: minio/minio:latest
+    image: docker.arvancloud.ir/intel/minio:RELEASE.2020-12-12T08-39-07Z-mr
     container_name: benji-minio
+    entrypoint: ["/usr/bin/minio"]
+    command: ["server", "/data"]
     environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=adminadmin
-    command: server /data --console-address ":9001"
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: adminadmin
     ports:
       - "9000:9000"
-      - "9001:9001"
     volumes:
       - minio_data:/data
     networks:
       - benji_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     restart: unless-stopped
 
   benji-api:
@@ -127,8 +122,8 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+#      elasticsearch:
+#        condition: service_healthy
     networks:
       - benji_network
     volumes:
@@ -140,7 +135,7 @@ volumes:
   postgres_data:
   redis_data:
   mongo_data:
-  elasticsearch_data:
+#  elasticsearch_data:
   minio_data:
 
 networks:

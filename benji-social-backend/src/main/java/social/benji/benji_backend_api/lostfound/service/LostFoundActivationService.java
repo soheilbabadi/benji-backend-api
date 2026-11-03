@@ -10,6 +10,8 @@ import social.benji.benji_backend_api.lostfound.domain.LostFoundAdvertisementEnt
 import social.benji.benji_backend_api.lostfound.event.PaymentSucceededContext;
 import social.benji.benji_backend_api.lostfound.repository.LostFoundAdvertisementRepository;
 
+import java.util.UUID;
+
 /**
  * The ONLY path that can turn a LOST advertisement ACTIVE. Invoked from the payment module's
  * verified-success event (outbox relay), never from an HTTP request. Idempotent by design:
@@ -39,7 +41,7 @@ public class LostFoundActivationService {
         }
         try {
             // Payer identity from the event must equal the advertiser (validated, never assumed).
-            ad.activateOnVerifiedPayment(ctx.userId());
+            ad.activateOnVerifiedPayment(UUID.fromString(ctx.userId()));
             advertisements.save(ad);
             log.info("Advertisement {} activated by verified payment {}",
                     ad.getPublicId(), ctx.transactionPublicToken());
