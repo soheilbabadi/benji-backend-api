@@ -1,8 +1,7 @@
-package social.benji.benji_backend_api.pet.web.dto;
+package social.benji.benji_backend_api.pet.controller.dto;
 
 import java.util.UUID;
 
-import social.benji.benji_backend_api.pet.domain.Breed;
 import social.benji.benji_backend_api.pet.domain.Pet;
 import social.benji.benji_backend_api.pet.domain.PetSpecies;
 

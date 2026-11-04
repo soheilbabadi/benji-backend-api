@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.pet.web;
+package social.benji.benji_backend_api.pet.controller;
 
 import java.time.Instant;
 

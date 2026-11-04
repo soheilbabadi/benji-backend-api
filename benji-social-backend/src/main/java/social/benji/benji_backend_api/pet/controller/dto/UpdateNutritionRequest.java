@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.pet.web.dto;
+package social.benji.benji_backend_api.pet.controller.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

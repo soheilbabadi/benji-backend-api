@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.pet.web;
+package social.benji.benji_backend_api.pet.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -29,23 +29,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import social.benji.benji_backend_api.pet.domain.Breed;
 import social.benji.benji_backend_api.pet.domain.Pet;
-import social.benji.benji_backend_api.pet.domain.PetPhoto;
 import social.benji.benji_backend_api.pet.domain.PetSpecies;
 import social.benji.benji_backend_api.pet.repository.BreedRepository;
 import social.benji.benji_backend_api.pet.repository.PetPhotoRepository;
 import social.benji.benji_backend_api.pet.service.PetPhotoService;
 import social.benji.benji_backend_api.pet.service.PetProfileService;
 import social.benji.benji_backend_api.pet.service.PetService;
-import social.benji.benji_backend_api.pet.web.dto.BreedResponse;
-import social.benji.benji_backend_api.pet.web.dto.CreatePetRequest;
-import social.benji.benji_backend_api.pet.web.dto.PetResponse;
-import social.benji.benji_backend_api.pet.web.dto.PetSummary;
-import social.benji.benji_backend_api.pet.web.dto.UpdateBasicInfoRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateBehaviorRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateIdentificationRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateNutritionRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdatePetRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdatePhysicalRequest;
+import social.benji.benji_backend_api.pet.controller.dto.BreedResponse;
+import social.benji.benji_backend_api.pet.controller.dto.CreatePetRequest;
+import social.benji.benji_backend_api.pet.controller.dto.PetResponse;
+import social.benji.benji_backend_api.pet.controller.dto.PetSummary;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateBasicInfoRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateBehaviorRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateIdentificationRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateNutritionRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdatePetRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdatePhysicalRequest;
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 /**

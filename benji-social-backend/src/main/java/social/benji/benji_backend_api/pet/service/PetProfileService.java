@@ -18,12 +18,12 @@ import social.benji.benji_backend_api.pet.domain.PetSpecies;
 import social.benji.benji_backend_api.pet.domain.Pet;
 import social.benji.benji_backend_api.pet.domain.exception.PetErrors;
 import social.benji.benji_backend_api.pet.repository.BreedRepository;
-import social.benji.benji_backend_api.pet.web.dto.CreatePetRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateBasicInfoRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateBehaviorRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateIdentificationRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdateNutritionRequest;
-import social.benji.benji_backend_api.pet.web.dto.UpdatePhysicalRequest;
+import social.benji.benji_backend_api.pet.controller.dto.CreatePetRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateBasicInfoRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateBehaviorRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateIdentificationRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdateNutritionRequest;
+import social.benji.benji_backend_api.pet.controller.dto.UpdatePhysicalRequest;
 
 /**
  * Extended-profile application service: full creation payload plus the five
