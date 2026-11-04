@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import social.benji.benji_backend_api.pet.domain.Breed;
 import social.benji.benji_backend_api.pet.domain.Pet;
-import social.benji.benji_backend_api.pet.domain.PetSpecies;
+import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
 import social.benji.benji_backend_api.pet.repository.BreedRepository;
 import social.benji.benji_backend_api.pet.repository.PetPhotoRepository;
 import social.benji.benji_backend_api.pet.service.PetPhotoService;

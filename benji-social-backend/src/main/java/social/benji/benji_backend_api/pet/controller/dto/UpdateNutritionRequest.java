@@ -3,7 +3,7 @@ package social.benji.benji_backend_api.pet.controller.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import social.benji.benji_backend_api.pet.domain.FoodType;
+import social.benji.benji_backend_api.pet.valueobject.FoodType;
 
 /** Section 5 of the profile. Null fields stay unchanged; blanks clear values. */
 public record UpdateNutritionRequest(

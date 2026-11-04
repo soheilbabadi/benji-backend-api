@@ -10,12 +10,12 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import social.benji.benji_backend_api.pet.domain.AcquisitionMethod;
-import social.benji.benji_backend_api.pet.domain.ActivityLevel;
-import social.benji.benji_backend_api.pet.domain.BodySize;
-import social.benji.benji_backend_api.pet.domain.CoatLength;
-import social.benji.benji_backend_api.pet.domain.FoodType;
-import social.benji.benji_backend_api.pet.domain.PetSex;
+import social.benji.benji_backend_api.pet.valueobject.AcquisitionMethod;
+import social.benji.benji_backend_api.pet.valueobject.ActivityLevel;
+import social.benji.benji_backend_api.pet.valueobject.BodySize;
+import social.benji.benji_backend_api.pet.valueobject.CoatLength;
+import social.benji.benji_backend_api.pet.valueobject.FoodType;
+import social.benji.benji_backend_api.pet.valueobject.PetSex;
 
 /**
  * Legacy whole-profile PATCH kept for backward compatibility. Null fields mean

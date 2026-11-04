@@ -3,7 +3,7 @@ package social.benji.benji_backend_api.pet.controller.dto;
 import java.util.UUID;
 
 import jakarta.validation.constraints.Size;
-import social.benji.benji_backend_api.pet.domain.PetSex;
+import social.benji.benji_backend_api.pet.valueobject.PetSex;
 
 /**
  * PATCH semantics: absent (null) fields are left unchanged; a blank string

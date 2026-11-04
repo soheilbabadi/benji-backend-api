@@ -3,7 +3,7 @@ package social.benji.benji_backend_api.pet.controller.dto;
 import java.util.List;
 
 import jakarta.validation.constraints.Size;
-import social.benji.benji_backend_api.pet.domain.ActivityLevel;
+import social.benji.benji_backend_api.pet.valueobject.ActivityLevel;
 
 /**
  * Section 4 of the profile. Null fields stay unchanged; blanks clear values.

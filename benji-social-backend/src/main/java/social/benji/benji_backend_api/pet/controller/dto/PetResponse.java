@@ -6,15 +6,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import social.benji.benji_backend_api.pet.domain.AcquisitionMethod;
-import social.benji.benji_backend_api.pet.domain.ActivityLevel;
-import social.benji.benji_backend_api.pet.domain.BodySize;
-import social.benji.benji_backend_api.pet.domain.CoatLength;
-import social.benji.benji_backend_api.pet.domain.FoodType;
+import social.benji.benji_backend_api.pet.valueobject.AcquisitionMethod;
+import social.benji.benji_backend_api.pet.valueobject.ActivityLevel;
+import social.benji.benji_backend_api.pet.valueobject.BodySize;
+import social.benji.benji_backend_api.pet.valueobject.CoatLength;
+import social.benji.benji_backend_api.pet.valueobject.FoodType;
 import social.benji.benji_backend_api.pet.domain.Pet;
-import social.benji.benji_backend_api.pet.domain.PetSex;
-import social.benji.benji_backend_api.pet.domain.PetSpecies;
-import social.benji.benji_backend_api.pet.domain.PetStatus;
+import social.benji.benji_backend_api.pet.valueobject.PetSex;
+import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
+import social.benji.benji_backend_api.pet.valueobject.PetStatus;
 
 /**
  * Full pet view for the owner. Microchip is intentionally excluded from the

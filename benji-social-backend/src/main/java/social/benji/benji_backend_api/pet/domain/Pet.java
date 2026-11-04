@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import social.benji.benji_backend_api.pet.valueobject.*;
 
 /**
  * Basic identity of a user's dog or cat. Deliberately free of health, weight

@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.pet.domain;
+package social.benji.benji_backend_api.pet.valueobject;
 
 /** Pet body-size bucket. UNKNOWN keeps the field honestly optional. */
 public enum BodySize {

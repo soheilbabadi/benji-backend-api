@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.pet.domain;
+package social.benji.benji_backend_api.pet.valueobject;
 
 /**
  * Pet lifecycle. Physical deletion is intentionally not supported so future

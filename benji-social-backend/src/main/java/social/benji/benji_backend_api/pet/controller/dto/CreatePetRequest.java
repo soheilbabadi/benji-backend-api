@@ -12,13 +12,13 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import social.benji.benji_backend_api.pet.domain.AcquisitionMethod;
-import social.benji.benji_backend_api.pet.domain.ActivityLevel;
-import social.benji.benji_backend_api.pet.domain.BodySize;
-import social.benji.benji_backend_api.pet.domain.CoatLength;
-import social.benji.benji_backend_api.pet.domain.FoodType;
-import social.benji.benji_backend_api.pet.domain.PetSex;
-import social.benji.benji_backend_api.pet.domain.PetSpecies;
+import social.benji.benji_backend_api.pet.valueobject.AcquisitionMethod;
+import social.benji.benji_backend_api.pet.valueobject.ActivityLevel;
+import social.benji.benji_backend_api.pet.valueobject.BodySize;
+import social.benji.benji_backend_api.pet.valueobject.CoatLength;
+import social.benji.benji_backend_api.pet.valueobject.FoodType;
+import social.benji.benji_backend_api.pet.valueobject.PetSex;
+import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
 
 /**
  * Only name and species (a.k.a. petType: DOG or CAT) are required — every

@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
-import social.benji.benji_backend_api.pet.domain.BodySize;
-import social.benji.benji_backend_api.pet.domain.CoatLength;
+import social.benji.benji_backend_api.pet.valueobject.BodySize;
+import social.benji.benji_backend_api.pet.valueobject.CoatLength;
 
 /** Section 2 of the profile. Null fields stay unchanged; blanks clear values. */
 public record UpdatePhysicalRequest(

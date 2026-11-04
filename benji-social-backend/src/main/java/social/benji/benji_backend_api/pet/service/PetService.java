@@ -8,11 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import social.benji.benji_backend_api.pet.domain.Breed;
 import social.benji.benji_backend_api.pet.domain.Pet;
-import social.benji.benji_backend_api.pet.domain.PetSex;
-import social.benji.benji_backend_api.pet.domain.PetSpecies;
+import social.benji.benji_backend_api.pet.valueobject.PetSex;
+import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
 import social.benji.benji_backend_api.pet.domain.exception.PetErrors;
 import social.benji.benji_backend_api.pet.repository.BreedRepository;
 import social.benji.benji_backend_api.pet.repository.PetRepository;
+import social.benji.benji_backend_api.pet.valueobject.PetStatus;
 
 /**
  * Application service for pet identity management. Ownership is enforced here,
@@ -61,7 +62,7 @@ public class PetService {
             return petRepository.findByOwnerIdOrderByCreatedAtDesc(ownerId);
         }
         return petRepository.findByOwnerIdAndStatusOrderByCreatedAtDesc(
-                ownerId, social.benji.benji_backend_api.pet.domain.PetStatus.ACTIVE);
+                ownerId, PetStatus.ACTIVE);
     }
 
     @Transactional(readOnly = true)

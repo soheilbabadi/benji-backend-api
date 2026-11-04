@@ -3,7 +3,7 @@ package social.benji.benji_backend_api.pet.controller.dto;
 import java.util.UUID;
 
 import social.benji.benji_backend_api.pet.domain.Pet;
-import social.benji.benji_backend_api.pet.domain.PetSpecies;
+import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
 
 /** Lightweight shape for the "My Pets" screen — no life-record data. */
 public record PetSummary(

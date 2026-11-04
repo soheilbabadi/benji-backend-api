@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import social.benji.benji_backend_api.pet.domain.Pet;
-import social.benji.benji_backend_api.pet.domain.PetStatus;
+import social.benji.benji_backend_api.pet.valueobject.PetStatus;
 
 public interface PetRepository extends JpaRepository<Pet, UUID> {
 
