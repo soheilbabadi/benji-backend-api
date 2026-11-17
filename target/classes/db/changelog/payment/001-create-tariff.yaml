@@ -1,0 +1,112 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-tariff-table
+      author: benji-team
+      comment: Creates the tariff table for managing paid service prices
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableNameExists:
+              tableName: tariff
+      changes:
+        # Create enum for paid service types
+        - sql:
+            sql: |
+              CREATE TYPE paid_service_type AS ENUM (
+                'LOST_PET_ADVERTISEMENT',
+                'EXPERT_CONSULTATION'
+              );
+            rollback: DROP TYPE IF EXISTS paid_service_type;
+        
+        # Create tariff table
+        - createTable:
+            tableName: tariff
+            remarks: Stores pricing information for paid services
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: service_type
+                  type: paid_service_type
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: bigint
+                  remarks: Amount in minor unit (e.g., Rials for IRR)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(3)
+                  defaultValue: IRR
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: activated_at
+                  type: timestamp with time zone
+                  remarks: When this tariff was activated
+        
+        # Add unique constraint to ensure only one active tariff per service type at a time
+        - addUniqueConstraint:
+            tableName: tariff
+            constraintName: uk_tariff_service_type_active
+            columns: service_type, is_active
+            deferrable: true
+            initiallyDeferred: true
+        
+        # Add check constraint to ensure positive amounts
+        - addCheckConstraint:
+            tableName: tariff
+            constraintName: chk_tariff_amount_positive
+            condition: amount > 0
+        
+        # Add index for efficient lookup of active tariffs
+        - createIndex:
+            tableName: tariff
+            indexName: idx_tariff_service_type_active
+            unique: true
+            columns:
+              - column:
+                  name: service_type
+              - column:
+                  name: is_active
+        
+        # Add index for historical lookups
+        - createIndex:
+            tableName: tariff
+            indexName: idx_tariff_service_type_created
+            columns:
+              - column:
+                  name: service_type
+              - column:
+                  name: created_at
+      
+      rollback:
+        - dropTable:
+            tableName: tariff
+        - sql:
+            sql: DROP TYPE IF EXISTS paid_service_type;
