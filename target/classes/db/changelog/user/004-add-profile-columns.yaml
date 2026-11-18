@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-004-add-profile-columns
+      author: benji
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  type: varchar(30)
+              - column:
+                  name: city
+                  type: varchar(100)
+              - column:
+                  name: country
+                  type: varchar(100)
+              - column:
+                  name: bio
+                  type: varchar(500)
+              - column:
+                  name: phone
+                  type: varchar(20)
+              - column:
+                  name: website
+                  type: varchar(200)
+              - column:
+                  name: birth_date
+                  type: varchar(10)
+              - column:
+                  name: gender
+                  type: varchar(20)
+        - createIndex:
+            indexName: idx_users_username
+            tableName: users
+            unique: true
+            columns:
+              - column:
+                  name: username
+      rollback:
+        - dropIndex:
+            indexName: idx_users_username
+        - dropColumn:
+            tableName: users
+            columnName: username
+        - dropColumn:
+            tableName: users
+            columnName: city
+        - dropColumn:
+            tableName: users
+            columnName: country
+        - dropColumn:
+            tableName: users
+            columnName: bio
+        - dropColumn:
+            tableName: users
+            columnName: phone
+        - dropColumn:
+            tableName: users
+            columnName: website
+        - dropColumn:
+            tableName: users
+            columnName: birth_date
+        - dropColumn:
+            tableName: users
+            columnName: gender

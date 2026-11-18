@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-add-payment-indexes-and-constraints
+      author: benji-team
+      comment: Adds additional indexes and constraints for payment performance and data integrity
+      preConditions:
+        - onFail: MARK_RAN
+          tableExists:
+            tableName: payment_transaction
+      changes:
+        
+        # Add index for admin filtering by status and date
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_created
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: created_at
+        
+        # Add index for refund processing
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_refunded_at
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: refunded_at
+          remarks: Efficient lookup for refund operations
+        
+        # Add foreign key index if not automatically created
+        - createIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_tariff_id
+            columns:
+              - column:
+                  name: tariff_id
+          remarks: Improves join performance with tariff table
+      
+      rollback:
+        - dropIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_created
+        - dropIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_status_refunded_at
+        - dropIndex:
+            tableName: payment_transaction
+            indexName: idx_payment_tariff_id
+        # Note: Cannot drop unique constraint with columns in Liquibase rollback easily
+        # Manual intervention may be required

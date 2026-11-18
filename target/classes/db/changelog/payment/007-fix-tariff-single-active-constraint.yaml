@@ -1,0 +1,78 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-drop-flawed-tariff-unique-constraint
+      author: benji-team
+      comment: >
+        Drops uk_tariff_service_type_active / idx_tariff_service_type_active from changeset
+        001-create-tariff-table. UNIQUE(service_type, is_active) is incorrect: it allows multiple
+        ACTIVE tariffs only if they were inserted before the constraint existed, and it wrongly
+        restricts history (only one INACTIVE tariff per service type ever). Replaced by a partial
+        unique index in the next changeset.
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: payment_transaction
+            baseColumnNames: tariff_id
+            constraintName: fk_payment_transaction_tariff
+        - dropUniqueConstraint:
+            tableName: tariff
+            constraintName: uk_tariff_service_type_active
+        - dropIndex:
+            tableName: tariff
+            indexName: idx_tariff_service_type_active
+      rollback:
+        - createIndex:
+            tableName: tariff
+            indexName: idx_tariff_service_type_active
+            unique: true
+            columns:
+              - column:
+                  name: service_type
+              - column:
+                  name: is_active
+        - addUniqueConstraint:
+            tableName: tariff
+            constraintName: uk_tariff_service_type_active
+            columns: service_type, is_active
+        - addForeignKeyConstraint:
+            baseTableName: payment_transaction
+            baseColumnNames: tariff_id
+            referencedTableName: tariff
+            referencedColumnNames: id
+            constraintName: fk_payment_transaction_tariff
+
+  - changeSet:
+      id: 007b-create-tariff-partial-unique-index
+      author: benji-team
+      comment: >
+        Approved design decision G: exactly ONE active tariff per service type, enforced at the
+        database level via a partial unique index (WHERE is_active). Inactive/historical rows are
+        unconstrained. Tariffs remain immutable once superseded: deactivating an old tariff and
+        inserting a new active one happens in a single application transaction.
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              CREATE UNIQUE INDEX uk_tariff_one_active_per_service
+                ON tariff (service_type)
+                WHERE is_active;
+      rollback:
+        - sql:
+            dbms: postgresql
+            sql: DROP INDEX IF EXISTS uk_tariff_one_active_per_service;
+
+  - changeSet:
+      id: 007c-restore-payment-tariff-foreign-key
+      author: benji-team
+      comment: Restores the payment_transaction -> tariff foreign key dropped in changeset 007.
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: payment_transaction
+            baseColumnNames: tariff_id
+            referencedTableName: tariff
+            referencedColumnNames: id
+            constraintName: fk_payment_transaction_tariff
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: payment_transaction
+            baseColumnNames: tariff_id
+            constraintName: fk_payment_transaction_tariff

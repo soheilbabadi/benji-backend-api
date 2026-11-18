@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: pet-004-create-pet-photos
+      author: benji
+      changes:
+        - createTable:
+            tableName: pet_photos
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: pet_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_pet_photos_pet
+                    references: pets(id)
+                    deleteCascade: true
+              - column:
+                  name: object_key
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: content_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_size_bytes
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_primary
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_pet_photos_pet_id
+            tableName: pet_photos
+            columns:
+              - column:
+                  name: pet_id
+      rollback:
+        - dropTable:
+            tableName: pet_photos
