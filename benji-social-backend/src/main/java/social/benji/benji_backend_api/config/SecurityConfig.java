@@ -138,6 +138,11 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/api/auth/profile-picture").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/verify-otp").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/payments/callback").permitAll()
                 // Public endpoints (OTP request/verify/refresh/logout). The global
                 // logout endpoint sits under /api/auth/** but is additionally
                 // protected by the @AuthenticationPrincipal null-check in the controller.

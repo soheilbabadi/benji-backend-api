@@ -70,14 +70,6 @@ databaseChangeLog:
                   type: timestamp with time zone
                   remarks: When this tariff was activated
         
-        # Add unique constraint to ensure only one active tariff per service type at a time
-        - addUniqueConstraint:
-            tableName: tariff
-            constraintName: uk_tariff_service_type_active
-            columns: service_type, is_active
-            deferrable: true
-            initiallyDeferred: true
-        
         # Add check constraint to ensure positive amounts
         - addCheckConstraint:
             tableName: tariff

@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
+import social.benji.benji_backend_api.lostfound.application.payment.LostPaymentEventValidator;
 import social.benji.benji_backend_api.lostfound.domain.LostFoundAdvertisementEntity;
-import social.benji.benji_backend_api.lostfound.event.PaymentSucceededContext;
 import social.benji.benji_backend_api.lostfound.repository.LostFoundAdvertisementRepository;
-
-import java.util.UUID;
+import social.benji.benji_backend_api.payment.application.event.PaymentSucceededEvent;
 
 /**
  * The ONLY path that can turn a LOST advertisement ACTIVE. Invoked from the payment module's
@@ -23,28 +22,32 @@ public class LostFoundActivationService {
     private static final Logger log = LoggerFactory.getLogger(LostFoundActivationService.class);
 
     private final LostFoundAdvertisementRepository advertisements;
+    private final LostPaymentEventValidator paymentValidator;
 
-    public LostFoundActivationService(LostFoundAdvertisementRepository advertisements) {
+    public LostFoundActivationService(LostFoundAdvertisementRepository advertisements,
+                                      LostPaymentEventValidator paymentValidator) {
         this.advertisements = advertisements;
+        this.paymentValidator = paymentValidator;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void onPaymentSucceeded(PaymentSucceededContext ctx) {
+    public void onPaymentSucceeded(PaymentSucceededEvent event) {
         LostFoundAdvertisementEntity ad = advertisements
-                .findByPublicId(ctx.advertisementPublicId())
+                .findByPublicId(event.serviceReferenceId())
                 .orElse(null);
         if (ad == null) {
             // Event references an unknown ad id: stale/deleted or forged-internal — log and drop.
             log.warn("Payment success for unknown advertisement {} (txn {})",
-                    ctx.advertisementPublicId(), ctx.transactionPublicToken());
+                    event.serviceReferenceId(), event.transactionId());
             return;
         }
         try {
+            paymentValidator.validate(event, ad.getPublicId(), ad.getUserId());
             // Payer identity from the event must equal the advertiser (validated, never assumed).
-            ad.activateOnVerifiedPayment(UUID.fromString(ctx.userId()));
+            ad.activateOnVerifiedPayment(event.userId());
             advertisements.save(ad);
             log.info("Advertisement {} activated by verified payment {}",
-                    ad.getPublicId(), ctx.transactionPublicToken());
+                    ad.getPublicId(), event.transactionId());
         } catch (BenjiCustomException e) {
             // Duplicate event after ACTIVE is handled inside the entity as a no-op; anything else
             // (e.g. success arriving after CANCELLED) is logged for refund review, NOT applied.

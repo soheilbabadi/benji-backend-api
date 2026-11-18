@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import social.benji.benji_backend_api.identity.dto.AuthResponse;
@@ -56,10 +58,10 @@ public class AuthController {
      */
     @PostMapping("/profile-picture")
     public ResponseEntity<AuthResponse> uploadProfilePicture(
-            @RequestParam("userId") String userId,
+            @AuthenticationPrincipal UserDetails principal,
             @RequestParam("file") MultipartFile file) {
-        log.info("Received profile picture upload request for user: {}", userId);
-        AuthResponse response = authService.uploadProfilePicture(userId, file);
+        log.info("Received profile picture upload request for authenticated user: {}", principal.getUsername());
+        AuthResponse response = authService.uploadProfilePicture(principal.getUsername(), file);
         return ResponseEntity.ok(response);
     }
 }

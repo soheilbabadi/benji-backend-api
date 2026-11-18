@@ -20,14 +20,16 @@ spring:
   liquibase:
     database-change-log-table: Z_LIQ_CHANGELOG
     database-change-log-lock-table: Z_LIQ_CHANGELOG_LOCK
-    change-log: classpath:config/liquibase/master.xml
+    change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
     contexts: ${spring.profiles.active:dev}
-    clear-checksums: true
     drop-first: false
     parameters:
       releaseLocksOnExit: true
       shouldSnapshotRecycleBinObjects: false
+
+  flyway:
+    enabled: false
 
   mail:
     host: smtp.gmail.com
@@ -96,6 +98,25 @@ benji:
 
 server:
   port: 8080
+
+app:
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket-name: ${MINIO_BUCKET_NAME:benji-private}
+    secure: ${MINIO_SECURE:false}
+    presigned-url-expiration-seconds: ${MINIO_PRESIGNED_EXPIRATION_SECONDS:900}
+  object-storage:
+    max-file-size-bytes: ${OBJECT_STORAGE_MAX_FILE_SIZE_BYTES:10485760}
+    allowed-mime-types: ${OBJECT_STORAGE_ALLOWED_MIME_TYPES:image/jpeg,image/png,image/webp}
+    allowed-extensions: ${OBJECT_STORAGE_ALLOWED_EXTENSIONS:jpg,jpeg,png,webp}
+  zarinpal:
+    merchant-id: ${ZARINPAL_MERCHANT_ID:}
+    sandbox: ${ZARINPAL_SANDBOX:true}
+    callback-url: ${ZARINPAL_CALLBACK_URL:http://localhost:8080/api/payments/callback}
+    api-url: ${ZARINPAL_API_URL:https://sandbox.zarinpal.com/pg/v4}
+    payment-url: ${ZARINPAL_PAYMENT_URL:https://sandbox.zarinpal.com/pg/StartPay/}
 
 logging:
   level:

@@ -4,13 +4,18 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import social.benji.benji_backend_api.usermanagement.dto.AuthResponse;
 import social.benji.benji_backend_api.usermanagement.dto.LoginRequest;
 import social.benji.benji_backend_api.usermanagement.dto.OtpVerificationRequest;
 import social.benji.benji_backend_api.usermanagement.dto.RegisterRequest;
+import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 import social.benji.benji_backend_api.usermanagement.service.LegacyAuthService;
+import social.benji.benji_backend_api.usermanagement.service.UserAvatarService;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,6 +24,7 @@ import social.benji.benji_backend_api.usermanagement.service.LegacyAuthService;
 public class LegacyAuthController {
 
     private final LegacyAuthService authService;
+    private final UserAvatarService userAvatarService;
 
     /**
      * Register a new user
@@ -55,10 +61,15 @@ public class LegacyAuthController {
      */
     @PostMapping("/profile-picture")
     public ResponseEntity<AuthResponse> uploadProfilePicture(
-            @RequestParam("userId") String userId,
-            @RequestParam("file") MultipartFile file) {
-        log.info("Received profile picture upload request for user: {}", userId);
-        AuthResponse response = authService.uploadProfilePicture(userId, file);
-        return ResponseEntity.ok(response);
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam("file") MultipartFile file) throws IOException {
+        log.info("Received profile picture upload request for authenticated user: {}", principal.id());
+        var avatar = userAvatarService.upload(principal.id(), file.getContentType(), file.getBytes());
+        return ResponseEntity.ok(AuthResponse.builder()
+                .userId(principal.id().toString())
+                .profilePictureFileId(avatar.objectKey())
+                .authenticated(true)
+                .message("Profile picture updated successfully")
+                .build());
     }
 }

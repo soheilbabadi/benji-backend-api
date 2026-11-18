@@ -117,3 +117,15 @@ app:
     access-key: ${MINIO_ACCESS_KEY:minioadmin}
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     bucket-name: ${MINIO_BUCKET_NAME:benji-bucket}
+    secure: ${MINIO_SECURE:false}
+    presigned-url-expiration-seconds: ${MINIO_PRESIGNED_EXPIRATION_SECONDS:900}
+  object-storage:
+    max-file-size-bytes: ${OBJECT_STORAGE_MAX_FILE_SIZE_BYTES:10485760}
+    allowed-mime-types: ${OBJECT_STORAGE_ALLOWED_MIME_TYPES:image/jpeg,image/png,image/webp}
+    allowed-extensions: ${OBJECT_STORAGE_ALLOWED_EXTENSIONS:jpg,jpeg,png,webp}
+  zarinpal:
+    merchant-id: ${ZARINPAL_MERCHANT_ID:}
+    sandbox: ${ZARINPAL_SANDBOX:true}
+    callback-url: ${ZARINPAL_CALLBACK_URL:http://localhost:8080/api/payments/callback}
+    api-url: ${ZARINPAL_API_URL:https://sandbox.zarinpal.com/pg/v4}
+    payment-url: ${ZARINPAL_PAYMENT_URL:https://sandbox.zarinpal.com/pg/StartPay/}

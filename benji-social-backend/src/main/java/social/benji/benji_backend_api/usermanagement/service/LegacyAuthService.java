@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import social.benji.benji_backend_api.usermanagement.dto.AuthResponse;
 import social.benji.benji_backend_api.usermanagement.dto.LoginRequest;
 import social.benji.benji_backend_api.usermanagement.dto.OtpVerificationRequest;
@@ -17,8 +16,8 @@ import social.benji.benji_backend_api.usermanagement.repository.LegacyUserReposi
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
+import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +27,10 @@ public class LegacyAuthService {
     private final LegacyUserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EmailService emailService;
-    private final LegacyObjectStorageService objectStorageService;
 
     private static final int OTP_LENGTH = 6;
     private static final int OTP_VALIDITY_MINUTES = 10;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Registers a new user and sends OTP to their email.
@@ -130,7 +129,7 @@ public class LegacyAuthService {
         }
 
         LocalDateTime otpGeneratedAt = user.getOtpGeneratedAt();
-        if (otpGeneratedAt == null || 
+        if (otpGeneratedAt == null ||
             otpGeneratedAt.isBefore(LocalDateTime.now().minusMinutes(OTP_VALIDITY_MINUTES))) {
             throw new RuntimeException("OTP has expired");
         }
@@ -154,49 +153,10 @@ public class LegacyAuthService {
                 .build();
     }
 
-    /**
-     * Uploads profile picture and updates user record.
-     */
-    @Transactional
-    public AuthResponse uploadProfilePicture(String userId, MultipartFile file) {
-        log.info("Uploading profile picture for user: {}", userId);
-
-        if (file.isEmpty()) {
-            throw new RuntimeException("File is empty");
-        }
-
-        LegacyUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Delete old profile picture if exists
-        if (user.getProfilePictureFileId() != null) {
-            objectStorageService.deleteFile(user.getProfilePictureFileId(), "profile-pictures");
-        }
-
-        // Upload new file
-        try {
-            String fileId = objectStorageService.uploadFile(file, "profile-pictures");
-            user.setProfilePictureFileId(fileId);
-            userRepository.save(user);
-
-            return AuthResponse.builder()
-                    .userId(user.getId())
-                    .email(user.getEmail())
-                    .profilePictureFileId(fileId)
-                    .authenticated(true)
-                    .message("Profile picture updated successfully")
-                    .build();
-        } catch (Exception e) {
-            log.error("Error uploading profile picture", e);
-            throw new RuntimeException("Failed to upload profile picture: " + e.getMessage());
-        }
-    }
-
     private String generateOtp() {
-        Random random = new Random();
         StringBuilder otp = new StringBuilder(OTP_LENGTH);
         for (int i = 0; i < OTP_LENGTH; i++) {
-            otp.append(random.nextInt(10));
+            otp.append(SECURE_RANDOM.nextInt(10));
         }
         return otp.toString();
     }

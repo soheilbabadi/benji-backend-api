@@ -22,5 +22,8 @@
     -->
 
     <include file="db/changelog/2026-11-03-pet-profile-additive-columns.xml" relativeToChangelogFile="false"/>
+    <includeAll path="db/changelog/lookup/" relativeToChangelogFile="false"/>
+    <includeAll path="db/changelog/lostfound/" relativeToChangelogFile="false"/>
+    <includeAll path="db/changelog/payment/" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -2,7 +2,7 @@ package social.benji.benji_backend_api.lostfound.service;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import social.benji.benji_backend_api.lostfound.event.PaymentSucceededContext;
+import social.benji.benji_backend_api.payment.application.event.PaymentSucceededEvent;
 
 /**
  * Receives the payment module's published success notification (relayed from payment_event_outbox).
@@ -18,7 +18,7 @@ class PaymentSuccessEventListener {
     }
 
     @EventListener
-    public void handle(PaymentSucceededContext event) {
+    public void handle(PaymentSucceededEvent event) {
         activationService.onPaymentSucceeded(event);
     }
 }
