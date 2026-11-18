@@ -1,27 +1,32 @@
 package social.benji.benji_backend_api.lostfound.application.payment;
 
+import social.benji.benji_backend_api.payment.application.event.PaymentSucceededEvent;
+import social.benji.benji_backend_api.payment.application.PaymentValidationUseCase;
 import social.benji.benji_backend_api.payment.domain.valueobject.PaidServiceType;
-import social.benji.benji_backend_api.payment.infrastructure.event.PaymentSucceededEvent;
 
 import java.util.UUID;
 
-public final class LostPaymentEventValidator {
-    private LostPaymentEventValidator() {}
+public class LostPaymentEventValidator {
+    private final PaymentValidationUseCase paymentValidationUseCase;
 
-    public static void validate(PaymentSucceededEvent event, UUID expectedAdvertisementId) {
+    public LostPaymentEventValidator(PaymentValidationUseCase paymentValidationUseCase) {
+        this.paymentValidationUseCase = paymentValidationUseCase;
+    }
+
+    public PaymentValidationUseCase.ValidatedPaymentResult validate(
+            PaymentSucceededEvent event,
+            UUID expectedAdvertisementId,
+            UUID expectedOwnerId) {
         if (event == null) {
             throw new IllegalArgumentException("Payment event is required");
         }
         if (event.serviceType() != PaidServiceType.LOST_PET_ADVERTISEMENT) {
             throw new IllegalArgumentException("Payment event is not for LOST_PET_ADVERTISEMENT");
         }
-        if (event.serviceReferenceId() == null
-                || !event.serviceReferenceId().equals(expectedAdvertisementId)) {
-            throw new IllegalArgumentException("Payment event references a different advertisement");
-        }
-        if (event.transactionId() == null || event.gatewayReferenceId() == null
-                || event.gatewayReferenceId().isBlank()) {
-            throw new IllegalArgumentException("Payment event has no verified transaction identity");
-        }
+        return paymentValidationUseCase.validateSuccessfulPayment(
+                event,
+                PaidServiceType.LOST_PET_ADVERTISEMENT,
+                expectedAdvertisementId,
+                expectedOwnerId);
     }
 }

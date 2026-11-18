@@ -2,19 +2,11 @@ package social.benji.benji_backend_api.lostfound.application.ownership;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import social.benji.benji_backend_api.model.User;
-import social.benji.benji_backend_api.repository.UserRepository;
 
 @Component
 public class SpringAuthenticatedUserIdResolver implements AuthenticatedUserIdResolver {
-    private final UserRepository userRepository;
-
-    public SpringAuthenticatedUserIdResolver(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
     public String currentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -24,17 +16,14 @@ public class SpringAuthenticatedUserIdResolver implements AuthenticatedUserIdRes
             throw new IllegalStateException("Authentication is required");
         }
 
-        String email;
-        if (authentication.getPrincipal() instanceof UserDetails details) {
-            email = details.getUsername();
-        } else if (authentication.getPrincipal() instanceof User user) {
-            email = user.getUsername();
-        } else {
-            email = authentication.getName();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof User user) {
+            if (user.getId() == null || user.getId().isBlank()) {
+                throw new IllegalStateException("Authenticated user has no internal ID");
+            }
+            return user.getId();
         }
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("Authenticated user is not found"));
-        return user.getId();
+        throw new IllegalStateException("Unsupported authenticated principal");
     }
 }

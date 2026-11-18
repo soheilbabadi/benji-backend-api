@@ -1,4 +1,4 @@
-package social.benji.benji_backend_api.payment.infrastructure.event;
+package social.benji.benji_backend_api.payment.application.event;
 
 import social.benji.benji_backend_api.payment.domain.valueobject.PaidServiceType;
 

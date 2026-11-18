@@ -11,6 +11,7 @@ import social.benji.benji_backend_api.payment.domain.model.PaymentEventOutbox;
 import social.benji.benji_backend_api.payment.domain.repository.PaymentEventOutboxRepository;
 import social.benji.benji_backend_api.payment.domain.valueobject.PaidServiceType;
 import social.benji.benji_backend_api.payment.domain.valueobject.PaymentEventType;
+import social.benji.benji_backend_api.payment.application.event.PaymentSucceededEvent;
 
 import java.util.UUID;
 

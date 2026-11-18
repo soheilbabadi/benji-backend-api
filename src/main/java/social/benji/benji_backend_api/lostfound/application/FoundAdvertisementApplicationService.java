@@ -24,6 +24,9 @@ public class FoundAdvertisementApplicationService {
     }
 
     public FoundAdvertisement create(CreateFoundAdvertisementRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Found advertisement request is required");
+        }
         String ownerId = userIdResolver.currentUserId();
         validatePet(request.petId(), ownerId);
 

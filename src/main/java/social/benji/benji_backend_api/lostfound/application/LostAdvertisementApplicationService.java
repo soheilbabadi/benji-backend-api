@@ -24,6 +24,9 @@ public class LostAdvertisementApplicationService {
     }
 
     public LostAdvertisement create(CreateLostAdvertisementRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Lost advertisement request is required");
+        }
         String ownerId = userIdResolver.currentUserId();
         validatePet(request.petId(), ownerId);
 
