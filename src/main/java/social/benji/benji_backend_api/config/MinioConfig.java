@@ -5,28 +5,26 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import java.net.URI;
 
 @Configuration
 @Getter
+@EnableConfigurationProperties(MinioProperties.class)
 public class MinioConfig {
 
-    @Value("${app.minio.endpoint}")
-    private String endpoint;
+    private final MinioProperties properties;
 
-    @Value("${app.minio.access-key}")
-    private String accessKey;
-
-    @Value("${app.minio.secret-key}")
-    private String secretKey;
-
-    @Value("${app.minio.bucket-name}")
-    private String bucketName;
+    public MinioConfig(MinioProperties properties) {
+        this.properties = properties;
+    }
 
     @Bean
     public MinioClient minioClient() {
+        String endpoint = properties.getEndpoint();
         return MinioClient.builder()
                 .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
+                .credentials(properties.getAccessKey(), properties.getSecretKey())
                 .build();
     }
 }

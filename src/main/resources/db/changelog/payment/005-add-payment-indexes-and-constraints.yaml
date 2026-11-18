@@ -8,18 +8,6 @@ databaseChangeLog:
           tableExists:
             tableName: payment_transaction
       changes:
-        # Add composite unique constraint to prevent duplicate pending payments for same service reference
-        # This prevents multiple pending payments for the same consultation/advertisement
-        - addUniqueConstraint:
-            tableName: payment_transaction
-            constraintName: uk_payment_service_pending
-            columns: service_type, service_reference_id, status
-            deferrable: true
-            initiallyDeferred: true
-          remarks: Prevents multiple pending payments for same service (partial index simulation)
-        
-        # Note: PostgreSQL doesn't support partial unique indexes directly in Liquibase,
-        # so we enforce this logic in the application layer with proper transaction handling
         
         # Add index for admin filtering by status and date
         - createIndex:

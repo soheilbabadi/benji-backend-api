@@ -135,7 +135,11 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/verify-otp").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/profile-picture").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/payments/callback").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/actuator/**").permitAll()
