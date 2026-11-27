@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-payment-integrity-indexes
+      author: benji-team
+      comment: Corrects active-tariff and pending-payment uniqueness to PostgreSQL partial indexes
+      preConditions:
+        - onFail: MARK_RAN
+          dbms:
+            type: postgresql
+      changes:
+        - sql:
+            sql: |
+              DROP INDEX IF EXISTS idx_tariff_service_type_active;
+              CREATE UNIQUE INDEX uk_tariff_service_type_active
+                ON tariff(service_type)
+                WHERE is_active = TRUE;
+
+              CREATE UNIQUE INDEX uk_payment_service_pending
+                ON payment_transaction(service_type, service_reference_id)
+                WHERE status = 'PENDING';
+
+              ALTER TABLE payment_event_outbox
+                DROP CONSTRAINT IF EXISTS uk_outbox_aggregate_event_type;
+              CREATE UNIQUE INDEX uk_outbox_aggregate_event_type
+                ON payment_event_outbox(aggregate_id, event_type);
+      rollback:
+        - sql:
+            sql: |
+              DROP INDEX IF EXISTS uk_outbox_aggregate_event_type;
+              DROP INDEX IF EXISTS uk_payment_service_pending;
+              DROP INDEX IF EXISTS uk_tariff_service_type_active;

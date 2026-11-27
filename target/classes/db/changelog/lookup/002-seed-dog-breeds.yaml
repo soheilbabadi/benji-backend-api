@@ -1,0 +1,1577 @@
+databaseChangeLog:
+  - changeSet:
+      id: lookup-002-seed-dog-breeds
+      author: benji
+      changes:
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: affenpinscher }
+              - column: { name: title, value: 'Affenpinscher' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 1 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: afghan-hound }
+              - column: { name: title, value: 'Afghan Hound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 2 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: airedale-terrier }
+              - column: { name: title, value: 'Airedale Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 3 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: akita }
+              - column: { name: title, value: 'Akita' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 4 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: alaskan-malamute }
+              - column: { name: title, value: 'Alaskan Malamute' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 5 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: american-akita }
+              - column: { name: title, value: 'American Akita' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 6 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: american-staffordshire-terrier }
+              - column: { name: title, value: 'American Staffordshire Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 7 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: anatolian-shepherd-dog }
+              - column: { name: title, value: 'Anatolian Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 8 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: australian-cattle-dog }
+              - column: { name: title, value: 'Australian Cattle Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 9 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: australian-shepherd }
+              - column: { name: title, value: 'Australian Shepherd' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 10 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: australian-silky-terrier }
+              - column: { name: title, value: 'Australian Silky Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 11 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: australian-terrier }
+              - column: { name: title, value: 'Australian Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 12 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: basenji }
+              - column: { name: title, value: 'Basenji' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 13 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: basset-hound }
+              - column: { name: title, value: 'Basset Hound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 14 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: beagle }
+              - column: { name: title, value: 'Beagle' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 15 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bearded-collie }
+              - column: { name: title, value: 'Bearded Collie' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 16 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: beauceron }
+              - column: { name: title, value: 'Beauceron' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 17 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bedlington-terrier }
+              - column: { name: title, value: 'Bedlington Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 18 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: belgian-malinois }
+              - column: { name: title, value: 'Belgian Malinois' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 19 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: belgian-shepherd-dog }
+              - column: { name: title, value: 'Belgian Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 20 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: belgian-tervuren }
+              - column: { name: title, value: 'Belgian Tervuren' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 21 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bernese-mountain-dog }
+              - column: { name: title, value: 'Bernese Mountain Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 22 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bichon-frisé }
+              - column: { name: title, value: 'Bichon Frisé' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 23 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: biewer-terrier }
+              - column: { name: title, value: 'Biewer Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 24 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bloodhound }
+              - column: { name: title, value: 'Bloodhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 25 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: border-collie }
+              - column: { name: title, value: 'Border Collie' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 26 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: border-terrier }
+              - column: { name: title, value: 'Border Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 27 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: borzoi }
+              - column: { name: title, value: 'Borzoi' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 28 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: boston-terrier }
+              - column: { name: title, value: 'Boston Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 29 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: boxer }
+              - column: { name: title, value: 'Boxer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 30 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: boykin-spaniel }
+              - column: { name: title, value: 'Boykin Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 31 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: briard }
+              - column: { name: title, value: 'Briard' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 32 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: brittany }
+              - column: { name: title, value: 'Brittany' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 33 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: brussels-griffon }
+              - column: { name: title, value: 'Brussels Griffon' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 34 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bull-terrier }
+              - column: { name: title, value: 'Bull Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 35 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bulldog }
+              - column: { name: title, value: 'Bulldog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 36 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bullmastiff }
+              - column: { name: title, value: 'Bullmastiff' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 37 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: cairn-terrier }
+              - column: { name: title, value: 'Cairn Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 38 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: cane-corso }
+              - column: { name: title, value: 'Cane Corso' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 39 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: cavalier-king-charles-spaniel }
+              - column: { name: title, value: 'Cavalier King Charles Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 40 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: central-asian-shepherd-dog }
+              - column: { name: title, value: 'Central Asian Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 41 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: chesapeake-bay-retriever }
+              - column: { name: title, value: 'Chesapeake Bay Retriever' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 42 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: chihuahua }
+              - column: { name: title, value: 'Chihuahua' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 43 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: chinese-crested-dog }
+              - column: { name: title, value: 'Chinese Crested Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 44 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: chow-chow }
+              - column: { name: title, value: 'Chow Chow' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 45 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: cocker-spaniel }
+              - column: { name: title, value: 'Cocker Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 46 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: collie }
+              - column: { name: title, value: 'Collie' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 47 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: coton-de-tulear }
+              - column: { name: title, value: 'Coton de Tulear' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 48 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dachshund }
+              - column: { name: title, value: 'Dachshund' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 49 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dalmatian }
+              - column: { name: title, value: 'Dalmatian' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 50 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dandie-dinmont-terrier }
+              - column: { name: title, value: 'Dandie Dinmont Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 51 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dobermann }
+              - column: { name: title, value: 'Dobermann' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 52 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dogue-de-bordeaux }
+              - column: { name: title, value: 'Dogue de Bordeaux' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 53 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: english-cocker-spaniel }
+              - column: { name: title, value: 'English Cocker Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 54 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: english-setter }
+              - column: { name: title, value: 'English Setter' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 55 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: english-springer-spaniel }
+              - column: { name: title, value: 'English Springer Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 56 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: english-toy-terrier }
+              - column: { name: title, value: 'English Toy Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 57 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: eurasier }
+              - column: { name: title, value: 'Eurasier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 58 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: field-spaniel }
+              - column: { name: title, value: 'Field Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 59 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: finnish-lapphund }
+              - column: { name: title, value: 'Finnish Lapphund' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 60 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: finnish-spitz }
+              - column: { name: title, value: 'Finnish Spitz' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 61 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: fox-terrier }
+              - column: { name: title, value: 'Fox Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 62 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: french-bulldog }
+              - column: { name: title, value: 'French Bulldog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 63 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: german-pinscher }
+              - column: { name: title, value: 'German Pinscher' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 64 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: german-shepherd-dog }
+              - column: { name: title, value: 'German Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 65 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: german-shorthaired-pointer }
+              - column: { name: title, value: 'German Shorthaired Pointer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 66 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: german-spitz }
+              - column: { name: title, value: 'German Spitz' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 67 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: giant-schnauzer }
+              - column: { name: title, value: 'Giant Schnauzer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 68 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: golden-retriever }
+              - column: { name: title, value: 'Golden Retriever' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 69 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: gordon-setter }
+              - column: { name: title, value: 'Gordon Setter' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 70 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: great-dane }
+              - column: { name: title, value: 'Great Dane' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 71 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: great-pyrenees }
+              - column: { name: title, value: 'Great Pyrenees' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 72 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: greater-swiss-mountain-dog }
+              - column: { name: title, value: 'Greater Swiss Mountain Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 73 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: greyhound }
+              - column: { name: title, value: 'Greyhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 74 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: havanese }
+              - column: { name: title, value: 'Havanese' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 75 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: hovawart }
+              - column: { name: title, value: 'Hovawart' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 76 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: irish-setter }
+              - column: { name: title, value: 'Irish Setter' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 77 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: irish-terrier }
+              - column: { name: title, value: 'Irish Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 78 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: irish-wolfhound }
+              - column: { name: title, value: 'Irish Wolfhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 79 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: italian-greyhound }
+              - column: { name: title, value: 'Italian Greyhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 80 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: italian-spinone }
+              - column: { name: title, value: 'Italian Spinone' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 81 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: jack-russell-terrier }
+              - column: { name: title, value: 'Jack Russell Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 82 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: japanese-chin }
+              - column: { name: title, value: 'Japanese Chin' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 83 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: japanese-spitz }
+              - column: { name: title, value: 'Japanese Spitz' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 84 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: kangal }
+              - column: { name: title, value: 'Kangal' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 85 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: kerry-blue-terrier }
+              - column: { name: title, value: 'Kerry Blue Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 86 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: komondor }
+              - column: { name: title, value: 'Komondor' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 87 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: keeshond }
+              - column: { name: title, value: 'Keeshond' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 88 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: labrador-retriever }
+              - column: { name: title, value: 'Labrador Retriever' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 89 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: lagotto-romagnolo }
+              - column: { name: title, value: 'Lagotto Romagnolo' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 90 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: lakeland-terrier }
+              - column: { name: title, value: 'Lakeland Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 91 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: lancashire-heeler }
+              - column: { name: title, value: 'Lancashire Heeler' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 92 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: leonberger }
+              - column: { name: title, value: 'Leonberger' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 93 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: lhasa-apso }
+              - column: { name: title, value: 'Lhasa Apso' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 94 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: maltese }
+              - column: { name: title, value: 'Maltese' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 95 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: manchester-terrier }
+              - column: { name: title, value: 'Manchester Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 96 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: mastiff }
+              - column: { name: title, value: 'Mastiff' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 97 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: miniature-american-shepherd }
+              - column: { name: title, value: 'Miniature American Shepherd' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 98 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: miniature-bull-terrier }
+              - column: { name: title, value: 'Miniature Bull Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 99 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: miniature-pinscher }
+              - column: { name: title, value: 'Miniature Pinscher' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 100 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: miniature-schnauzer }
+              - column: { name: title, value: 'Miniature Schnauzer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 101 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: newfoundland }
+              - column: { name: title, value: 'Newfoundland' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 102 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: norfolk-terrier }
+              - column: { name: title, value: 'Norfolk Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 103 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: norwegian-elkhound }
+              - column: { name: title, value: 'Norwegian Elkhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 104 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: norwegian-lundehund }
+              - column: { name: title, value: 'Norwegian Lundehund' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 105 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: norwich-terrier }
+              - column: { name: title, value: 'Norwich Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 106 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: nova-scotia-duck-tolling-retriever }
+              - column: { name: title, value: 'Nova Scotia Duck Tolling Retriever' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 107 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: old-english-sheepdog }
+              - column: { name: title, value: 'Old English Sheepdog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 108 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: papillon }
+              - column: { name: title, value: 'Papillon' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 109 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: parson-russell-terrier }
+              - column: { name: title, value: 'Parson Russell Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 110 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pekingese }
+              - column: { name: title, value: 'Pekingese' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 111 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pembroke-welsh-corgi }
+              - column: { name: title, value: 'Pembroke Welsh Corgi' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 112 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: peruvian-hairless-dog }
+              - column: { name: title, value: 'Peruvian Hairless Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 113 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pharaoh-hound }
+              - column: { name: title, value: 'Pharaoh Hound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 114 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pointer }
+              - column: { name: title, value: 'Pointer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 115 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pomeranian }
+              - column: { name: title, value: 'Pomeranian' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 116 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: poodle }
+              - column: { name: title, value: 'Poodle' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 117 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: portuguese-water-dog }
+              - column: { name: title, value: 'Portuguese Water Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 118 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pug }
+              - column: { name: title, value: 'Pug' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 119 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: puli }
+              - column: { name: title, value: 'Puli' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 120 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: pumi }
+              - column: { name: title, value: 'Pumi' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 121 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: rhodesian-ridgeback }
+              - column: { name: title, value: 'Rhodesian Ridgeback' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 122 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: rottweiler }
+              - column: { name: title, value: 'Rottweiler' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 123 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: saint-bernard }
+              - column: { name: title, value: 'Saint Bernard' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 124 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: saluki }
+              - column: { name: title, value: 'Saluki' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 125 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: samoyed }
+              - column: { name: title, value: 'Samoyed' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 126 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: schipperke }
+              - column: { name: title, value: 'Schipperke' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 127 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: scottish-terrier }
+              - column: { name: title, value: 'Scottish Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 128 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: shetland-sheepdog }
+              - column: { name: title, value: 'Shetland Sheepdog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 129 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: shiba-inu }
+              - column: { name: title, value: 'Shiba Inu' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 130 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: shih-tzu }
+              - column: { name: title, value: 'Shih Tzu' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 131 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: siberian-husky }
+              - column: { name: title, value: 'Siberian Husky' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 132 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: silky-terrier }
+              - column: { name: title, value: 'Silky Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 133 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: skye-terrier }
+              - column: { name: title, value: 'Skye Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 134 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: sloughi }
+              - column: { name: title, value: 'Sloughi' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 135 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: soft-coated-wheaten-terrier }
+              - column: { name: title, value: 'Soft Coated Wheaten Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 136 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: staffordshire-bull-terrier }
+              - column: { name: title, value: 'Staffordshire Bull Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 137 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: standard-schnauzer }
+              - column: { name: title, value: 'Standard Schnauzer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 138 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: sussex-spaniel }
+              - column: { name: title, value: 'Sussex Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 139 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: swedish-vallhund }
+              - column: { name: title, value: 'Swedish Vallhund' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 140 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: tibetan-mastiff }
+              - column: { name: title, value: 'Tibetan Mastiff' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 141 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: tibetan-spaniel }
+              - column: { name: title, value: 'Tibetan Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 142 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: tibetan-terrier }
+              - column: { name: title, value: 'Tibetan Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 143 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: toy-fox-terrier }
+              - column: { name: title, value: 'Toy Fox Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 144 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: vizsla }
+              - column: { name: title, value: 'Vizsla' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 145 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: weimaraner }
+              - column: { name: title, value: 'Weimaraner' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 146 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: welsh-terrier }
+              - column: { name: title, value: 'Welsh Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 147 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: west-highland-white-terrier }
+              - column: { name: title, value: 'West Highland White Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 148 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: whippet }
+              - column: { name: title, value: 'Whippet' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 149 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: wire-fox-terrier }
+              - column: { name: title, value: 'Wire Fox Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 150 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: yorkshire-terrier }
+              - column: { name: title, value: 'Yorkshire Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 151 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: akita-inu }
+              - column: { name: title, value: 'Akita Inu' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 152 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: boerboel }
+              - column: { name: title, value: 'Boerboel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 153 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: brazilian-terrier }
+              - column: { name: title, value: 'Brazilian Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 154 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dogue-argentino }
+              - column: { name: title, value: 'Dogue Argentino' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 155 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: dogo-canario }
+              - column: { name: title, value: 'Dogo Canario' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 156 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: estrela-mountain-dog }
+              - column: { name: title, value: 'Estrela Mountain Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 157 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: fila-brasileiro }
+              - column: { name: title, value: 'Fila Brasileiro' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 158 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: japanese-terrier }
+              - column: { name: title, value: 'Japanese Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 159 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: kuvasz }
+              - column: { name: title, value: 'Kuvasz' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 160 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: maremma-and-abruzzo-shepherd-dog }
+              - column: { name: title, value: 'Maremma and Abruzzo Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 161 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: neapolitan-mastiff }
+              - column: { name: title, value: 'Neapolitan Mastiff' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 162 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: polish-lowland-sheepdog }
+              - column: { name: title, value: 'Polish Lowland Sheepdog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 163 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: portuguese-podengo }
+              - column: { name: title, value: 'Portuguese Podengo' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 164 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: romanian-mioritic-shepherd-dog }
+              - column: { name: title, value: 'Romanian Mioritic Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 165 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: russian-black-terrier }
+              - column: { name: title, value: 'Russian Black Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 166 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: saarloos-wolfdog }
+              - column: { name: title, value: 'Saarloos Wolfdog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 167 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: schapendoes }
+              - column: { name: title, value: 'Schapendoes' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 168 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: slovakian-wirehaired-pointer }
+              - column: { name: title, value: 'Slovakian Wirehaired Pointer' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 169 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: spanish-water-dog }
+              - column: { name: title, value: 'Spanish Water Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 170 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: standard-poodle }
+              - column: { name: title, value: 'Standard Poodle' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 171 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: thai-ridgeback }
+              - column: { name: title, value: 'Thai Ridgeback' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 172 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: turkish-shepherd-dog }
+              - column: { name: title, value: 'Turkish Shepherd Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 173 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: welsh-corgi-cardigan }
+              - column: { name: title, value: 'Welsh Corgi Cardigan' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 174 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: west-siberian-laika }
+              - column: { name: title, value: 'West Siberian Laika' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 175 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: yakutian-laika }
+              - column: { name: title, value: 'Yakutian Laika' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 176 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: alaskan-klee-kai }
+              - column: { name: title, value: 'Alaskan Klee Kai' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 177 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: american-eskimo-dog }
+              - column: { name: title, value: 'American Eskimo Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 178 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: american-foxhound }
+              - column: { name: title, value: 'American Foxhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 179 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: american-hairless-terrier }
+              - column: { name: title, value: 'American Hairless Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 180 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: australian-stumpy-tail-cattle-dog }
+              - column: { name: title, value: 'Australian Stumpy Tail Cattle Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 181 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: belgian-laekenois }
+              - column: { name: title, value: 'Belgian Laekenois' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 182 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: black-russian-terrier }
+              - column: { name: title, value: 'Black Russian Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 183 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: bluetick-coonhound }
+              - column: { name: title, value: 'Bluetick Coonhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 184 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: catahoula-leopard-dog }
+              - column: { name: title, value: 'Catahoula Leopard Dog' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 185 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: chinese-shar-pei }
+              - column: { name: title, value: 'Chinese Shar-Pei' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 186 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: english-foxhound }
+              - column: { name: title, value: 'English Foxhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 187 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: irish-water-spaniel }
+              - column: { name: title, value: 'Irish Water Spaniel' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 188 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: japanese-shikoku }
+              - column: { name: title, value: 'Japanese Shikoku' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 189 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: kai-ken }
+              - column: { name: title, value: 'Kai Ken' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 190 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: kishu-ken }
+              - column: { name: title, value: 'Kishu Ken' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 191 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: korean-jindo }
+              - column: { name: title, value: 'Korean Jindo' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 192 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: norwegian-buhund }
+              - column: { name: title, value: 'Norwegian Buhund' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 193 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: rat-terrier }
+              - column: { name: title, value: 'Rat Terrier' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 194 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: redbone-coonhound }
+              - column: { name: title, value: 'Redbone Coonhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 195 }
+        - insert:
+            tableName: tbl_lookups
+            columns:
+              - column: { name: category, value: dog-breed }
+              - column: { name: code, value: treeing-walker-coonhound }
+              - column: { name: title, value: 'Treeing Walker Coonhound' }
+              - column: { name: active, value: true }
+              - column: { name: sort_order, value: 196 }
+      rollback:
+        - delete:
+            tableName: tbl_lookups
+            where: category = 'dog-breed'

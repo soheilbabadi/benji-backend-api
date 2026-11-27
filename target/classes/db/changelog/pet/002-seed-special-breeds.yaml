@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: pet-002-seed-special-breeds
+      author: benji
+      changes:
+        - insert:
+            tableName: breeds
+            columns:
+              - column: { name: species, value: DOG }
+              - column: { name: name, value: MIXED }
+              - column: { name: is_mixed, value: true }
+              - column: { name: is_unknown, value: false }
+        - insert:
+            tableName: breeds
+            columns:
+              - column: { name: species, value: DOG }
+              - column: { name: name, value: UNKNOWN }
+              - column: { name: is_mixed, value: false }
+              - column: { name: is_unknown, value: true }
+        - insert:
+            tableName: breeds
+            columns:
+              - column: { name: species, value: CAT }
+              - column: { name: name, value: MIXED }
+              - column: { name: is_mixed, value: true }
+              - column: { name: is_unknown, value: false }
+        - insert:
+            tableName: breeds
+            columns:
+              - column: { name: species, value: CAT }
+              - column: { name: name, value: UNKNOWN }
+              - column: { name: is_mixed, value: false }
+              - column: { name: is_unknown, value: true }
+      rollback:
+        - delete:
+            tableName: breeds
+            where: is_mixed = true OR is_unknown = true

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013-payment-amount-bigint-to-numeric
+      author: benji-team
+      comment: >
+        Converts monetary columns from bigint to NUMERIC(19,0) (approved decision D: all money in
+        IRR Rials, exact BigDecimal arithmetic end-to-end; scale 0 = integer minor unit, matching
+        ZarinPal vNext request.amount which is an integer amount in Rials). Values are preserved by
+        the cast. CHECK constraints for positivity are re-created on the new type.
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              ALTER TABLE tariff
+                ALTER COLUMN amount TYPE NUMERIC(19,0) USING amount::NUMERIC(19,0);
+              ALTER TABLE payment_transaction
+                ALTER COLUMN amount TYPE NUMERIC(19,0) USING amount::NUMERIC(19,0);
+      rollback:
+        - sql:
+            dbms: postgresql
+            sql: |
+              ALTER TABLE tariff
+                ALTER COLUMN amount TYPE BIGINT USING amount::BIGINT;
+              ALTER TABLE payment_transaction
+                ALTER COLUMN amount TYPE BIGINT USING amount::BIGINT;
