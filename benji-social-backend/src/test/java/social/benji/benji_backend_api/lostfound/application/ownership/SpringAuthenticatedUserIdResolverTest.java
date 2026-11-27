@@ -7,6 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
+import social.benji.benji_backend_api.usermanagement.domain.User;
+import social.benji.benji_backend_api.usermanagement.model.LegacyUser;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,28 @@ class SpringAuthenticatedUserIdResolverTest {
                         user, null, List.of(new SimpleGrantedAuthority("ROLE_USER"))));
 
         assertEquals(user.id().toString(), resolver.currentUserId());
+    }
+
+    @Test
+    void resolvesCanonicalUserEntityIdDirectly() {
+        UUID id = UUID.fromString("22222222-2222-2222-2222-222222222222");
+        User user = User.builder().id(id).mobileNumber("+989121234567").build();
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        user, null, List.of(new SimpleGrantedAuthority("ROLE_USER"))));
+
+        assertEquals(id.toString(), resolver.currentUserId());
+    }
+
+    @Test
+    void resolvesLegacyUserDetailsIdDirectly() {
+        String id = "33333333-3333-3333-3333-333333333333";
+        LegacyUser user = LegacyUser.builder().id(id).email("legacy@example.com").build();
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        user, null, List.of(new SimpleGrantedAuthority("ROLE_USER"))));
+
+        assertEquals(id, resolver.currentUserId());
     }
 
     @Test

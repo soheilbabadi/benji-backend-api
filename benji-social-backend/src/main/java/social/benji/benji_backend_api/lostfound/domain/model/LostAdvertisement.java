@@ -3,6 +3,7 @@ package social.benji.benji_backend_api.lostfound.domain.model;
 import social.benji.benji_backend_api.lostfound.domain.valueobject.Breed;
 import social.benji.benji_backend_api.lostfound.domain.valueobject.Location;
 import social.benji.benji_backend_api.lostfound.domain.valueobject.PetSpecies;
+import social.benji.benji_backend_api.lostfound.domain.lifecycle.LostAdvertisementLifecycle;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,6 +25,11 @@ public class LostAdvertisement {
     private final Instant createdAt;
     private Instant updatedAt;
     private long version;
+    private LostAdvertisementLifecycle lifecycle = LostAdvertisementLifecycle.UNDER_REVIEW;
+    private Instant approvedAt;
+    private Instant paymentDeadlineAt;
+    private Instant publishedAt;
+    private Instant expiresAt;
 
     public LostAdvertisement(String ownerId, UUID petId, PetSpecies species, Breed breed,
                              String petName, String physicalDescription,
@@ -51,6 +57,59 @@ public class LostAdvertisement {
 
     public boolean isOwnedBy(String requestedOwnerId) {
         return ownerId.equals(requestedOwnerId);
+    }
+
+    public LostAdvertisementLifecycle getLifecycle() { return lifecycle; }
+    public Instant getApprovedAt() { return approvedAt; }
+    public Instant getPaymentDeadlineAt() { return paymentDeadlineAt; }
+    public Instant getPublishedAt() { return publishedAt; }
+    public Instant getExpiresAt() { return expiresAt; }
+
+    public void reject() {
+        if (lifecycle != LostAdvertisementLifecycle.UNDER_REVIEW) {
+            throw new IllegalStateException("Only an advertisement under review can be rejected");
+        }
+        lifecycle = LostAdvertisementLifecycle.REJECTED;
+    }
+
+    public void resubmit() {
+        if (lifecycle != LostAdvertisementLifecycle.REJECTED) {
+            throw new IllegalStateException("Only a rejected advertisement can be resubmitted");
+        }
+        lifecycle = LostAdvertisementLifecycle.UNDER_REVIEW;
+    }
+
+    public void approve(Instant now) {
+        if (lifecycle != LostAdvertisementLifecycle.UNDER_REVIEW) {
+            throw new IllegalStateException("Only an advertisement under review can be approved");
+        }
+        lifecycle = LostAdvertisementLifecycle.PAYMENT_PENDING;
+        approvedAt = now;
+        paymentDeadlineAt = now.plusSeconds(48L * 60L * 60L);
+    }
+
+    public void publishAfterVerifiedPayment(Instant now) {
+        if (lifecycle != LostAdvertisementLifecycle.PAYMENT_PENDING) {
+            throw new IllegalStateException("Lost advertisement is not awaiting payment");
+        }
+        lifecycle = LostAdvertisementLifecycle.PUBLISHED;
+        publishedAt = now;
+        expiresAt = now.plusSeconds(30L * 24L * 60L * 60L);
+    }
+
+    public void expire(Instant now) {
+        if (lifecycle != LostAdvertisementLifecycle.PUBLISHED
+                || expiresAt == null || now.isBefore(expiresAt)) {
+            throw new IllegalStateException("Lost advertisement cannot expire");
+        }
+        lifecycle = LostAdvertisementLifecycle.EXPIRED;
+    }
+
+    public void deactivate() {
+        if (lifecycle != LostAdvertisementLifecycle.PUBLISHED) {
+            throw new IllegalStateException("Only published Lost advertisements can be deactivated");
+        }
+        lifecycle = LostAdvertisementLifecycle.DEACTIVATED;
     }
 
     private static String requireOwner(String ownerId) {

@@ -23,4 +23,17 @@ public interface PaymentValidationUseCase {
             PaymentStatus status,
             String gatewayReferenceId
     ) {}
+
+    record AuthoritativePaymentStatus(
+            UUID transactionId,
+            PaymentStatus status,
+            UUID userId,
+            PaidServiceType serviceType,
+            UUID serviceReferenceId,
+            Long amount,
+            String currency,
+            String gatewayReferenceId
+    ) {}
+
+    AuthoritativePaymentStatus lookupLatest(PaidServiceType serviceType, UUID serviceReferenceId);
 }

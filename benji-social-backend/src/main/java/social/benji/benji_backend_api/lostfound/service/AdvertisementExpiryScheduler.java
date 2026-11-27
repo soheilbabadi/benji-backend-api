@@ -12,7 +12,7 @@ import social.benji.benji_backend_api.lostfound.repository.LostFoundAdvertisemen
 import java.time.Instant;
 import java.util.List;
 
-/** Confirmed rule: ACTIVE advertisements expire exactly 30 days after publication. */
+/** PUBLISHED advertisements expire after exactly 30 x 24 UTC hours. */
 @Component
 class AdvertisementExpiryScheduler {
 
@@ -29,7 +29,7 @@ class AdvertisementExpiryScheduler {
     public void expireDueAdvertisements() {
         Instant now = Instant.now();
         List<LostFoundAdvertisementEntity> due =
-                advertisements.findByStatusAndExpiresAtBefore(AdvertisementStatus.ACTIVE, now);
+                advertisements.findByStatusAndExpiresAtBefore(AdvertisementStatus.PUBLISHED, now);
         for (LostFoundAdvertisementEntity ad : due) {
             ad.expireIfDue(now); // re-checks status/expiry so concurrent resolves win safely
         }

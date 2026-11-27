@@ -1,9 +1,11 @@
 package social.benji.benji_backend_api.usermanagement.model;
 
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
 import lombok.*;
 
 @Entity
+@Audited
 @Table(name = "tbl_addresses")
 @Data
 @NoArgsConstructor

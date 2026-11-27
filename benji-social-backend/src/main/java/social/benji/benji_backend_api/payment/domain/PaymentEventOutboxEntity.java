@@ -14,6 +14,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.NotAudited;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -27,6 +30,7 @@ import java.util.UUID;
  * must be idempotent.</p>
  */
 @Entity
+@Audited
 @Table(name = "payment_event_outbox")
 @Getter
 @Setter
@@ -54,6 +58,7 @@ public class PaymentEventOutboxEntity {
 
     /** JSON payload of the domain event (see PaymentSucceededPayload etc.). */
     @Column(name = "payload", nullable = false, columnDefinition = "jsonb")
+    @NotAudited
     private String payload;
 
     @Column(name = "occurred_at", nullable = false)

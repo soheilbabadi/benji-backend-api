@@ -5,12 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import social.benji.benji_backend_api.payment.domain.valueobject.PaymentEventType;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Audited
 @Table(name = "payment_event_outbox")
 @Getter
 @NoArgsConstructor
@@ -31,6 +34,7 @@ public class PaymentEventOutbox {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
+    @NotAudited
     private String payload;
 
     @Column(name = "occurred_at", nullable = false)

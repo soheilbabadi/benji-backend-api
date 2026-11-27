@@ -16,6 +16,8 @@ import social.benji.benji_backend_api.lostfound.service.AdvertisementImageServic
 import social.benji.benji_backend_api.lostfound.service.LostFoundAdvertisementService;
 import social.benji.benji_backend_api.lostfound.web.dto.LostFoundDtos.*;
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
+import social.benji.benji_backend_api.payment.application.PaymentUseCase;
+import social.benji.benji_backend_api.payment.application.dto.PaymentResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +26,7 @@ import java.util.UUID;
 /**
  * Authenticated advertiser endpoints. The acting user id comes ONLY from the JWT principal —
  * never from a request body or query param. There is deliberately NO endpoint that sets status
- * to ACTIVE: activation happens exclusively via the verified payment event.
+ * to PUBLISHED: Lost activation happens exclusively via the verified payment event.
  */
 @RestController
 @RequestMapping("/api/v1/lost-found")
@@ -33,13 +35,16 @@ class LostFoundUserController {
     private final LostFoundAdvertisementService service;
     private final AdvertisementImageService imageService;
     private final LostFoundMapper mapper;
+    private final PaymentUseCase paymentUseCase;
 
     LostFoundUserController(LostFoundAdvertisementService service,
                             AdvertisementImageService imageService,
-                            LostFoundMapper mapper) {
+                            LostFoundMapper mapper,
+                            PaymentUseCase paymentUseCase) {
         this.service = service;
         this.imageService = imageService;
         this.mapper = mapper;
+        this.paymentUseCase = paymentUseCase;
     }
 
     @PostMapping("/ads/lost")
@@ -70,7 +75,7 @@ class LostFoundUserController {
         return mapper.toManaged(service.getManaged(me.id(), publicId));
     }
 
-    /** Edit allowed only in DRAFT / PAYMENT_PENDING; type, pet link and status are immutable here. */
+    /** Edit allowed only in REJECTED; type, pet link and status are immutable here. */
     @PatchMapping("/ads/{publicId}")
     public ManagedAdvertisementDto update(@PathVariable UUID publicId,
                                           @Valid @RequestBody UpdateAdvertisementRequest body,
@@ -95,25 +100,34 @@ class LostFoundUserController {
         return mapper.toManaged(ad);
     }
 
-    /** LOST only: DRAFT -> PAYMENT_PENDING. Client receives the ad id to hand to the payment flow. */
-    @PostMapping("/ads/{publicId}/submit-for-payment")
-    public ManagedAdvertisementDto submitForPayment(@PathVariable UUID publicId,
-                                                    @AuthenticationPrincipal UserPrincipal me) {
-        return mapper.toManaged(service.submitForPayment(me.id(), publicId));
+    @PostMapping("/ads/{publicId}/payment")
+    public PaymentResponse initiateLostPayment(@PathVariable UUID publicId,
+                                               @RequestParam @jakarta.validation.constraints.NotBlank String idempotencyKey,
+                                               @AuthenticationPrincipal UserPrincipal me) {
+        var request = service.prepareLostPayment(me.id(), publicId, idempotencyKey);
+        return paymentUseCase.createPayment(me.id(), request);
     }
 
-    /** Mark the animal as found/reunited. RESOLVED IS TERMINAL — no reactivation endpoint exists. */
+    /** Permanent resolution: remove the Lost advertisement and its advertisement-specific data. */
     @PostMapping("/ads/{publicId}/resolve")
-    public ManagedAdvertisementDto resolve(@PathVariable UUID publicId,
+    public ResponseEntity<Void> resolve(@PathVariable UUID publicId,
                                            @Valid @RequestBody ResolveRequest body,
                                            @AuthenticationPrincipal UserPrincipal me) {
-        return mapper.toManaged(service.resolve(me.id(), publicId, body.note()));
+        service.resolve(me.id(), publicId, body.note());
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/ads/{publicId}/close")
-    public ManagedAdvertisementDto close(@PathVariable UUID publicId,
+    @PostMapping("/ads/{publicId}/resubmit")
+    public ManagedAdvertisementDto resubmit(@PathVariable UUID publicId,
+                                           @AuthenticationPrincipal UserPrincipal me) {
+        return mapper.toManaged(service.resubmit(me.id(), publicId));
+    }
+
+    @DeleteMapping("/ads/{publicId}")
+    public ResponseEntity<Void> close(@PathVariable UUID publicId,
                                          @AuthenticationPrincipal UserPrincipal me) {
-        return mapper.toManaged(service.cancelOrClose(me.id(), publicId));
+        service.cancelOrClose(me.id(), publicId);
+        return ResponseEntity.noContent().build();
     }
 
     // ---- Images (max 5 × 5MB, JPEG/PNG/WebP, private MinIO storage) ---------------------------

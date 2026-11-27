@@ -87,7 +87,9 @@ public class AdvertisementImageService {
     public String publicImageUrl(UUID publicAdId, UUID imageId) {
         LostFoundAdvertisementEntity ad = advertisements.findByPublicId(publicAdId)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("Advertisement not found"));
-        if (!ad.getStatus().isPubliclyVisible()) {
+        if (ad.getStatus() != social.benji.benji_backend_api.lostfound.domain.AdvertisementStatus.PUBLISHED
+                || ad.getExpiresAt() == null
+                || !ad.getExpiresAt().isAfter(java.time.Instant.now())) {
             throw new BenjiCustomException.ResourceNotFoundException("Advertisement not found");
         }
         AdvertisementImageEntity img = images.findByIdAndAdvertisementId(imageId, publicAdId)
@@ -122,7 +124,7 @@ public class AdvertisementImageService {
         }
         if (!ad.getStatus().isEditable()) {
             throw new BenjiCustomException.ResourceForbiddenException(
-                    "Images can only change while the advertisement is DRAFT or PAYMENT_PENDING");
+                    "Images can only change while the advertisement is REJECTED");
         }
     }
 

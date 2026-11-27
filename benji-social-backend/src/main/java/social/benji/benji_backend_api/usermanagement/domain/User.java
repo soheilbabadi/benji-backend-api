@@ -16,12 +16,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 /**
  * Identity root for Benji. Future business modules reference this row only via
  * {@code user_id} and never duplicate profile data.
  */
 @Entity
+@Audited
 @Table(name = "tbl_users")
 @Getter
 @Setter

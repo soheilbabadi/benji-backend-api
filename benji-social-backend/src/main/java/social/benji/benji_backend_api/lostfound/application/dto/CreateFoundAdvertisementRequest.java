@@ -2,6 +2,7 @@ package social.benji.benji_backend_api.lostfound.application.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -18,7 +19,7 @@ public record CreateFoundAdvertisementRequest(
         String physicalDescription,
         @Size(max = 1000)
         String distinguishingCharacteristics,
-        @NotNull
+        @NotNull @PastOrPresent
         LocalDate foundDate,
         @NotBlank @Size(max = 100)
         String country,

@@ -79,4 +79,26 @@ public class PaymentValidationApplicationService implements PaymentValidationUse
                 transaction.getStatus(),
                 transaction.getGatewayReferenceId());
     }
+
+    @Override
+    public AuthoritativePaymentStatus lookupLatest(PaidServiceType serviceType,
+                                                    UUID serviceReferenceId) {
+        if (serviceType == null || serviceReferenceId == null) {
+            throw new IllegalArgumentException("Payment lookup parameters are incomplete");
+        }
+        return transactionRepository.findTopByServiceTypeAndServiceReferenceIdOrderByCreatedAtDesc(
+                        serviceType, serviceReferenceId)
+                .map(transaction -> new AuthoritativePaymentStatus(
+                        transaction.getId(),
+                        transaction.getStatus(),
+                        transaction.getUserId(),
+                        transaction.getServiceType(),
+                        transaction.getServiceReferenceId(),
+                        transaction.getAmount(),
+                        transaction.getCurrency(),
+                        transaction.getGatewayReferenceId()))
+                .orElseGet(() -> new AuthoritativePaymentStatus(
+                        null, PaymentStatus.UNKNOWN, null, serviceType,
+                        serviceReferenceId, null, null, null));
+    }
 }

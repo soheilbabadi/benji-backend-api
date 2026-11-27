@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ import java.util.UUID;
  * </ul>
  */
 @Entity
+@Audited
 @Table(name = "payment_transaction")
 @Getter
 @Setter

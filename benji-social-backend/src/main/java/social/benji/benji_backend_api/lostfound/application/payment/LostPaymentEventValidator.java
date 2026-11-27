@@ -22,6 +22,19 @@ public class LostPaymentEventValidator {
         if (event == null) {
             throw new IllegalArgumentException("Payment event is required");
         }
+        if (event.transactionId() == null
+                || event.userId() == null
+                || event.serviceType() == null
+                || event.serviceReferenceId() == null
+                || event.amount() == null
+                || event.currency() == null
+                || event.gatewayReferenceId() == null
+                || event.gatewayReferenceId().isBlank()) {
+            throw new IllegalArgumentException("Malformed payment success event");
+        }
+        if (expectedAdvertisementId == null || expectedOwnerId == null) {
+            throw new IllegalArgumentException("Payment validation expectations are incomplete");
+        }
         if (event.serviceType() != PaidServiceType.LOST_PET_ADVERTISEMENT) {
             throw new IllegalArgumentException("Payment event is not for LOST_PET_ADVERTISEMENT");
         }

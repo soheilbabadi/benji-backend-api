@@ -16,10 +16,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
+import social.benji.benji_backend_api.lostfound.domain.lifecycle.FoundAdvertisementLifecycle;
+import social.benji.benji_backend_api.lostfound.domain.lifecycle.LostAdvertisementLifecycle;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -32,13 +34,14 @@ import java.util.UUID;
  * <ul>
  *   <li>userId / petId / breedId are bare UUIDs with NO foreign keys to other modules' tables.</li>
  *   <li>Pet ownership is verified server-side at creation via a port — never trusted from the client.</li>
- *   <li>Status changes go exclusively through {@link #transitionTo}; activation of a LOST ad can
+ *   <li>Status changes go exclusively through independent LOST/FOUND lifecycle methods; activation of a LOST ad can
  *       only be triggered by the module-internal payment-success handler, never by an HTTP call.</li>
  *   <li>Contact phone is ad-specific data explicitly provided by the advertiser; public reads get
  *       a MASKED value ({@link #maskedContactPhone()}); full value only via the reveal endpoint.</li>
  * </ul>
  */
 @Entity
+@Audited
 @Table(name = "lost_found_advertisement")
 @Getter
 @Setter
@@ -47,8 +50,8 @@ import java.util.UUID;
 @Builder
 public class LostFoundAdvertisementEntity {
 
-    /** Confirmed expiry duration: ACTIVE ads expire 30 days after publication. */
-    public static final Duration ADVERTISEMENT_TTL = Duration.ofDays(30);
+    /** Approved publication duration: exactly 30 x 24 hours, measured with Instant plusSeconds. */
+    public static final long ADVERTISEMENT_TTL_SECONDS = 30L * 24L * 60L * 60L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -67,7 +70,15 @@ public class LostFoundAdvertisementEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
-    private AdvertisementStatus status = AdvertisementStatus.DRAFT;
+    private AdvertisementStatus status = AdvertisementStatus.UNDER_REVIEW;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "lost_lifecycle_status", length = 20)
+    private LostAdvertisementLifecycle lostLifecycleStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "found_lifecycle_status", length = 20)
+    private FoundAdvertisementLifecycle foundLifecycleStatus;
 
     /** Advertiser. No FK to user module (modular-monolith boundary). */
     @Column(name = "user_id", nullable = false, updatable = false)
@@ -148,6 +159,21 @@ public class LostFoundAdvertisementEntity {
     @Column(name = "expires_at")
     private Instant expiresAt;
 
+    @Column(name = "approved_at")
+    private Instant approvedAt;
+
+    @Column(name = "payment_deadline_at")
+    private Instant paymentDeadlineAt;
+
+    @Column(name = "rejected_at")
+    private Instant rejectedAt;
+
+    @Column(name = "resubmitted_at")
+    private Instant resubmittedAt;
+
+    @Column(name = "deactivated_at")
+    private Instant deactivatedAt;
+
     @Column(name = "resolved_at")
     private Instant resolvedAt;
 
@@ -195,38 +221,136 @@ public class LostFoundAdvertisementEntity {
         }
     }
 
-    // ---- Lifecycle ---------------------------------------------------------------------------
-
-    /** The ONLY way status changes. Rejects anything outside {@link AdvertisementStatus#canTransitionTo}. */
-    public void transitionTo(AdvertisementStatus next) {
-        if (!status.canTransitionTo(next)) {
-            throw new BenjiCustomException.ValidationException(
-                    "Illegal advertisement transition " + status + " -> " + next + " for ad " + publicId);
-        }
-        this.status = next;
-        applySideEffects(next);
-    }
-
-    private void applySideEffects(AdvertisementStatus next) {
+    public void enterModeration() {
+        assertTypeConsistency();
         Instant now = Instant.now();
-        switch (next) {
-            case ACTIVE -> {
-                if (publishedAt == null) {
-                    publishedAt = now;
-                }
-                expiresAt = publishedAt.plus(ADVERTISEMENT_TTL); // confirmed: 30 days
-                hiddenReason = null;
-            }
-            case RESOLVED -> {
-                resolvedAt = now;
-                expiresAt = null;
-            }
-            case CLOSED -> closedAt = now;
-            default -> { }
+        updatedAt = now;
+        if (advertisementType == AdvertisementType.LOST) {
+            lostLifecycleStatus = LostAdvertisementLifecycle.UNDER_REVIEW;
+            foundLifecycleStatus = null;
+            status = AdvertisementStatus.UNDER_REVIEW;
+        } else {
+            foundLifecycleStatus = FoundAdvertisementLifecycle.UNDER_REVIEW;
+            lostLifecycleStatus = null;
+            status = AdvertisementStatus.UNDER_REVIEW;
         }
     }
 
-    /** Called ONLY by the payment-success event handler (server-verified). Idempotent no-op otherwise. */
+    public void rejectLostOrFound(Instant now) {
+        if (advertisementType == AdvertisementType.LOST) {
+            LostAdvertisementLifecycle current = lostLifecycleStatus;
+            if (current != LostAdvertisementLifecycle.UNDER_REVIEW
+                    || !current.canTransitionTo(LostAdvertisementLifecycle.REJECTED)) {
+                throw new BenjiCustomException.ValidationException("Lost advertisement cannot be rejected");
+            }
+            lostLifecycleStatus = LostAdvertisementLifecycle.REJECTED;
+        } else {
+            FoundAdvertisementLifecycle current = foundLifecycleStatus;
+            if (current != FoundAdvertisementLifecycle.UNDER_REVIEW
+                    || !current.canTransitionTo(FoundAdvertisementLifecycle.REJECTED)) {
+                throw new BenjiCustomException.ValidationException("Found advertisement cannot be rejected");
+            }
+            foundLifecycleStatus = FoundAdvertisementLifecycle.REJECTED;
+        }
+        status = AdvertisementStatus.REJECTED;
+        rejectedAt = now;
+        updatedAt = now;
+    }
+
+    public void resubmit(Instant now) {
+        if (advertisementType == AdvertisementType.LOST) {
+            if (lostLifecycleStatus != LostAdvertisementLifecycle.REJECTED) {
+                throw new BenjiCustomException.ValidationException("Only rejected Lost advertisements can be resubmitted");
+            }
+            lostLifecycleStatus = LostAdvertisementLifecycle.UNDER_REVIEW;
+        } else {
+            if (foundLifecycleStatus != FoundAdvertisementLifecycle.REJECTED) {
+                throw new BenjiCustomException.ValidationException("Only rejected Found advertisements can be resubmitted");
+            }
+            foundLifecycleStatus = FoundAdvertisementLifecycle.UNDER_REVIEW;
+        }
+        status = AdvertisementStatus.UNDER_REVIEW;
+        resubmittedAt = now;
+        updatedAt = now;
+    }
+
+    public void approveLost(Instant now) {
+        if (advertisementType != AdvertisementType.LOST
+                || lostLifecycleStatus != LostAdvertisementLifecycle.UNDER_REVIEW) {
+            throw new BenjiCustomException.ValidationException("Lost advertisement cannot be approved");
+        }
+        lostLifecycleStatus = LostAdvertisementLifecycle.PAYMENT_PENDING;
+        status = AdvertisementStatus.PAYMENT_PENDING;
+        approvedAt = now;
+        paymentDeadlineAt = now.plusSeconds(48L * 60L * 60L);
+        updatedAt = now;
+    }
+
+    public void approveFound(Instant now) {
+        if (advertisementType != AdvertisementType.FOUND
+                || foundLifecycleStatus != FoundAdvertisementLifecycle.UNDER_REVIEW) {
+            throw new BenjiCustomException.ValidationException("Found advertisement cannot be approved");
+        }
+        foundLifecycleStatus = FoundAdvertisementLifecycle.PUBLISHED;
+        status = AdvertisementStatus.PUBLISHED;
+        approvedAt = now;
+        publishedAt = now;
+        expiresAt = now.plusSeconds(ADVERTISEMENT_TTL_SECONDS);
+        updatedAt = now;
+    }
+
+    public void publishLostAfterVerifiedPayment(Instant now) {
+        if (advertisementType != AdvertisementType.LOST
+                || lostLifecycleStatus != LostAdvertisementLifecycle.PAYMENT_PENDING) {
+            throw new BenjiCustomException.ValidationException("Lost advertisement is not awaiting verified payment");
+        }
+        lostLifecycleStatus = LostAdvertisementLifecycle.PUBLISHED;
+        status = AdvertisementStatus.PUBLISHED;
+        publishedAt = now;
+        expiresAt = now.plusSeconds(ADVERTISEMENT_TTL_SECONDS);
+        updatedAt = now;
+    }
+
+    public void expire(Instant now) {
+        if (expiresAt == null || now.isBefore(expiresAt)) {
+            throw new BenjiCustomException.ValidationException("Advertisement has not reached expiry");
+        }
+        if (advertisementType == AdvertisementType.LOST
+                && lostLifecycleStatus == LostAdvertisementLifecycle.PUBLISHED) {
+            lostLifecycleStatus = LostAdvertisementLifecycle.EXPIRED;
+            status = AdvertisementStatus.EXPIRED;
+        } else if (advertisementType == AdvertisementType.FOUND
+                && foundLifecycleStatus == FoundAdvertisementLifecycle.PUBLISHED) {
+            foundLifecycleStatus = FoundAdvertisementLifecycle.EXPIRED;
+            status = AdvertisementStatus.EXPIRED;
+        } else {
+            throw new BenjiCustomException.ValidationException("Advertisement cannot expire");
+        }
+        updatedAt = now;
+    }
+
+    public void deactivate(UUID administratorId, String reason, Instant now) {
+        if (reason == null || reason.isBlank()) {
+            throw new BenjiCustomException.ValidationException("Deactivation reason is required");
+        }
+        if (advertisementType == AdvertisementType.LOST
+                && lostLifecycleStatus == LostAdvertisementLifecycle.PUBLISHED) {
+            lostLifecycleStatus = LostAdvertisementLifecycle.DEACTIVATED;
+        } else if (advertisementType == AdvertisementType.FOUND
+                && foundLifecycleStatus == FoundAdvertisementLifecycle.PUBLISHED) {
+            foundLifecycleStatus = FoundAdvertisementLifecycle.DEACTIVATED;
+        } else {
+            throw new BenjiCustomException.ValidationException("Only published advertisements can be deactivated");
+        }
+        status = AdvertisementStatus.DEACTIVATED;
+        hiddenReason = reason;
+        deactivatedAt = now;
+        updatedAt = now;
+    }
+
+    // ---- Independent lifecycle transitions -----------------------------------------------
+
+    /** Called only by the verified Payment-success event handler. Duplicate delivery is a no-op. */
     public void activateOnVerifiedPayment(UUID actingUserId) {
         if (advertisementType != AdvertisementType.LOST) {
             throw new BenjiCustomException.ValidationException("Only LOST advertisements require payment activation");
@@ -234,33 +358,27 @@ public class LostFoundAdvertisementEntity {
         if (!userId.equals(actingUserId)) {
             throw new BenjiCustomException.ValidationException("Payment event user does not match advertisement owner");
         }
-        if (status == AdvertisementStatus.ACTIVE) {
-            return; // duplicate PaymentSucceededEvent → harmless no-op (idempotency requirement)
+        if (lostLifecycleStatus == LostAdvertisementLifecycle.PUBLISHED) {
+            return;
         }
-        if (status != AdvertisementStatus.PAYMENT_PENDING) {
-            // e.g. payment succeeded after the draft was CANCELLED: record stays in Payment module
-            // for refund review; the ad is NOT resurrected.
-            throw new BenjiCustomException.ValidationException("Advertisement is not awaiting payment: " + status);
-        }
-        transitionTo(AdvertisementStatus.ACTIVE);
+        publishLostAfterVerifiedPayment(Instant.now());
     }
 
     public void markResolved(UUID resolverUserId, String note) {
-        this.resolvedByUserId = resolverUserId;
-        this.resolutionNote = note;
-        transitionTo(AdvertisementStatus.RESOLVED);
+        if (!userId.equals(resolverUserId)) {
+            throw new BenjiCustomException.ResourceUnauthorizedException("Only the owner can resolve an advertisement");
+        }
+        resolvedByUserId = resolverUserId;
+        resolutionNote = note;
+        resolvedAt = Instant.now();
     }
 
-    /** Scheduler-only transition; guarded so it can never fire on non-ACTIVE rows. */
     public void expireIfDue(Instant now) {
-        if (status == AdvertisementStatus.ACTIVE && expiresAt != null && !expiresAt.isAfter(now)) {
-            transitionTo(AdvertisementStatus.EXPIRED);
-        }
+        expire(now);
     }
 
     public void hide(String reason) {
-        this.hiddenReason = reason;
-        transitionTo(AdvertisementStatus.HIDDEN);
+        deactivate(null, reason, Instant.now());
     }
 
     // ---- Privacy helpers -----------------------------------------------------------------------

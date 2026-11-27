@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
  * {@code lostfound/{advertisementId}/{imageId}.{ext}} — client filenames are never used.
  */
 @Entity
+@Audited
 @Table(name = "lost_found_advertisement_image")
 @Getter
 @Setter
