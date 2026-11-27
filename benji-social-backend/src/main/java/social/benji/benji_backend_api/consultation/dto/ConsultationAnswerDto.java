@@ -13,6 +13,7 @@ import java.time.Instant;
 public class ConsultationAnswerDto {
 
     private String id;
+    private String consultationId;
     private String expertId;
     private String assessment;
     private String recommendedActions;

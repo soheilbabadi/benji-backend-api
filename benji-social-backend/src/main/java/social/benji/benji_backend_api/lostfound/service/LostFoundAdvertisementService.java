@@ -176,8 +176,8 @@ public class LostFoundAdvertisementService {
                                                            String city, String area, UUID breedId,
                                                            AnimalSex sex, Instant from, Instant to,
                                                            String text, Pageable pageable) {
-        return advertisements.searchPublic(visibleStatuses, type, species, city, area, breedId,
-                sex, from, to, text, pageable);
+        return advertisements.searchPublic(visibleStatuses, Instant.now(), type, species, city,
+                area, breedId, sex, from, to, text, pageable);
     }
 
     @Transactional(readOnly = true)

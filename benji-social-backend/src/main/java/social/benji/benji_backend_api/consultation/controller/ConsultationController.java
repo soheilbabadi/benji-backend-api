@@ -34,7 +34,7 @@ public class ConsultationController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationDto> create(@Valid @RequestBody ConsultationDto consultationDto) {
-        log.info("Creating consultation for ownerId: {}", consultationDto.getOwnerId());
+        log.info("Creating consultation");
         return ResponseEntity.status(HttpStatus.CREATED).body(consultationService.create(consultationDto));
     }
 

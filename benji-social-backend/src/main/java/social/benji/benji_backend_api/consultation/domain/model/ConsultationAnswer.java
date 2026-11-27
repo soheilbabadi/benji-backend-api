@@ -21,6 +21,7 @@ public class ConsultationAnswer {
 
     @Id
     private String id;
+    private String consultationId;
     private String expertId;
     private String assessment;
     private String recommendedActions;

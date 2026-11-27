@@ -72,6 +72,14 @@ public class PetPhotoService {
         } catch (IOException e) {
             log.warn("Failed to read upload stream for pet {}", petId);
             throw PetErrors.emptyPhoto();
+        } catch (RuntimeException e) {
+            try {
+                storage.delete(minioProperties.bucketName(), objectKey);
+            } catch (RuntimeException cleanupFailure) {
+                log.warn("Could not compensate failed pet photo upload {} for pet {}",
+                        objectKey, petId, cleanupFailure);
+            }
+            throw PetErrors.photoStorageFailure();
         }
 
         PetPhoto photo = PetPhoto.builder()
@@ -82,10 +90,19 @@ public class PetPhotoService {
                 .fileSizeBytes(file.getSize())
                 .primary(true)
                 .build();
-        PetPhoto saved = photoRepository.save(photo);
-
-        removePreviousPhotos(petId, photoId);
-        return saved;
+        try {
+            PetPhoto saved = photoRepository.saveAndFlush(photo);
+            removePreviousPhotos(petId, photoId);
+            return saved;
+        } catch (RuntimeException e) {
+            try {
+                storage.delete(minioProperties.bucketName(), objectKey);
+            } catch (RuntimeException cleanupFailure) {
+                log.warn("Could not compensate orphaned pet photo object {} for pet {}",
+                        objectKey, petId, cleanupFailure);
+            }
+            throw e;
+        }
     }
 
     /** Short-lived pre-signed URL so private objects are never publicly readable. */
@@ -105,8 +122,12 @@ public class PetPhotoService {
         pets.requireOwnedPet(petId, ownerId);
         // Idempotent: a pet without a photo is not an error; nothing to remove.
         for (PetPhoto photo : photoRepository.findByPetId(petId)) {
-            storage.delete(minioProperties.bucketName(), photo.getObjectKey());
             photoRepository.delete(photo);
+            try {
+                storage.delete(minioProperties.bucketName(), photo.getObjectKey());
+            } catch (RuntimeException e) {
+                throw PetErrors.photoStorageFailure();
+            }
         }
     }
 
@@ -132,8 +153,8 @@ public class PetPhotoService {
         photoRepository.findByPetId(petId).stream()
                 .filter(p -> !p.getId().equals(keepId))
                 .forEach(p -> {
-                    storage.delete(minioProperties.bucketName(), p.getObjectKey());
                     photoRepository.delete(p);
+                    storage.delete(minioProperties.bucketName(), p.getObjectKey());
                 });
     }
 

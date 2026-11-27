@@ -45,6 +45,8 @@ public interface LostFoundAdvertisementRepository extends JpaRepository<LostFoun
            select a from LostFoundAdvertisementEntity a
             where a.includeInSearch = true
               and a.status in :visibleStatuses
+               and a.expiresAt is not null
+               and a.expiresAt > :now
               and (:type is null or a.advertisementType = :type)
               and (:species is null or a.species = :species)
               and (:city is null or lower(a.city) like concat(lower(:city), '%'))
@@ -60,6 +62,7 @@ public interface LostFoundAdvertisementRepository extends JpaRepository<LostFoun
            """)
     Page<LostFoundAdvertisementEntity> searchPublic(
             @Param("visibleStatuses") List<AdvertisementStatus> visibleStatuses,
+            @Param("now") Instant now,
             @Param("type") AdvertisementType type,
             @Param("species") Species species,
             @Param("city") String city,

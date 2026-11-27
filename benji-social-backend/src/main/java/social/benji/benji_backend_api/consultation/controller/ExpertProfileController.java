@@ -34,7 +34,7 @@ public class ExpertProfileController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ExpertProfileDto> create(@Valid @RequestBody ExpertProfileDto expertProfileDto) {
-        log.info("Creating expert profile for userId: {}", expertProfileDto.getUserId());
+        log.info("Creating expert profile");
         return ResponseEntity.status(HttpStatus.CREATED).body(expertProfileService.create(expertProfileDto));
     }
 
@@ -92,7 +92,6 @@ public class ExpertProfileController {
             @ApiResponse(responseCode = "200", description = "پروفایل با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پروفایل یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ExpertProfileDto> update(
             @PathVariable String id,
@@ -107,7 +106,6 @@ public class ExpertProfileController {
             @ApiResponse(responseCode = "204", description = "پروفایل با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پروفایل یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting expert profile with id: {}", id);

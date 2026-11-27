@@ -80,7 +80,6 @@ public class ConsultationSharedPetDataController {
             @ApiResponse(responseCode = "200", description = "داده با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "داده یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationSharedPetDataDto> update(
             @PathVariable String id,
@@ -95,7 +94,6 @@ public class ConsultationSharedPetDataController {
             @ApiResponse(responseCode = "204", description = "داده با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "داده یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting shared pet data with id: {}", id);

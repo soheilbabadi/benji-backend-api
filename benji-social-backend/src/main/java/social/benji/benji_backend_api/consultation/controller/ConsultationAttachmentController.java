@@ -33,7 +33,7 @@ public class ConsultationAttachmentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationAttachmentDto> create(@Valid @RequestBody ConsultationAttachmentDto attachmentDto) {
-        log.info("Creating attachment for consultationId: {}", attachmentDto.getConsultationId());
+        log.info("Creating consultation attachment");
         return ResponseEntity.status(HttpStatus.CREATED).body(consultationAttachmentService.create(attachmentDto));
     }
 
