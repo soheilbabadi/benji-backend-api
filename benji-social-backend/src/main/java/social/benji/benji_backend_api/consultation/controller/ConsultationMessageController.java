@@ -33,7 +33,7 @@ public class ConsultationMessageController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationMessageDto> create(@Valid @RequestBody ConsultationMessageDto messageDto) {
-        log.info("Creating message for consultationId: {}", messageDto.getConsultationId());
+        log.info("Creating consultation message");
         return ResponseEntity.status(HttpStatus.CREATED).body(consultationMessageService.create(messageDto));
     }
 
@@ -76,7 +76,6 @@ public class ConsultationMessageController {
             @ApiResponse(responseCode = "200", description = "پیام با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پیام یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationMessageDto> update(
             @PathVariable String id,
@@ -91,7 +90,6 @@ public class ConsultationMessageController {
             @ApiResponse(responseCode = "204", description = "پیام با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پیام یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting message with id: {}", id);

@@ -170,9 +170,11 @@ public class PetService {
                 && (weight.signum() <= 0 || weight.compareTo(new java.math.BigDecimal("200")) >= 0)) {
             throw PetErrors.invalidWeight();
         }
-        if (microchip != null && !blankToNull(microchip).isEmpty()
-                && !normalizeMicrochip(microchip).matches("[A-Za-z0-9]{10,15}")) {
-            throw PetErrors.invalidMicrochipNumber();
+        if (microchip != null) {
+            String normalized = normalizeMicrochip(microchip);
+            if (normalized != null && !normalized.matches("[A-Za-z0-9]{10,15}")) {
+                throw PetErrors.invalidMicrochipNumber();
+            }
         }
     }
 

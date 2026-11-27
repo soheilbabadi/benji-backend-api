@@ -122,4 +122,11 @@ public final class PetErrors {
                 "The uploaded photo is empty.",
                 HttpStatus.BAD_REQUEST);
     }
+
+    public static PetException photoStorageFailure() {
+        return new PetException(
+                "PET_PHOTO_STORAGE_FAILURE",
+                "Pet photo storage operation failed.",
+                HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }

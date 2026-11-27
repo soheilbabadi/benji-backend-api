@@ -33,7 +33,7 @@ public class ConsultationAnswerController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ConsultationAnswerDto> create(@Valid @RequestBody ConsultationAnswerDto answerDto) {
-        log.info("Creating consultation answer for expertId: {}", answerDto.getExpertId());
+        log.info("Creating consultation answer");
         return ResponseEntity.status(HttpStatus.CREATED).body(consultationAnswerService.create(answerDto));
     }
 
@@ -70,7 +70,6 @@ public class ConsultationAnswerController {
             @ApiResponse(responseCode = "200", description = "پاسخ با موفقیت به‌روزرسانی شد"),
             @ApiResponse(responseCode = "404", description = "پاسخ یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultationAnswerDto> update(
             @PathVariable String id,
@@ -85,7 +84,6 @@ public class ConsultationAnswerController {
             @ApiResponse(responseCode = "204", description = "پاسخ با موفقیت حذف شد"),
             @ApiResponse(responseCode = "404", description = "پاسخ یافت نشد")
     })
-    @PreAuthorize("hasRole(\'ADMIN\')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable String id) {
         log.info("Deleting consultation answer with id: {}", id);

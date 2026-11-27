@@ -8,6 +8,8 @@ import social.benji.benji_backend_api.consultation.mapper.ConsultationPaymentMap
 import social.benji.benji_backend_api.consultation.repository.ConsultationPaymentRepository;
 import social.benji.benji_backend_api.consultation.service.ConsultationPaymentService;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
+import social.benji.benji_backend_api.consultation.security.ConsultationAuthorizationService;
+import social.benji.benji_backend_api.consultation.domain.model.ConsultationPayment;
 
 import java.util.List;
 
@@ -17,26 +19,42 @@ public class ConsultationPaymentServiceImpl implements ConsultationPaymentServic
 
     private final ConsultationPaymentRepository consultationPaymentRepository;
     private final ConsultationPaymentMapper consultationPaymentMapper;
+    private final ConsultationAuthorizationService authorization;
 
     @Override
     public ConsultationPaymentDto create(ConsultationPaymentDto paymentDto) {
-        return consultationPaymentMapper.toDto(consultationPaymentRepository.save(consultationPaymentMapper.toModel(paymentDto)));
+        if (paymentDto == null || paymentDto.getConsultationId() == null
+                || paymentDto.getConsultationId().isBlank()) {
+            throw new BenjiCustomException.ValidationException("Consultation ID is required");
+        }
+        authorization.requireOwner(paymentDto.getConsultationId());
+        ConsultationPayment payment = consultationPaymentMapper.toModel(paymentDto);
+        payment.setStatus(PaymentStatus.PENDING);
+        payment.setProviderPaymentId(null);
+        payment.setIdempotencyKey(null);
+        payment.setUpdatedAt(java.time.Instant.now());
+        if (payment.getCreatedAt() == null) payment.setCreatedAt(java.time.Instant.now());
+        payment.setPaidAt(null);
+        return consultationPaymentMapper.toDto(consultationPaymentRepository.save(payment));
     }
 
     @Override
     public ConsultationPaymentDto findById(String id) {
-        return consultationPaymentRepository.findById(id)
-                .map(consultationPaymentMapper::toDto)
-                .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found with id: " + id));
+        ConsultationPayment payment = consultationPaymentRepository.findById(id)
+                .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found"));
+        authorization.requireOwner(payment.getConsultationId());
+        return consultationPaymentMapper.toDto(payment);
     }
 
     @Override
     public List<ConsultationPaymentDto> findAll() {
+        authorization.requireAdmin();
         return consultationPaymentRepository.findAll().stream().map(consultationPaymentMapper::toDto).toList();
     }
 
     @Override
     public ConsultationPaymentDto findByConsultationId(String consultationId) {
+        authorization.requireOwner(consultationId);
         return consultationPaymentRepository.findByConsultationId(consultationId)
                 .map(consultationPaymentMapper::toDto)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found for consultationId: " + consultationId));
@@ -44,30 +62,41 @@ public class ConsultationPaymentServiceImpl implements ConsultationPaymentServic
 
     @Override
     public ConsultationPaymentDto findByProviderPaymentId(String providerPaymentId) {
-        return consultationPaymentRepository.findByProviderPaymentId(providerPaymentId)
-                .map(consultationPaymentMapper::toDto)
+        ConsultationPayment payment = consultationPaymentRepository.findByProviderPaymentId(providerPaymentId)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found for providerPaymentId: " + providerPaymentId));
+        authorization.requireOwner(payment.getConsultationId());
+        return consultationPaymentMapper.toDto(payment);
     }
 
     @Override
     public ConsultationPaymentDto findByIdempotencyKey(String idempotencyKey) {
-        return consultationPaymentRepository.findByIdempotencyKey(idempotencyKey)
-                .map(consultationPaymentMapper::toDto)
+        ConsultationPayment payment = consultationPaymentRepository.findByIdempotencyKey(idempotencyKey)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found for idempotencyKey: " + idempotencyKey));
+        authorization.requireOwner(payment.getConsultationId());
+        return consultationPaymentMapper.toDto(payment);
     }
 
     @Override
     public List<ConsultationPaymentDto> findByStatus(PaymentStatus status) {
+        authorization.requireAdmin();
         return consultationPaymentRepository.findByStatus(status).stream().map(consultationPaymentMapper::toDto).toList();
     }
 
     @Override
     public ConsultationPaymentDto update(ConsultationPaymentDto paymentDto) {
-        return consultationPaymentMapper.toDto(consultationPaymentRepository.save(consultationPaymentMapper.toModel(paymentDto)));
+        authorization.requireAdmin();
+        if (paymentDto == null || paymentDto.getId() == null) {
+            throw new BenjiCustomException.ValidationException("Payment ID is required");
+        }
+        ConsultationPayment existing = consultationPaymentRepository.findById(paymentDto.getId())
+                .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found"));
+        existing.setUpdatedAt(java.time.Instant.now());
+        return consultationPaymentMapper.toDto(consultationPaymentRepository.save(existing));
     }
 
     @Override
     public void deleteById(String id) {
+        authorization.requireAdmin();
         if (!consultationPaymentRepository.existsById(id)) {
             throw new BenjiCustomException.ResourceNotFoundException("ConsultationPayment not found with id: " + id);
         }
