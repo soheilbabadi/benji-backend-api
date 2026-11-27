@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
 
 /**
@@ -22,6 +23,7 @@ import social.benji.benji_backend_api.pet.valueobject.PetSpecies;
  * the pet form always has an honest option without nullable-column semantics.
  */
 @Entity
+@Audited
 @Table(name = "tbl_breeds")
 @Getter
 @Setter

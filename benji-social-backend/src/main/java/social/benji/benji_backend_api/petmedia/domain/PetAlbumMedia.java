@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import social.benji.benji_backend_api.petmedia.valueobject.MediaType;
 
 /**
@@ -22,6 +23,7 @@ import social.benji.benji_backend_api.petmedia.valueobject.MediaType;
  * PostgreSQL — only the object key and descriptive fields live here.
  */
 @Entity
+@Audited
 @Table(name = "tbl_pet_album_media")
 @Getter
 @Setter

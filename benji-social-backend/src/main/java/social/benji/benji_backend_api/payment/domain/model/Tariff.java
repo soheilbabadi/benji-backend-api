@@ -3,6 +3,7 @@ package social.benji.benji_backend_api.payment.domain.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 import social.benji.benji_backend_api.payment.domain.valueobject.Money;
 import social.benji.benji_backend_api.payment.domain.valueobject.PaidServiceType;
 
@@ -10,6 +11,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Audited
 @Table(name = "tariff")
 @Getter
 @NoArgsConstructor

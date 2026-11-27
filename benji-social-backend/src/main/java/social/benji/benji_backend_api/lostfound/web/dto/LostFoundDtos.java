@@ -82,6 +82,10 @@ public final class LostFoundDtos {
 
     public record ReviewReportRequest(@NotNull ReportStatus outcome, @Size(max = 500) String note) { }
 
+    public record RejectAdvertisementRequest(@NotBlank @Size(max = 1000) String reason) { }
+
+    public record DeactivateAdvertisementRequest(@NotBlank @Size(max = 1000) String reason) { }
+
     // ---- Responses -------------------------------------------------------------------------------
 
     /** Public view: phone is ALWAYS masked; no userId/petId/email leak. */

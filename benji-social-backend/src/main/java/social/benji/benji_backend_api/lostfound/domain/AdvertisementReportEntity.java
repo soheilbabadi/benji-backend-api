@@ -14,12 +14,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.time.Instant;
 import java.util.UUID;
 
 /** Minimal MVP moderation record. Reports are immutable once reviewed (audit trail; never deleted). */
 @Entity
+@Audited
 @Table(name = "lost_found_advertisement_report")
 @Getter
 @Setter

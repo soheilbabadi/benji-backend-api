@@ -3,6 +3,7 @@ package social.benji.benji_backend_api.petmedia.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import social.benji.benji_backend_api.petmedia.valueobject.AlbumStatus;
+import org.hibernate.envers.Audited;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
  * a single source of truth for who owns what.
  */
 @Entity
+@Audited
 @Table(name = "tbl_pet_albums")
 @Getter
 @Setter

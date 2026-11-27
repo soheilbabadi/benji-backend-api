@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import java.util.UUID;
  * partial unique indexes. The primary key IS the dedup guard (unique insert; loser reads winner).
  */
 @Entity
+@Audited
 @Table(name = "payment_idempotency_key")
 @Getter
 @Setter

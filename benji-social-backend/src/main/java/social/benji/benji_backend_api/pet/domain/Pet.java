@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import social.benji.benji_backend_api.pet.valueobject.*;
 
 /**
@@ -27,6 +28,7 @@ import social.benji.benji_backend_api.pet.valueobject.*;
  * association, to keep the module boundary intact.
  */
 @Entity
+@Audited
 @Table(name = "tbl_pets")
 @Getter
 @Setter

@@ -2,6 +2,8 @@ package social.benji.benji_backend_api.usermanagement.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ import java.util.Set;
  * user-management feature package alongside it.
  */
 @Entity
+@Audited
 @Table(name = "tbl_users")
 @Data
 @NoArgsConstructor
@@ -42,6 +45,7 @@ public class LegacyUser implements UserDetails {
 
     private LocalDateTime otpGeneratedAt;
 
+    @NotAudited
     private String otp;
 
     private boolean otpVerified;

@@ -1,10 +1,12 @@
 package social.benji.benji_backend_api.usermanagement.model;
 
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
+@Audited
 @Table(name = "tbl_roles")
 @Data
 @NoArgsConstructor

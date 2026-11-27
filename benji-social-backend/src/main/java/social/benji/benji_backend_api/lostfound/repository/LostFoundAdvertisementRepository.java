@@ -9,6 +9,8 @@ import social.benji.benji_backend_api.lostfound.domain.AdvertisementStatus;
 import social.benji.benji_backend_api.lostfound.domain.AdvertisementType;
 import social.benji.benji_backend_api.lostfound.domain.LostFoundAdvertisementEntity;
 import social.benji.benji_backend_api.lostfound.domain.Species;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 
 import java.time.Instant;
 import java.util.List;
@@ -19,15 +21,22 @@ public interface LostFoundAdvertisementRepository extends JpaRepository<LostFoun
 
     Optional<LostFoundAdvertisementEntity> findByPublicId(UUID publicId);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select a from LostFoundAdvertisementEntity a where a.publicId = :publicId")
+    Optional<LostFoundAdvertisementEntity> findByPublicIdForUpdate(@Param("publicId") UUID publicId);
+
     Page<LostFoundAdvertisementEntity> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 
-    /** Scheduler: ACTIVE ads whose 30-day window has elapsed. */
+    /** Scheduler: PUBLISHED ads whose exact 30 x 24-hour window has elapsed. */
     List<LostFoundAdvertisementEntity> findByStatusAndExpiresAtBefore(AdvertisementStatus status, Instant now);
+
+    List<LostFoundAdvertisementEntity> findByStatusAndPaymentDeadlineAtBefore(
+            AdvertisementStatus status, Instant now);
 
     boolean existsByPetIdAndStatus(UUID petId, AdvertisementStatus status);
 
     /**
-     * Public search over visible ads only (ACTIVE by default; RESOLVED/EXPIRED included on request).
+     * Public search over currently PUBLISHED advertisements only.
      * All filters are optional; text search uses case-insensitive LIKE on public fields — justified
      * for MVP volumes without introducing Elasticsearch. city is matched case-insensitively and
      * prefix-wise to tolerate minor spelling variants.

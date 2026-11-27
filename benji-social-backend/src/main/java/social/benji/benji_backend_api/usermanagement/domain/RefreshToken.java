@@ -16,12 +16,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 /**
  * Server-side record of issued refresh tokens. The raw token is never stored;
  * only its SHA-256 hash, so a database leak cannot be replayed.
  */
 @Entity
+@Audited
 @Table(name = "tbl_refresh_tokens")
 @Getter
 @Setter
@@ -39,6 +42,7 @@ public class RefreshToken {
     private UUID userId;
 
     @Column(name = "token_hash", nullable = false, unique = true, length = 64)
+    @NotAudited
     private String tokenHash;
 
     @Column(name = "expires_at", nullable = false)
@@ -49,6 +53,7 @@ public class RefreshToken {
 
     /** Set when this token was rotated into a successor (theft-detection lineage). */
     @Column(name = "replaced_by_token_hash", length = 64)
+    @NotAudited
     private String replacedByTokenHash;
 
     @Column(name = "created_at", nullable = false, updatable = false)

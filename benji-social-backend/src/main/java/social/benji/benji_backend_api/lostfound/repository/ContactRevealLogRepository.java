@@ -12,4 +12,6 @@ public interface ContactRevealLogRepository extends JpaRepository<ContactRevealL
     long countByViewerUserIdAndCreatedAtAfter(UUID viewerUserId, Instant since);
 
     long countByAdvertisementIdAndViewerIpAndCreatedAtAfter(UUID advertisementId, String ip, Instant since);
+
+    void deleteByAdvertisementId(UUID advertisementId);
 }

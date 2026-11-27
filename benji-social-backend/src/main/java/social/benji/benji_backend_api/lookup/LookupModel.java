@@ -1,12 +1,14 @@
 package social.benji.benji_backend_api.lookup;
 
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Audited
 @Table(name = "tbl_lookups")
 @Getter
 @Setter

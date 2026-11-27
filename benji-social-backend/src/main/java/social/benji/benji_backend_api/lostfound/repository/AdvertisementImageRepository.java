@@ -14,4 +14,6 @@ public interface AdvertisementImageRepository extends JpaRepository<Advertisemen
     Optional<AdvertisementImageEntity> findByIdAndAdvertisementId(UUID id, UUID advertisementId);
 
     long countByAdvertisementId(UUID advertisementId);
+
+    void deleteByAdvertisementId(UUID advertisementId);
 }

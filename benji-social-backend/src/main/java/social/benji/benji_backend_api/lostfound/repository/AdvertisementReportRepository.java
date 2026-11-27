@@ -17,4 +17,6 @@ public interface AdvertisementReportRepository extends JpaRepository<Advertiseme
 
     Optional<AdvertisementReportEntity> findFirstByAdvertisementIdAndReporterUserIdAndStatus(
             UUID advertisementId, UUID reporterUserId, ReportStatus status);
+
+    void deleteByAdvertisementId(UUID advertisementId);
 }

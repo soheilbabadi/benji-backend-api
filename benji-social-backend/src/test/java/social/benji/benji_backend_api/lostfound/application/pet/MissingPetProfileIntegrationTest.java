@@ -1,6 +1,7 @@
 package social.benji.benji_backend_api.lostfound.application.pet;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
@@ -18,5 +19,11 @@ class MissingPetProfileIntegrationTest {
         MissingPetProfileIntegration integration = new MissingPetProfileIntegration();
         assertThrows(IllegalStateException.class,
                 () -> integration.validatePetOwnership(UUID.randomUUID(), "owner-1"));
+    }
+
+    @Test
+    void placeholderIsNotRegisteredAsASpringComponent() {
+        assertEquals(null,
+                MissingPetProfileIntegration.class.getAnnotation(Component.class));
     }
 }

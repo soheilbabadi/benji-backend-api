@@ -44,10 +44,7 @@ class LostFoundPublicController {
         this.mapper = mapper;
     }
 
-    /**
-     * Search visible ads. includeInactive=true adds RESOLVED/EXPIRED to results.
-     * All filters optional; pagination via standard Spring Pageable params.
-     */
+    /** Search only currently published advertisements. */
     @GetMapping("/ads")
     public Page<PublicAdvertisementDto> search(
             @RequestParam(required = false) AdvertisementType type,
@@ -59,12 +56,9 @@ class LostFoundPublicController {
             @RequestParam(required = false) Instant from,
             @RequestParam(required = false) Instant to,
             @RequestParam(required = false) String q,
-            @RequestParam(defaultValue = "false") boolean includeInactive,
             @PageableDefault(size = 20) Pageable pageable) {
 
-        List<AdvertisementStatus> statuses = includeInactive
-                ? List.of(AdvertisementStatus.ACTIVE, AdvertisementStatus.RESOLVED, AdvertisementStatus.EXPIRED)
-                : List.of(AdvertisementStatus.ACTIVE);
+        List<AdvertisementStatus> statuses = List.of(AdvertisementStatus.PUBLISHED);
         return service.searchPublic(statuses, type, species, city, area, breedId, sex, from, to, q, pageable)
                 .map(mapper::toPublic);
     }

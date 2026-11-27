@@ -16,12 +16,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 /**
  * One OTP challenge per request. Lives outside the User aggregate so
  * authentication protocol state never pollutes identity data.
  */
 @Entity
+@Audited
 @Table(name = "tbl_otp_challenges")
 @Getter
 @Setter
@@ -44,6 +47,7 @@ public class OtpChallenge {
      * Must never appear in logs or API responses.
      */
     @Column(name = "code", nullable = false, length = 10)
+    @NotAudited
     private String code;
 
     @Enumerated(EnumType.STRING)

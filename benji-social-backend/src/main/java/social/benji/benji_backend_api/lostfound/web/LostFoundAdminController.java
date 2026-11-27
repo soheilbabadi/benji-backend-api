@@ -39,15 +39,30 @@ class LostFoundAdminController {
         return reports.findByStatusOrderByCreatedAtAsc(ReportStatus.OPEN, pageable);
     }
 
-    @PostMapping("/ads/{publicId}/hide")
-    public ManagedAdvertisementDto hide(@PathVariable UUID publicId,
-                                        @RequestParam(required = false) String reason) {
-        return mapper.toManaged(service.hideByAdmin(publicId, reason != null ? reason : "hidden by moderation"));
+    @PostMapping("/ads/{publicId}/approve")
+    public ManagedAdvertisementDto approve(@PathVariable UUID publicId,
+                                           @AuthenticationPrincipal UserPrincipal admin) {
+        return mapper.toManaged(service.approve(admin.id(), publicId));
     }
 
-    @PostMapping("/ads/{publicId}/restore")
-    public ManagedAdvertisementDto restore(@PathVariable UUID publicId) {
-        return mapper.toManaged(service.restoreByAdmin(publicId));
+    @PostMapping("/ads/{publicId}/reject")
+    public ManagedAdvertisementDto reject(@PathVariable UUID publicId,
+                                         @Valid @RequestBody RejectAdvertisementRequest body,
+                                         @AuthenticationPrincipal UserPrincipal admin) {
+        return mapper.toManaged(service.reject(admin.id(), publicId, body.reason()));
+    }
+
+    @PostMapping("/ads/{publicId}/deactivate")
+    public ManagedAdvertisementDto deactivate(@PathVariable UUID publicId,
+                                              @Valid @RequestBody DeactivateAdvertisementRequest body,
+                                              @AuthenticationPrincipal UserPrincipal admin) {
+        return mapper.toManaged(service.hideByAdmin(admin.id(), publicId, body.reason()));
+    }
+
+    @DeleteMapping("/ads/{publicId}")
+    public void deleteExpiredOrDeactivated(@PathVariable UUID publicId,
+                                           @AuthenticationPrincipal UserPrincipal admin) {
+        service.deleteExpiredOrDeactivatedByAdmin(admin.id(), publicId);
     }
 
     @PostMapping("/reports/{reportId}/review")

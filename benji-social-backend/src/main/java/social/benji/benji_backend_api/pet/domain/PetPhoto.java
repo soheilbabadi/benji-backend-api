@@ -13,12 +13,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 /**
  * Metadata row for a pet photo stored in MinIO. Only the object key and basic
  * attributes live here; binary content never touches PostgreSQL.
  */
 @Entity
+@Audited
 @Table(name = "tbl_pet_photos")
 @Getter
 @Setter

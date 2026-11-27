@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
  * Enables abuse review without storing any message content.
  */
 @Entity
+@Audited
 @Table(name = "lost_found_contact_reveal_log")
 @Getter
 @Setter
