@@ -39,20 +39,14 @@ public class ExpertProfileServiceImpl implements ExpertProfileService {
 
     @Override
     public ExpertProfileDto findById(String id) {
-        ExpertProfileDto dto = expertProfileRepository.findById(id)
-                .map(expertProfileMapper::toDto)
+        return expertProfileRepository.findById(id)
+                .map(this::toPublicDto)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ExpertProfile not found with id: " + id));
-        dto.setUserId(null);
-        return dto;
     }
 
     @Override
     public List<ExpertProfileDto> findAll() {
-        return expertProfileRepository.findAll().stream().map(profile -> {
-            ExpertProfileDto dto = expertProfileMapper.toDto(profile);
-            dto.setUserId(null);
-            return dto;
-        }).toList();
+        return expertProfileRepository.findAll().stream().map(this::toPublicDto).toList();
     }
 
     @Override
@@ -65,29 +59,21 @@ public class ExpertProfileServiceImpl implements ExpertProfileService {
 
     @Override
     public List<ExpertProfileDto> findByVerificationStatus(ExpertVerificationStatus verificationStatus) {
-        return expertProfileRepository.findByVerificationStatus(verificationStatus).stream().map(profile -> {
-            ExpertProfileDto dto = expertProfileMapper.toDto(profile);
-            dto.setUserId(null);
-            return dto;
-        }).toList();
+        return expertProfileRepository.findByVerificationStatus(verificationStatus).stream()
+                .map(this::toPublicDto)
+                .toList();
     }
 
     @Override
     public List<ExpertProfileDto> findAllActive() {
-        return expertProfileRepository.findByIsActiveTrue().stream().map(profile -> {
-            ExpertProfileDto dto = expertProfileMapper.toDto(profile);
-            dto.setUserId(null);
-            return dto;
-        }).toList();
+        return expertProfileRepository.findByIsActiveTrue().stream().map(this::toPublicDto).toList();
     }
 
     @Override
     public List<ExpertProfileDto> findBySpecialty(String specialty) {
-        return expertProfileRepository.findBySpecialtiesContaining(specialty).stream().map(profile -> {
-            ExpertProfileDto dto = expertProfileMapper.toDto(profile);
-            dto.setUserId(null);
-            return dto;
-        }).toList();
+        return expertProfileRepository.findBySpecialtiesContaining(specialty).stream()
+                .map(this::toPublicDto)
+                .toList();
     }
 
     @Override
@@ -123,5 +109,13 @@ public class ExpertProfileServiceImpl implements ExpertProfileService {
                     "Only the profile owner or an administrator can delete this expert profile");
         }
         expertProfileRepository.deleteById(id);
+    }
+
+    private ExpertProfileDto toPublicDto(ExpertProfile profile) {
+        ExpertProfileDto dto = expertProfileMapper.toDto(profile);
+        dto.setUserId(null);
+        dto.setCreatedAt(null);
+        dto.setUpdatedAt(null);
+        return dto;
     }
 }

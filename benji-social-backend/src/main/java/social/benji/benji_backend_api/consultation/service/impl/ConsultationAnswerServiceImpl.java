@@ -63,19 +63,9 @@ public class ConsultationAnswerServiceImpl implements ConsultationAnswerService 
 
     @Override
     public List<ConsultationAnswerDto> findAll() {
-        if (authorization.isAdmin()) {
-            return consultationAnswerRepository.findAll().stream().map(consultationAnswerMapper::toDto).toList();
-        }
-        String callerId = authorization.callerId();
-        return consultationAnswerRepository.findAll().stream()
-                .filter(answer -> {
-                    try {
-                        var cons = authorization.requireParticipant(answer.getConsultationId());
-                        return callerId.equals(cons.getOwnerId()) || callerId.equals(cons.getAssignedExpertId());
-                    } catch (RuntimeException e) {
-                        return false;
-                    }
-                })
+        return authorization.accessibleConsultations().stream()
+                .flatMap(consultation -> consultationAnswerRepository
+                        .findAllByConsultationId(consultation.getId()).stream())
                 .map(consultationAnswerMapper::toDto)
                 .toList();
     }

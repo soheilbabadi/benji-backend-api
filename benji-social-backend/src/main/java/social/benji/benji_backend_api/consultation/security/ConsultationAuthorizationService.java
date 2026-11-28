@@ -9,6 +9,10 @@ import social.benji.benji_backend_api.exception.BenjiCustomException;
 import social.benji.benji_backend_api.usermanagement.security.JwtAuthenticationFilter.UserPrincipal;
 
 import java.util.UUID;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Component
 public class ConsultationAuthorizationService {
@@ -36,6 +40,8 @@ public class ConsultationAuthorizationService {
     public boolean isAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null
+                && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof UserPrincipal
                 && authentication.getAuthorities().stream()
                 .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
     }
@@ -88,10 +94,36 @@ public class ConsultationAuthorizationService {
     }
 
     public void requireOwnerOrAdminForUserId(String targetUserId) {
-        if (!isAdmin() && !callerId().equals(targetUserId)) {
-            throw new BenjiCustomException.ResourceForbiddenException(
-                    "Only the user or an administrator can perform this operation");
+        if (isAdmin()) {
+            return;
         }
+        try {
+            if (callerId().equals(UUID.fromString(targetUserId).toString())) {
+                return;
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Malformed user identifiers cannot match the canonical authenticated ID.
+        }
+        throw new BenjiCustomException.ResourceForbiddenException(
+                "Only the user or an administrator can perform this operation");
+    }
+
+    public List<Consultation> accessibleConsultations() {
+        if (isAdmin()) {
+            return consultationRepository.findAll();
+        }
+        String callerId = callerId();
+        return Stream.concat(
+                        consultationRepository.findByOwnerId(callerId).stream(),
+                        consultationRepository.findByAssignedExpertId(callerId).stream())
+                .collect(java.util.stream.Collectors.toMap(
+                        Consultation::getId,
+                        Function.identity(),
+                        (first, ignored) -> first,
+                        LinkedHashMap::new))
+                .values()
+                .stream()
+                .toList();
     }
 
     public boolean isParticipant(Consultation consultation) {
