@@ -27,13 +27,20 @@ public class ConsultationPaymentServiceImpl implements ConsultationPaymentServic
                 || paymentDto.getConsultationId().isBlank()) {
             throw new BenjiCustomException.ValidationException("Consultation ID is required");
         }
-        authorization.requireOwner(paymentDto.getConsultationId());
+        social.benji.benji_backend_api.consultation.domain.model.Consultation consultation =
+                authorization.requireOwner(paymentDto.getConsultationId());
+        if (consultation.getPrice() == null) {
+            throw new BenjiCustomException.ValidationException(
+                    "Consultation price is required before payment creation");
+        }
         ConsultationPayment payment = consultationPaymentMapper.toModel(paymentDto);
         payment.setStatus(PaymentStatus.PENDING);
+        payment.setAmount(consultation.getPrice());
         payment.setProviderPaymentId(null);
         payment.setIdempotencyKey(null);
-        payment.setUpdatedAt(java.time.Instant.now());
-        if (payment.getCreatedAt() == null) payment.setCreatedAt(java.time.Instant.now());
+        java.time.Instant now = java.time.Instant.now();
+        payment.setCreatedAt(now);
+        payment.setUpdatedAt(now);
         payment.setPaidAt(null);
         return consultationPaymentMapper.toDto(consultationPaymentRepository.save(payment));
     }

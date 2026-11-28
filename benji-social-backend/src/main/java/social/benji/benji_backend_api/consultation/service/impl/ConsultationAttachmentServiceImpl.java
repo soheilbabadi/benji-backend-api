@@ -44,19 +44,8 @@ public class ConsultationAttachmentServiceImpl implements ConsultationAttachment
 
     @Override
     public List<ConsultationAttachmentDto> findAll() {
-        if (authorization.isAdmin()) {
-            return consultationAttachmentRepository.findAll().stream().map(consultationAttachmentMapper::toDto).toList();
-        }
-        String callerId = authorization.callerId();
+        authorization.requireAdmin();
         return consultationAttachmentRepository.findAll().stream()
-                .filter(attachment -> {
-                    try {
-                        var cons = authorization.requireParticipant(attachment.getConsultationId());
-                        return callerId.equals(cons.getOwnerId()) || callerId.equals(cons.getAssignedExpertId());
-                    } catch (RuntimeException e) {
-                        return false;
-                    }
-                })
                 .map(consultationAttachmentMapper::toDto)
                 .toList();
     }
@@ -69,19 +58,15 @@ public class ConsultationAttachmentServiceImpl implements ConsultationAttachment
 
     @Override
     public List<ConsultationAttachmentDto> findByUploadedBy(String uploadedBy) {
-        if (!authorization.isAdmin() && !authorization.callerId().equals(uploadedBy)) {
-            throw new BenjiCustomException.ResourceForbiddenException(
-                    "Only the uploader or an administrator can query these attachments");
-        }
+        authorization.requireOwnerOrAdminForUserId(uploadedBy);
+        java.util.Set<String> consultationIds = authorization.isAdmin()
+                ? null
+                : authorization.accessibleConsultations().stream()
+                        .map(consultation -> consultation.getId())
+                        .collect(java.util.stream.Collectors.toSet());
         return consultationAttachmentRepository.findByUploadedBy(uploadedBy).stream()
-                .filter(attachment -> {
-                    try {
-                        authorization.requireParticipant(attachment.getConsultationId());
-                        return true;
-                    } catch (RuntimeException e) {
-                        return false;
-                    }
-                })
+                .filter(attachment -> consultationIds == null
+                        || consultationIds.contains(attachment.getConsultationId()))
                 .map(consultationAttachmentMapper::toDto)
                 .toList();
     }

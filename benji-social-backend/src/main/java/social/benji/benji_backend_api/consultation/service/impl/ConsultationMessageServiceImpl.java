@@ -8,7 +8,6 @@ import social.benji.benji_backend_api.consultation.repository.ConsultationMessag
 import social.benji.benji_backend_api.consultation.service.ConsultationMessageService;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
 import social.benji.benji_backend_api.consultation.security.ConsultationAuthorizationService;
-import social.benji.benji_backend_api.consultation.repository.ConsultationRepository;
 import social.benji.benji_backend_api.consultation.domain.model.Consultation;
 import social.benji.benji_backend_api.consultation.domain.model.ConsultationMessage;
 
@@ -21,7 +20,6 @@ public class ConsultationMessageServiceImpl implements ConsultationMessageServic
     private final ConsultationMessageRepository consultationMessageRepository;
     private final ConsultationMessageMapper consultationMessageMapper;
     private final ConsultationAuthorizationService authorization;
-    private final ConsultationRepository consultationRepository;
 
     @Override
     public ConsultationMessageDto create(ConsultationMessageDto messageDto) {
@@ -55,13 +53,7 @@ public class ConsultationMessageServiceImpl implements ConsultationMessageServic
 
     @Override
     public List<ConsultationMessageDto> findAll() {
-        if (authorization.isAdmin()) {
-            return consultationMessageRepository.findAll().stream().map(consultationMessageMapper::toDto).toList();
-        }
-        String callerId = authorization.callerId();
-        return consultationRepository.findAll().stream()
-                .filter(cons -> callerId.equals(cons.getOwnerId())
-                        || callerId.equals(cons.getAssignedExpertId()))
+        return authorization.accessibleConsultations().stream()
                 .flatMap(cons -> consultationMessageRepository
                         .findByConsultationIdOrderByCreatedAtAsc(cons.getId()).stream())
                 .map(consultationMessageMapper::toDto)
@@ -77,10 +69,6 @@ public class ConsultationMessageServiceImpl implements ConsultationMessageServic
     @Override
     public List<ConsultationMessageDto> findByConsultationIdAndSenderId(String consultationId, String senderId) {
         authorization.requireParticipant(consultationId);
-        if (!authorization.isAdmin() && !authorization.callerId().equals(senderId)) {
-            throw new BenjiCustomException.ResourceForbiddenException(
-                    "A participant can only query their own messages");
-        }
         return consultationMessageRepository.findByConsultationIdAndSenderId(consultationId, senderId).stream().map(consultationMessageMapper::toDto).toList();
     }
 

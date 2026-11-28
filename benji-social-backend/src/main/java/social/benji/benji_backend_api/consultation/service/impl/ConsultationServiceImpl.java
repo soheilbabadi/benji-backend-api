@@ -10,8 +10,10 @@ import social.benji.benji_backend_api.consultation.service.ConsultationService;
 import social.benji.benji_backend_api.exception.BenjiCustomException;
 import social.benji.benji_backend_api.consultation.security.ConsultationAuthorizationService;
 import social.benji.benji_backend_api.consultation.domain.model.Consultation;
+import social.benji.benji_backend_api.pet.service.PetService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final ConsultationMapper consultationMapper;
     private final ConsultationAuthorizationService authorization;
+    private final PetService petService;
 
     @Override
     public ConsultationDto create(ConsultationDto consultationDto) {
@@ -27,10 +30,12 @@ public class ConsultationServiceImpl implements ConsultationService {
             throw new BenjiCustomException.ValidationException("Consultation request is required");
         }
         String callerId = authorization.callerId();
+        requireOwnedPet(consultationDto.getPetId(), callerId);
         Consultation consultation = consultationMapper.toModel(consultationDto);
         consultation.setOwnerId(callerId);
         consultation.setAssignedExpertId(null);
-        consultation.setStatus(social.benji.benji_backend_api.consultation.domain.valueobject.ConsultationStatus.DRAFT);
+        consultation.setStatus(ConsultationStatus.DRAFT);
+        consultation.setPrice(null);
         java.time.Instant now = java.time.Instant.now();
         consultation.setCreatedAt(now);
         consultation.setUpdatedAt(now);
@@ -49,13 +54,7 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     public List<ConsultationDto> findAll() {
-        if (authorization.isAdmin()) {
-            return consultationRepository.findAll().stream().map(consultationMapper::toDto).toList();
-        }
-        String callerId = authorization.callerId();
-        return consultationRepository.findAll().stream()
-                .filter(cons -> callerId.equals(cons.getOwnerId())
-                        || callerId.equals(cons.getAssignedExpertId()))
+        return authorization.accessibleConsultations().stream()
                 .map(consultationMapper::toDto)
                 .toList();
     }
@@ -74,13 +73,8 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     public List<ConsultationDto> findByStatus(ConsultationStatus status) {
-        if (authorization.isAdmin()) {
-            return consultationRepository.findByStatus(status).stream().map(consultationMapper::toDto).toList();
-        }
-        String callerId = authorization.callerId();
-        return consultationRepository.findByStatus(status).stream()
-                .filter(cons -> callerId.equals(cons.getOwnerId())
-                        || callerId.equals(cons.getAssignedExpertId()))
+        return authorization.accessibleConsultations().stream()
+                .filter(consultation -> status == consultation.getStatus())
                 .map(consultationMapper::toDto)
                 .toList();
     }
@@ -98,7 +92,10 @@ public class ConsultationServiceImpl implements ConsultationService {
             throw new BenjiCustomException.ValidationException("Consultation ID is required");
         }
         Consultation existing = authorization.requireConsultation(consultationDto.getId());
-        if (consultationDto.getPetId() != null) existing.setPetId(consultationDto.getPetId());
+        if (consultationDto.getPetId() != null) {
+            requireOwnedPet(consultationDto.getPetId(), existing.getOwnerId());
+            existing.setPetId(consultationDto.getPetId());
+        }
         if (consultationDto.getCategory() != null) existing.setCategory(consultationDto.getCategory());
         if (consultationDto.getSubject() != null) existing.setSubject(consultationDto.getSubject());
         if (consultationDto.getQuestion() != null) existing.setQuestion(consultationDto.getQuestion());
@@ -115,5 +112,16 @@ public class ConsultationServiceImpl implements ConsultationService {
             throw new BenjiCustomException.ResourceNotFoundException("Consultation not found with id: " + id);
         }
         consultationRepository.deleteById(id);
+    }
+
+    private void requireOwnedPet(String petId, String ownerId) {
+        if (petId == null) {
+            return;
+        }
+        try {
+            petService.requireOwnedPet(UUID.fromString(petId), UUID.fromString(ownerId));
+        } catch (IllegalArgumentException e) {
+            throw new BenjiCustomException.ValidationException("Pet ID and owner ID must be valid UUIDs");
+        }
     }
 }

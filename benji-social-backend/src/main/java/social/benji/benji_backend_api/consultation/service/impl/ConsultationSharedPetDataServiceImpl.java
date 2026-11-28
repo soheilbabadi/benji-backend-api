@@ -27,7 +27,7 @@ public class ConsultationSharedPetDataServiceImpl implements ConsultationSharedP
                 || sharedPetDataDto.getConsultationId().isBlank()) {
             throw new BenjiCustomException.ValidationException("Consultation ID is required");
         }
-        authorization.requireParticipant(sharedPetDataDto.getConsultationId());
+        authorization.requireOwner(sharedPetDataDto.getConsultationId());
         ConsultationSharedPetData data = consultationSharedPetDataMapper.toModel(sharedPetDataDto);
         data.setCreatedAt(java.time.Instant.now());
         return consultationSharedPetDataMapper.toDto(
@@ -44,19 +44,8 @@ public class ConsultationSharedPetDataServiceImpl implements ConsultationSharedP
 
     @Override
     public List<ConsultationSharedPetDataDto> findAll() {
-        if (authorization.isAdmin()) {
-            return consultationSharedPetDataRepository.findAll().stream().map(consultationSharedPetDataMapper::toDto).toList();
-        }
-        String callerId = authorization.callerId();
+        authorization.requireAdmin();
         return consultationSharedPetDataRepository.findAll().stream()
-                .filter(data -> {
-                    try {
-                        var cons = authorization.requireParticipant(data.getConsultationId());
-                        return callerId.equals(cons.getOwnerId()) || callerId.equals(cons.getAssignedExpertId());
-                    } catch (RuntimeException e) {
-                        return false;
-                    }
-                })
                 .map(consultationSharedPetDataMapper::toDto)
                 .toList();
     }
@@ -82,7 +71,7 @@ public class ConsultationSharedPetDataServiceImpl implements ConsultationSharedP
         }
         ConsultationSharedPetData existing = consultationSharedPetDataRepository.findById(sharedPetDataDto.getId())
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationSharedPetData not found"));
-        authorization.requireParticipant(existing.getConsultationId());
+        authorization.requireOwner(existing.getConsultationId());
         if (sharedPetDataDto.getDataType() != null) existing.setDataType(sharedPetDataDto.getDataType());
         if (sharedPetDataDto.getContentSnapshot() != null) existing.setContentSnapshot(sharedPetDataDto.getContentSnapshot());
         return consultationSharedPetDataMapper.toDto(consultationSharedPetDataRepository.save(existing));
@@ -92,7 +81,7 @@ public class ConsultationSharedPetDataServiceImpl implements ConsultationSharedP
     public void deleteById(String id) {
         ConsultationSharedPetData existing = consultationSharedPetDataRepository.findById(id)
                 .orElseThrow(() -> new BenjiCustomException.ResourceNotFoundException("ConsultationSharedPetData not found"));
-        authorization.requireParticipant(existing.getConsultationId());
+        authorization.requireOwner(existing.getConsultationId());
         consultationSharedPetDataRepository.deleteById(id);
     }
 }
